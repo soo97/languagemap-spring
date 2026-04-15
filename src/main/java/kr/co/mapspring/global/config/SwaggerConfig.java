@@ -9,8 +9,8 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()
-                .title("rest-study API 문서화")
+                .title("mapProject API 문서화")
                 .version("v1")
-                .description("rest-study 프로젝트에 대한 문서"));
+                .description("map 프로젝트에 대한 문서"));
     }
 }
