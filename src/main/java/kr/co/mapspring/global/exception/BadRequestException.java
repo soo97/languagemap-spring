@@ -10,3 +10,7 @@ public class BadRequestException extends CustomException {
         super(ErrorCode.BAD_REQUEST, message);
     }
 }
+
+
+
+
