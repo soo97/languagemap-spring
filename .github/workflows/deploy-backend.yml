@@ -33,15 +33,11 @@ jobs:
           aws s3 cp "$JAR_FILE" s3://${{ secrets.BACKEND_BUCKET }}/app.jar
 
       - name: Deploy via SSM
-        env:
-          BUCKET: ${{ secrets.BACKEND_BUCKET }}
-          INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
         run: |
-          COMMANDS=$(cat <<EOF
-          ["aws s3 cp s3://${BUCKET}/app.jar /home/ec2-user/app/app.jar", "bash /home/ec2-user/app/deploy.sh"]
-          EOF
-          )
           aws ssm send-command \
-            --instance-ids "$INSTANCE_ID" \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
-            --parameters "commands=${COMMANDS}"
+            --parameters commands="[
+              \"aws s3 cp s3://${{ secrets.BACKEND_BUCKET }}/app.jar /home/ec2-user/app/app.jar\",
+              \"bash /home/ec2-user/app/deploy.sh\"
+            ]"
