@@ -1,0 +1,47 @@
+name: Spring Boot Deploy via SSM
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.OIDC_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build JAR
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test
+
+      - name: Upload JAR to S3
+        run: |
+          JAR_FILE=$(ls build/libs/*.jar | grep -v plain)
+          aws s3 cp "$JAR_FILE" s3://${{ secrets.BACKEND_BUCKET }}/app.jar
+
+      - name: Deploy via SSM
+        env:
+          BUCKET: ${{ secrets.BACKEND_BUCKET }}
+          INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+        run: |
+          COMMANDS=$(cat <<EOF
+          ["aws s3 cp s3://${BUCKET}/app.jar /home/ec2-user/app/app.jar", "bash /home/ec2-user/app/deploy.sh"]
+          EOF
+          )
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "commands=${COMMANDS}"
