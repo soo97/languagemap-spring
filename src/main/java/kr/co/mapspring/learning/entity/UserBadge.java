@@ -15,7 +15,7 @@ public class UserBadge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_badge_id", nullable = false, updatable = false)
+    @Column(name = "user_badge_id")
     private Long userBadgeId;
 
     //    @ManyToOne(fetch = FetchType.LAZY)

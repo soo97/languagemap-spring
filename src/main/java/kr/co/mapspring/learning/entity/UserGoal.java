@@ -1,49 +1,51 @@
 package kr.co.mapspring.learning.entity;
 
 import jakarta.persistence.*;
+import kr.co.mapspring.learning.enums.UserGoalStatus;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "learning_goal")
+@Table(name = "user_goal")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class LearningGoal {
-
+public class UserGoal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "goal_id", nullable = false, updatable = false)
-    private Long goalId;
+    @Column(name = "user_goal_id")
+    private Long userGoalId;
 
-    //    @ManyToMany(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id", nullable = false)
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "goal_type", nullable = false, length = 50)
-    private String goalType;
-
-    @Column(name = "target_value", nullable = false)
-    private Integer targetValue;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "goal_master_id", nullable = false)
+    @Column(name = "goal_master_id", nullable = false)
+    private Long goalMasterId;
 
     @Builder.Default
     @Column(name = "current_value", nullable = false)
     private Integer currentValue = 0;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private UserGoalStatus status = UserGoalStatus.ACTIVE;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private String status;
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -52,15 +54,14 @@ public class LearningGoal {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    protected void prePersist() {
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    public void preUpdate() {
+    protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
 }
-

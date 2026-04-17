@@ -14,7 +14,7 @@ public class LearningProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "learning_profile_id", nullable = false, updatable = false)
+    @Column(name = "learning_profile_id")
     private Long learningProfileId;
 
     //    @OneToOne(fetch = FetchType.LAZY)

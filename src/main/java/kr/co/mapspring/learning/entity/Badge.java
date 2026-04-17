@@ -15,7 +15,7 @@ public class Badge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "badge_id", nullable = false, updatable = false)
+    @Column(name = "badge_id")
     private Long badgeId;
 
     @Column(name = "badge_name", nullable = false, length = 100)
