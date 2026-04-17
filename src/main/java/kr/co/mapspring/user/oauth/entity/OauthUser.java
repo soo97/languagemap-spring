@@ -69,11 +69,5 @@ public class OauthUser {
 	    this.updatedAt = LocalDateTime.now();
 	}
 	
-	public OauthUser(User user, SocialProvider provider, String providerUserId, String providerEmail) {
-        this.user = user;
-        this.provider = provider;
-        this.providerUserId = providerUserId;
-        this.providerEmail = providerEmail;
-    }
 	
 }
