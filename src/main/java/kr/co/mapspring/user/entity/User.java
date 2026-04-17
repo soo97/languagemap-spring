@@ -35,21 +35,21 @@ public class User {
 	@Column(name = "email",unique = true, length = 100)
 	private String email;
 	
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", nullable = false, length = 50)
 	private String name;
 
 	@Column(name = "nickname",unique = true, length = 50)
 	private String nickname;
 	
-	@Column(name = "password_hash", nullable = true)
+	@Column(name = "password_hash", length = 255)
 	private String passwordHash;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false)
+	@Column(name = "status", nullable = false, length = 20)
 	private UserStatus status;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false)
+	@Column(name = "role", nullable = false, length = 20)
 	private UserRole role;
 	
 	@Column(name = "created_at", nullable = false)
