@@ -70,31 +70,4 @@ public class User {
 	}
 	
 	
-	public User(String email, String name, String nickname, String passwordHash,
-            UserStatus status, UserRole role) {
-    this.email = email;
-    this.name = name;
-    this.nickname = nickname;
-    this.passwordHash = passwordHash;
-    this.status = status;
-    this.role = role;
-}
-	
-	public void updateNickname(String nickname) {
-	    this.nickname = nickname;
-	}
-
-	public void updatePasswordHash(String passwordHash) {
-	    this.passwordHash = passwordHash;
-	}
-
-	public void updateStatus(UserStatus status) {
-	    this.status = status;
-	}
-
-	public void updateRole(UserRole role) {
-	    this.role = role;
-	}
-	
-	
 }
