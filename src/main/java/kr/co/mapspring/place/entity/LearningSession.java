@@ -37,7 +37,7 @@ public class LearningSession {
 	private Scenario scenario;
 	 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "place_id", nullable = false)
+	@JoinColumn(name = "place_id", nullable = false)   
 	private Place place;
 	
 	@Column(name = "study_status", nullable = false, length = 10)
