@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
+import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,9 @@ public class LearningSession {
 	@Column(name = "session_id", nullable = false, updatable = false)
 	private Long sessionId;
 
-//	TODO: User 엔티티 구현후 연결 예정
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "user_id")
-//	private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "scenario_id", nullable = false)
