@@ -1,8 +1,16 @@
 package kr.co.mapspring.learning.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "learning_profile")
@@ -14,7 +22,7 @@ public class LearningProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "learning_profile_id")
+    @Column(name = "learning_profile_id", nullable = false, updatable = false)
     private Long learningProfileId;
 
     //    @OneToOne(fetch = FetchType.LAZY)

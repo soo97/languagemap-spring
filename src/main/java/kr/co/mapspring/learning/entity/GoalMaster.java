@@ -1,9 +1,26 @@
 package kr.co.mapspring.learning.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
 import kr.co.mapspring.learning.enums.GoalType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +32,7 @@ import java.time.LocalDateTime;
 public class GoalMaster {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "goal_master_id")
+    @Column(name = "goal_master_id", nullable = false, updatable = false)
     private Long goalMasterId;
 
     @ManyToOne(fetch = FetchType.LAZY)
