@@ -24,10 +24,9 @@ public class UserGoal {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "goal_master_id", nullable = false)
-    @Column(name = "goal_master_id", nullable = false)
-    private Long goalMasterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_master_id", nullable = false)
+    private GoalMaster goalMaster;
 
     @Builder.Default
     @Column(name = "current_value", nullable = false)

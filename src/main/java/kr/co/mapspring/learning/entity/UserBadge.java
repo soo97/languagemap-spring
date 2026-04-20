@@ -23,10 +23,9 @@ public class UserBadge {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "badge_id", nullable = false)
-    @Column(name = "badge_id", nullable = false)
-    private Long badgeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "badge_id", nullable = false)
+    private Badge badge;
 
     @Column(name = "earned_at", nullable = false)
     private LocalDateTime earnedAt;

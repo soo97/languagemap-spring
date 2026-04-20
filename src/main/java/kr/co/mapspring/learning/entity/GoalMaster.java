@@ -18,10 +18,9 @@ public class GoalMaster {
     @Column(name = "goal_master_id")
     private Long goalMasterId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "badge_id", nullable = false)
-    @Column(name = "badge_id", nullable = false)
-    private Long badgeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "badge_id", nullable = false)
+    private Badge badge;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "goal_type", nullable = false, length = 50)
