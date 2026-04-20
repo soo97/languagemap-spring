@@ -15,12 +15,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
+@Table(name = "scenario")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Scenario {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "scenario_id", nullable = false, updatable = false)
 	private Long scenarioId;
 	
 	@Lob

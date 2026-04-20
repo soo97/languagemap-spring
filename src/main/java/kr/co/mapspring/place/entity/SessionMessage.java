@@ -13,23 +13,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.SessionMessageRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
+@Table(name = "session_message")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class SessionMessage {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "message_id", nullable = false, updatable = false)
 	private Long messageId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "session_id", nullable = false)
-	private LearningSession sessionId;
+	private LearningSession session;
 	
 	@Column(name = "message", nullable = false, columnDefinition = "TEXT")
 	private String message;

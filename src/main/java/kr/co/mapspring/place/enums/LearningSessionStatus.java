@@ -1,6 +1,6 @@
 package kr.co.mapspring.place.enums;
 
-public enum LearningSessionStatusEnum {
+public enum LearningSessionStatus {
 	READY,
 	RUNNING,
 	COMPLETED
