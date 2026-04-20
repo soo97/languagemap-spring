@@ -29,7 +29,7 @@ public class Content {
 	@JoinColumn(name = "coaching_session_id", nullable = false)
 	private CoachingSession coachingSession;
 
-	@Column(name = "video_title", length = 255)
+	@Column(name = "video_title")
 	private String videoTitle;
 
 	@Column(name = "video_url", length = 500)
