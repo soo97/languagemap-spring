@@ -18,9 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "badge")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Badge {
 
     @Id

@@ -12,15 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,10 +47,7 @@ public class LearningGoalServiceTest {
         userId = 1L;
         goalMasterId = 100L;
 
-        goalMaster = GoalMaster.builder()
-                .goalMasterId(goalMasterId)
-                .goalTitle("하루 1회 학습")
-                .build();
+        goalMaster = GoalMaster.createForTest(goalMasterId, "하루 1회 학습");
     }
 
     @Test
@@ -64,7 +64,17 @@ public class LearningGoalServiceTest {
 
         learningGoalService.selectGoal(userId, goalMasterId);
 
-        verify(userGoalRepository).save(any(UserGoal.class));
+        verify(goalMasterRepository).findById(goalMasterId);
+        verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+        verify(userGoalRepository).countByUserId(userId);
+
+        ArgumentCaptor<UserGoal> captor = ArgumentCaptor.forClass(UserGoal.class);
+        verify(userGoalRepository).save(captor.capture());
+
+        UserGoal savedUserGoal = captor.getValue();
+
+        assertEquals(userId, savedUserGoal.getUserId());
+        assertEquals(goalMasterId, savedUserGoal.getGoalMaster().getGoalMasterId());
 
     }
 
@@ -76,6 +86,9 @@ public class LearningGoalServiceTest {
 
         assertThrows(GoalMasterNotFoundException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
+
+        verify(goalMasterRepository).findById(goalMasterId);
+        verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
     @Test
@@ -89,6 +102,10 @@ public class LearningGoalServiceTest {
 
         assertThrows(GoalAlreadySelectedException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
+
+        verify(goalMasterRepository).findById(goalMasterId);
+        verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+        verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
     @Test
@@ -105,6 +122,11 @@ public class LearningGoalServiceTest {
 
         assertThrows(GoalSelectionLimitExceededException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
+
+        verify(goalMasterRepository).findById(goalMasterId);
+        verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+        verify(userGoalRepository).countByUserId(userId);
+        verify(userGoalRepository).save(any(UserGoal.class));
     }
 
 }

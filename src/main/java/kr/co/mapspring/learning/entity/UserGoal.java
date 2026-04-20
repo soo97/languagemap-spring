@@ -27,8 +27,6 @@ import java.time.LocalDateTime;
 @Table(name = "user_goal")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class UserGoal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,11 +42,9 @@ public class UserGoal {
     @JoinColumn(name = "goal_master_id", nullable = false)
     private GoalMaster goalMaster;
 
-    @Builder.Default
     @Column(name = "current_value", nullable = false)
     private Integer currentValue = 0;
 
-    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private UserGoalStatus status = UserGoalStatus.ACTIVE;
@@ -77,6 +73,17 @@ public class UserGoal {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // !! TEST STATIC FACTORY !!
+    public static UserGoal createForTest(Long userId, GoalMaster goalMaster) {
+        UserGoal userGoal = new UserGoal();
+        userGoal.userId = userId;
+        userGoal.goalMaster = goalMaster;
+        userGoal.currentValue = 0;
+        userGoal.status = UserGoalStatus.ACTIVE;
+        userGoal.startDate = LocalDate.now();
+        return userGoal;
     }
 
 }

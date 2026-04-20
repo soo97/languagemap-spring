@@ -14,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LearningGoalServiceImpl implements LearningGoalService {
     private static final int MAX_GOAL_COUNT = 3;
 
     private final GoalMasterRepository goalMasterRepository;
     private final UserGoalRepository userGoalRepository;
 
+    @Override
     @Transactional
     public void selectGoal(Long userId, Long goalMasterId) {
         GoalMaster goalMaster = goalMasterRepository.findById(goalMasterId)
@@ -33,14 +35,12 @@ public class LearningGoalServiceImpl implements LearningGoalService {
         }
 
         int selectedCount = userGoalRepository.countByUserId(userId);
+
         if (selectedCount >= MAX_GOAL_COUNT) {
             throw new GoalSelectionLimitExceededException();
         }
 
-        UserGoal userGoal = UserGoal.builder()
-                .userId(userId)
-                .goalMaster(goalMaster)
-                .build();
+        UserGoal userGoal = UserGoal.createForTest(userId, goalMaster);
 
         userGoalRepository.save(userGoal);
 

@@ -16,8 +16,6 @@ import jakarta.persistence.Table;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
 import kr.co.mapspring.learning.enums.GoalType;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,8 +25,6 @@ import java.time.LocalDateTime;
 @Table(name = "goal_master")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class GoalMaster {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +33,7 @@ public class GoalMaster {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "badge_id", nullable = false)
-    private Badge badge;
+    private Badge badgeId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "goal_type", nullable = false, length = 50)
@@ -56,11 +52,9 @@ public class GoalMaster {
     @Column(name = "period_type", nullable = false, length = 20)
     private GoalPeriodType periodType;
 
-    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    @Builder.Default
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder = 0;
 
@@ -79,6 +73,14 @@ public class GoalMaster {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // !! TEST STATIC FACTORY !!
+    public static GoalMaster createForTest(Long goalMasterId, String goalTitle) {
+        GoalMaster goalMaster = new GoalMaster();
+        goalMaster.goalMasterId = goalMasterId;
+        goalMaster.goalTitle = goalTitle;
+        return goalMaster;
     }
 
 }
