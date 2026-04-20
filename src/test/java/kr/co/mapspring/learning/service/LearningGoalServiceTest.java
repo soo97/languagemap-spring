@@ -27,7 +27,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class LearningGoalServiceTest {
+class LearningGoalServiceTest {
 
     @Mock
     private GoalMasterRepository goalMasterRepository;
@@ -46,8 +46,7 @@ public class LearningGoalServiceTest {
     void setUp() {
         userId = 1L;
         goalMasterId = 100L;
-
-        goalMaster = GoalMaster.createForTest(goalMasterId, "하루 1회 학습");
+        goalMaster = GoalMaster.create(goalMasterId, "하루 1회 학습");
     }
 
     @Test
@@ -88,6 +87,9 @@ public class LearningGoalServiceTest {
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
 
         verify(goalMasterRepository).findById(goalMasterId);
+
+        verify(userGoalRepository, never()).existsByUserIdAndGoalMaster_GoalMasterId(any(), any());
+        verify(userGoalRepository, never()).countByUserId(any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
@@ -105,6 +107,8 @@ public class LearningGoalServiceTest {
 
         verify(goalMasterRepository).findById(goalMasterId);
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+
+        verify(userGoalRepository, never()).countByUserId(any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
@@ -126,7 +130,8 @@ public class LearningGoalServiceTest {
         verify(goalMasterRepository).findById(goalMasterId);
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
         verify(userGoalRepository).countByUserId(userId);
-        verify(userGoalRepository).save(any(UserGoal.class));
+
+        verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
 }

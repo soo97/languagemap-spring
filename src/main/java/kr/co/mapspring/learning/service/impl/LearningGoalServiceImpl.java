@@ -40,7 +40,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
             throw new GoalSelectionLimitExceededException();
         }
 
-        UserGoal userGoal = UserGoal.createForTest(userId, goalMaster);
+        UserGoal userGoal = UserGoal.create(userId, goalMaster);
 
         userGoalRepository.save(userGoal);
 

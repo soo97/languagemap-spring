@@ -76,7 +76,7 @@ public class GoalMaster {
     }
 
     // !! TEST STATIC FACTORY !!
-    public static GoalMaster createForTest(Long goalMasterId, String goalTitle) {
+    public static GoalMaster create(Long goalMasterId, String goalTitle) {
         GoalMaster goalMaster = new GoalMaster();
         goalMaster.goalMasterId = goalMasterId;
         goalMaster.goalTitle = goalTitle;

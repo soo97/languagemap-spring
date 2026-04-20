@@ -76,7 +76,7 @@ public class UserGoal {
     }
 
     // !! TEST STATIC FACTORY !!
-    public static UserGoal createForTest(Long userId, GoalMaster goalMaster) {
+    public static UserGoal create(Long userId, GoalMaster goalMaster) {
         UserGoal userGoal = new UserGoal();
         userGoal.userId = userId;
         userGoal.goalMaster = goalMaster;
