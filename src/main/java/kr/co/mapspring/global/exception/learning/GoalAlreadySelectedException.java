@@ -1,8 +1,9 @@
 package kr.co.mapspring.global.exception.learning;
 
-public class DuplicateUserGoalException extends RuntimeException {
+public class GoalAlreadySelectedException extends RuntimeException {
 
-    public DuplicateUserGoalException(String message) {
-        super(message);
+    public GoalAlreadySelectedException() {
+        super("이미 선택한 학습 목표입니다.");
     }
+
 }

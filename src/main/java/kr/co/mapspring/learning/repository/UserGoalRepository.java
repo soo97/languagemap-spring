@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserGoalRepository extends JpaRepository<UserGoal, Long> {
 
-    boolean existsByUserIdAndGoalMasterId(Long userId, Long goalMasterId);
+    boolean existsByUserIdAndGoalMaster_GoalMasterId(Long userId, Long goalMasterId);
+
+    int countByUserId(Long userId);
 
 }
