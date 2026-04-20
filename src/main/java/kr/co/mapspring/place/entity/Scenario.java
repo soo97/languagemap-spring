@@ -9,7 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import kr.co.mapspring.place.enums.SenarioLevel;
+import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +34,7 @@ public class Scenario {
 	
 	@Column(name = "level", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
-	private SenarioLevel level;
+	private ScenarioLevel level;
 	
 	@Column(name = "categoty", nullable = false, length = 50)
 	private String category;

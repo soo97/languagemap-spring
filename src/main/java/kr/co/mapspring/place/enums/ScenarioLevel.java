@@ -1,6 +1,6 @@
 package kr.co.mapspring.place.enums;
 
-public enum SenarioLevel {
+public enum ScenarioLevel {
 	BEGINNER,
 	INTERMEDIATE,
 	ADVANCED
