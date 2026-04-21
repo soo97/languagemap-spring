@@ -32,13 +32,13 @@ public class LearningProfile {
     private User user;
 
     @Column(name = "level", nullable = false)
-    private Integer level = 1;
+    private Integer level;
 
     @Column(name = "exp", nullable = false)
-    private Integer exp = 0;
+    private Integer exp;
 
     @Column(name = "total_study_count", nullable = false)
-    private Integer totalStudyCount = 0;
+    private Integer totalStudyCount;
 
 
 }

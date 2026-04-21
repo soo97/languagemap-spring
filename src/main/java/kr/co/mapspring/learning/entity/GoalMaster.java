@@ -53,10 +53,10 @@ public class GoalMaster {
     private GoalPeriodType periodType;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private boolean isActive;
 
     @Column(name = "display_order", nullable = false)
-    private Integer displayOrder = 0;
+    private Integer displayOrder;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

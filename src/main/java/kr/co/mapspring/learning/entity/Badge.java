@@ -32,6 +32,9 @@ public class Badge {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "condition_type", nullable = false, length = 50)
+    private String conditionType;
+
     @Column(name = "condition_value", nullable = false)
     private Integer conditionValue;
 
