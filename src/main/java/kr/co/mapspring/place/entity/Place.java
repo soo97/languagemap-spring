@@ -48,10 +48,6 @@ public class Place {
 	private BigDecimal longitude;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "scenario_id", nullable = false)
-	private Scenario scenario;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 }
