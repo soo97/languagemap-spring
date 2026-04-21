@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.dto.SavePlaceDto;
 import lombok.AccessLevel;
@@ -27,10 +30,9 @@ public class Place {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "place_id", nullable = false, updatable = false)
-	@Setter
 	private Long placeId;
 	
-	@Column(name = "google_place_id", nullable = false, unique = true, length = 150)
+	@Column(name = "google_place_id", nullable = false, unique = true)
 	private String googlePlaceId;
 	
 	@Column(name = "place_name", nullable = false, length = 100)
@@ -45,22 +47,11 @@ public class Place {
 	@Column(name = "longitude", nullable = false, precision = 11, scale = 8)
 	private BigDecimal longitude;
 	
-	@Column(name = "category", nullable = false, length = 50)
-	private String category;  
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "scenario_id", nullable = false)
+	private Scenario scenario;
 	
-	public static Place placeFrom(SavePlaceDto.RequsetSaveDto request) {
-		return Place.builder()
-  			  .googlePlaceId(request.getGooglePlaceId())
-  			  .category(request.getCategory())
-  			  .latitude(request.getLatitude())
-  			  .longitude(request.getLongitude())
-  			  .placeDescription(request.getPlaceDescription())
-  			  .placeName(request.getPlaceName())
-  			  .build();
-	}
-	
-	
-	
-	
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "region_id", nullable = false)
+	private Region region;
 }
