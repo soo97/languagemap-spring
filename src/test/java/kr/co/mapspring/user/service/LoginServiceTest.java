@@ -1,6 +1,7 @@
 package kr.co.mapspring.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -12,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.mockito.BDDMockito.given;
 
 import kr.co.mapspring.user.dto.LoginRequest;
 import kr.co.mapspring.user.dto.LoginResponse;
@@ -20,6 +20,7 @@ import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.enums.UserRole;
 import kr.co.mapspring.user.enums.UserStatus;
 import kr.co.mapspring.user.repository.UserRepository;
+import kr.co.mapspring.user.service.Impl.LoginServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
@@ -30,7 +31,7 @@ public class LoginServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private LoginService loginService;
+    private LoginServiceImpl  loginService;
     
     @Test
     @DisplayName("존재하는 이메일과 올바른 비밀번호면 로그인에 성공한다")
