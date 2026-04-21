@@ -59,6 +59,9 @@ public class User {
 	@Column(name = "role", nullable = false, length = 20)
 	private UserRole role;
 	
+	@Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+	
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 	
