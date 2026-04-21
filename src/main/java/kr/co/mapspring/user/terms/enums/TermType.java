@@ -1,5 +1,7 @@
 package kr.co.mapspring.user.terms.enums;
 
-public class TermType {
-
+public enum TermType {
+    SERVICE,
+    PRIVACY,
+    MARKETING
 }
