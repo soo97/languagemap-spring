@@ -8,6 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import kr.co.mapspring.user.repository.UserRepository;
+import kr.co.mapspring.user.serivce.LoginService;
+
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
     @Mock
