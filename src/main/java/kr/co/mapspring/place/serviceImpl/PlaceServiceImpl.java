@@ -3,7 +3,6 @@ package kr.co.mapspring.place.serviceImpl;
 import org.springframework.stereotype.Service;
 
 import kr.co.mapspring.place.dto.SavePlaceDto;
-import kr.co.mapspring.place.dto.SavePlaceDto.ResponseSaveDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -31,7 +30,7 @@ public class PlaceServiceImpl implements PlaceService {
 		if (placeEntity != null) {
 			throw new RuntimeException("이미 존재하는 장소입니다");
 		}
-		Place place = Place.placeOf(request, regionEntity, scenarioEntity);
+		Place place = Place.of(request, regionEntity, scenarioEntity);
 
 		placeRepository.save(place);
 	}
