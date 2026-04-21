@@ -1,5 +1,6 @@
 package kr.co.mapspring.user.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 
 
 public class User {
@@ -37,6 +38,15 @@ public class User {
 	
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
+	
+	@Column(name = "birth_date", nullable = false)
+	private LocalDate birthDate;
+	
+	@Column(name = "address", nullable = false, length = 255)
+    private String address;
+	
+	@Column(name = "phone_number", nullable = false, unique = true,length = 20)
+    private String phoneNumber;
 	
 	@Column(name = "password_hash", length = 255)
 	private String passwordHash;
