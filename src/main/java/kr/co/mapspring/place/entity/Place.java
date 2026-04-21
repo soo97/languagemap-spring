@@ -12,12 +12,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.dto.SavePlaceDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import kr.co.mapspring.place.repository.PlaceRepository;
+import kr.co.mapspring.place.repository.RegionRepository;
+import kr.co.mapspring.place.repository.ScenarioRepository;
+import lombok.*;
 
 @Entity
 @Table(name = "place")
@@ -54,4 +52,17 @@ public class Place {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "scenario_id", nullable = false)
 	private Scenario scenario;
+
+	public static Place placeOf(SavePlaceDto.RequestSaveDto request, Region regionEntity, Scenario scenarioEntity) {
+
+		return Place.builder()
+				.googlePlaceId(request.getGooglePlaceId())
+				.placeName(request.getPlaceName())
+				.placeDescription(request.getPlaceDescription())
+				.latitude(request.getLatitude())
+				.longitude(request.getLongitude())
+				.scenario(scenarioEntity)
+				.region(regionEntity)
+				.build();
+	}
 }

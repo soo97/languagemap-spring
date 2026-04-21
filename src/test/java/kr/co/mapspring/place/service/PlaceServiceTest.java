@@ -40,9 +40,9 @@ class PlaceServiceTest {
 	private ScenarioRepository scenarioRepository;
 
 	@Test
-	void 장소_저장_완료() {
+	void 장소_저장_성공() {
 		// given
-		SavePlaceDto.RequsetSaveDto request = SavePlaceDto.RequsetSaveDto.builder()
+		SavePlaceDto.RequestSaveDto request = SavePlaceDto.RequestSaveDto.builder()
 				.googlePlaceId("csdf34asd")
 				.placeName("스타벅스")
 				.placeDescription("커피 파는 곳")
@@ -78,9 +78,8 @@ class PlaceServiceTest {
 		when(placeRepository.save(any(Place.class)))
 		.thenReturn(savePlace);
 		// when
-		SavePlaceDto.ResponseSaveDto response = placeService.savePlace(request);
+		placeService.savePlace(request);
 		// then
-		assertEquals(s, response.getPlaceId());
 		verify(placeRepository, times(1)).save(any(Place.class));
 	}
 

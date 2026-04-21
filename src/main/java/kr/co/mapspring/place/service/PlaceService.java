@@ -5,6 +5,6 @@ import kr.co.mapspring.place.dto.SavePlaceDto.ResponseSaveDto;
 
 public interface PlaceService {
 	
-	ResponseSaveDto savePlace(SavePlaceDto.RequsetSaveDto request);
+	void savePlace(SavePlaceDto.RequestSaveDto request);
 
 }
