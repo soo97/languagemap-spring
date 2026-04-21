@@ -37,9 +37,6 @@ public class User {
 	
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
-
-	@Column(name = "nickname",unique = true, length = 50)
-	private String nickname;
 	
 	@Column(name = "password_hash", length = 255)
 	private String passwordHash;
