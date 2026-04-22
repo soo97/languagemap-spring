@@ -1,7 +1,9 @@
 package kr.co.mapspring.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -69,4 +71,29 @@ public class LoginServiceTest {
                 passwordHash
         );
     }
+    
+    
+    @Test
+    @DisplayName("존재하지 않는 이메일이면 예외가 발생한다")
+    void loginFailWhenUserNotFound() {
+        // given
+        // 존재하지 않는 이메일로 로그인 요청을 만든다.
+        LoginRequest request = new LoginRequest("notfound@naver.com", "1234");
+
+        // 해당 이메일로 조회하면 사용자가 없다고 가정한다.
+        given(userRepository.findByEmail("notfound@naver.com"))
+                .willReturn(Optional.empty());
+
+        // when & then
+        // 로그인 시 UserNotFoundException이 발생하는지 확인한다.
+        assertThatThrownBy(() -> loginService.login(request))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+    
+    
+    
+    
+    
+    
+    
 }
