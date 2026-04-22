@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "friendship")
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Friendship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +51,38 @@ public class Friendship {
     public void prePersist() {
         this.requestedAt = LocalDateTime.now();
         this.status = (this.status == null) ? FriendshipStatus.PENDING : this.status;
+    }
+
+    public static Friendship create(Long requesterId, Long addresseeId) {
+        return Friendship.builder()
+                .requesterId(requesterId)
+                .addresseeId(addresseeId)
+                .status(FriendshipStatus.PENDING)
+                .requestedAt(LocalDateTime.now())
+                .build();
+    }
+
+    public void accept() {
+        this.status = FriendshipStatus.ACCEPTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+
+    public void reject() {
+        this.status = FriendshipStatus.REJECTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+
+    public void block() {
+        this.status = FriendshipStatus.BLOCKED;
+        this.respondedAt = LocalDateTime.now();
+    }
+
+    public boolean isAddreess(Long userId) {
+        return this.addresseeId.equals(userId);
+    }
+
+    public boolean isRelatedUser(Long userId) {
+        return this.requesterId.equals(userId) || this.addresseeId.equals(userId);
     }
 
 }

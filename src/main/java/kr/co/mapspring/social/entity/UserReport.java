@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "user_report")
+@Getter
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserReport {
 
     @Id
