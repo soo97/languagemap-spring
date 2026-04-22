@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,16 +26,16 @@ import kr.co.mapspring.place.serviceImpl.PlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PlaceServiceTest {
-	
+
 	@InjectMocks
 	private PlaceServiceImpl placeService;
-	
+
 	@Mock
 	private PlaceRepository placeRepository;
-	
+
 	@Mock
 	private RegionRepository regionRepository;
-	
+
 	@Mock
 	private ScenarioRepository scenarioRepository;
 
@@ -50,19 +51,19 @@ class PlaceServiceTest {
 				.scenario(1L)
 				.region(1L)
 				.build();
-		
+
 		when(placeRepository.findByGooglePlaceId(request.getGooglePlaceId()))
 		.thenReturn(null);
-		
+
 		Region region = Region.builder().regionId(1L).build();
 		Scenario scenario = Scenario.builder().scenarioId(1L).build();
-		
+
 		when(regionRepository.findById(request.getRegion()))
         .thenReturn(Optional.of(region));
 
 		when(scenarioRepository.findById(request.getScenario()))
         .thenReturn(Optional.of(scenario));
-		
+
 		Place savePlace = Place.builder()
 				.placeId(1L)
 	            .googlePlaceId(request.getGooglePlaceId())
@@ -73,7 +74,7 @@ class PlaceServiceTest {
 	            .scenario(scenario)
 	            .region(region)
 	            .build();
-		
+
 		when(placeRepository.save(any(Place.class)))
 		.thenReturn(savePlace);
 		// when
