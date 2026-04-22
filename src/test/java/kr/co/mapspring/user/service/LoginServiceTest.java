@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import kr.co.mapspring.global.exception.user.InactiveUserException;
+import kr.co.mapspring.global.exception.user.InvalidPasswordException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.user.dto.LoginRequest;
 import kr.co.mapspring.user.dto.LoginResponse;
@@ -90,10 +92,69 @@ public class LoginServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
     }
     
+    @Test
+    @DisplayName("비밀번호가 일치하지 않으면 예외가 발생한다")
+    void loginFailWhenPasswordInvalid() {
+        // given
+        // 로그인 요청을 만든다.
+        LoginRequest request = new LoginRequest("test@naver.com", "wrongPassword");
+
+        // 조회는 성공하는 사용자 객체를 만든다.
+        User user = createUser("encodedPassword");
+
+        // 이메일로 사용자 조회 시 해당 사용자를 반환한다.
+        given(userRepository.findByEmail("test@naver.com"))
+                .willReturn(Optional.of(user));
+
+        // 입력한 비밀번호와 저장된 비밀번호가 일치하지 않는다고 가정한다.
+        given(passwordEncoder.matches("wrongPassword", "encodedPassword"))
+                .willReturn(false);
+
+        // when & then
+        // 로그인 시 InvalidPasswordException이 발생하는지 확인한다.
+        assertThatThrownBy(() -> loginService.login(request))
+                .isInstanceOf(InvalidPasswordException.class);
+    }
     
+    @Test
+    @DisplayName("사용자 상태가 ACTIVE가 아니면 예외가 발생한다")
+    void loginFailWhenUserInactive() {
+        // given
+        // 정상 이메일과 비밀번호 요청을 만든다.
+        LoginRequest request = new LoginRequest("test@naver.com", "1234");
+
+        // ACTIVE가 아닌 사용자 객체를 만든다.
+        User user = createInactiveUser("encodedPassword");
+
+        // 이메일 조회는 성공한다고 가정한다.
+        given(userRepository.findByEmail("test@naver.com"))
+                .willReturn(Optional.of(user));
+
+        // 비밀번호도 일치한다고 가정한다.
+        given(passwordEncoder.matches("1234", "encodedPassword"))
+                .willReturn(true);
+
+        // when & then
+        // 상태가 ACTIVE가 아니므로 InactiveUserException이 발생해야 한다.
+        assertThatThrownBy(() -> loginService.login(request))
+                .isInstanceOf(InactiveUserException.class);
+    }
     
-    
-    
+    private User createInactiveUser(String passwordHash) {
+        User user = User.create(
+                "test@naver.com",
+                "홍길동",
+                LocalDate.of(2000, 1, 1),
+                "서울시 강남구",
+                "010-1234-5678",
+                passwordHash
+        );
+
+        // ACTIVE -> INACTIVE 상태로 바꾼다.
+        user.deactivate();
+
+        return user;
+    }
     
     
 }

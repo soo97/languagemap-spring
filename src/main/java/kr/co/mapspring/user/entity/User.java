@@ -104,5 +104,10 @@ public class User {
     public boolean isActive() {
         return this.status == UserStatus.ACTIVE;
     }
+    
+    // 테스트 전용 메서드 
+    public void deactivate() {
+        this.status = UserStatus.INACTIVE;
+    }
 
 }
