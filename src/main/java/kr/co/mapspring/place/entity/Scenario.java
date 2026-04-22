@@ -36,6 +36,9 @@ public class Scenario {
 	@Column(name = "scenarios_description", nullable = false, length = 100)
 	private String scenariosDescription;
 	
+	@Column(name = "complete_exp", nullable = false)
+	private Integer completeExp;
+	
 	@Column(name = "level", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
 	private ScenarioLevel level;
