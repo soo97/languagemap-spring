@@ -15,8 +15,6 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +26,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserGoal {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_goal_id", nullable = false, updatable = false)
@@ -43,11 +42,11 @@ public class UserGoal {
     private GoalMaster goalMaster;
 
     @Column(name = "current_value", nullable = false)
-    private Integer currentValue = 0;
+    private Integer currentValue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private UserGoalStatus status = UserGoalStatus.ACTIVE;
+    private UserGoalStatus status;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -75,15 +74,40 @@ public class UserGoal {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // !! TEST STATIC FACTORY !!
-    public static UserGoal create(Long userId, GoalMaster goalMaster) {
+    public void updateCurrentValue(Integer currentValue) {
+        this.currentValue = currentValue;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void complete() {
+        this.status = UserGoalStatus.COMPLETED;
+        this.completedAt = LocalDateTime.now();
+    }
+
+    public void fail() {
+        this.status = UserGoalStatus.FAILED;
+    }
+
+    public void cancel() {
+        this.status = UserGoalStatus.CANCELED;
+    }
+
+    // 테스트 전용 생성 메서드
+    public static UserGoal of(Long userId, GoalMaster goalMaster,
+                              LocalDate startDate, LocalDate endDate) {
+
         UserGoal userGoal = new UserGoal();
         userGoal.userId = userId;
         userGoal.goalMaster = goalMaster;
         userGoal.currentValue = 0;
         userGoal.status = UserGoalStatus.ACTIVE;
-        userGoal.startDate = LocalDate.now();
+        userGoal.startDate = startDate;
+        userGoal.endDate = endDate;
+
         return userGoal;
     }
+
+
+
 
 }
