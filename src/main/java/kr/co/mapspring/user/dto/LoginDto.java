@@ -11,7 +11,7 @@ public class LoginDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request {
+    public static class RequestLogin {
 
         private String email;
 
@@ -22,7 +22,7 @@ public class LoginDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Response {
+    public static class ResponseLogin {
 
         private Long userId;
 
@@ -32,8 +32,8 @@ public class LoginDto {
 
         private String role;
 
-        public static Response from(User user) {
-            return Response.builder()
+        public static ResponseLogin from(User user) {
+            return ResponseLogin.builder()
                     .userId(user.getUserId())
                     .email(user.getEmail())
                     .name(user.getName())

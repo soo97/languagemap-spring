@@ -39,7 +39,7 @@ public class LoginServiceTest {
     void loginSuccess() {
         // given
         // 로그인 요청 생성
-    	LoginDto.Request request = new LoginDto.Request("test@naver.com", "1234");
+    	LoginDto.RequestLogin request = new LoginDto.RequestLogin("test@naver.com", "1234");
     	
         // 테스트용 사용자 생성
         User user = createUser("encodedPassword");
@@ -53,7 +53,7 @@ public class LoginServiceTest {
                 .willReturn(true);
 
         // when
-        LoginDto.Response response = loginService.login(request);
+        LoginDto.ResponseLogin response = loginService.login(request);
 
         // then
         assertThat(response).isNotNull();
@@ -79,7 +79,7 @@ public class LoginServiceTest {
     void loginFailWhenUserNotFound() {
         // given
         // 존재하지 않는 이메일로 로그인 요청을 만든다.
-    	LoginDto.Request request = new LoginDto.Request("notfound@naver.com", "1234");
+    	LoginDto.RequestLogin request = new LoginDto.RequestLogin("notfound@naver.com", "1234");
 
         // 해당 이메일로 조회하면 사용자가 없다고 가정한다.
         given(userRepository.findByEmail("notfound@naver.com"))
@@ -97,7 +97,7 @@ public class LoginServiceTest {
     void loginFailWhenPasswordInvalid() {
         // given
         // 로그인 요청을 만든다.
-    	LoginDto.Request request = new LoginDto.Request("test@naver.com", "wrongPassword");
+    	LoginDto.RequestLogin request = new LoginDto.RequestLogin("test@naver.com", "wrongPassword");
 
         // 조회는 성공하는 사용자 객체를 만든다.
         User user = createUser("encodedPassword");
@@ -122,7 +122,7 @@ public class LoginServiceTest {
     void loginFailWhenUserInactive() {
         // given
         // 정상 이메일과 비밀번호 요청을 만든다.
-    	 LoginDto.Request request = new LoginDto.Request("test@naver.com", "1234");
+    	 LoginDto.RequestLogin request = new LoginDto.RequestLogin("test@naver.com", "1234");
         // ACTIVE가 아닌 사용자 객체를 만든다.
         User user = createInactiveUser("encodedPassword");
 

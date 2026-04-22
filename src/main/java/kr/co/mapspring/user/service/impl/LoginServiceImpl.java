@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.user.dto.LoginDto;
+import kr.co.mapspring.user.dto.LoginDto.RequestLogin;
+import kr.co.mapspring.user.dto.LoginDto.ResponseLogin;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
 import kr.co.mapspring.user.service.LoginService;
@@ -23,7 +25,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public LoginDto.Response login(LoginDto.Request request) {
+    public ResponseLogin login(RequestLogin request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -35,6 +37,6 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(ErrorCode.INACTIVE_USER);
         }
 
-        return LoginDto.Response.from(user);
+        return LoginDto.ResponseLogin.from(user);
     }
 }
