@@ -11,6 +11,8 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "scenario")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor
+@Builder
 public class Scenario {
 	
 	@Id
@@ -29,14 +33,14 @@ public class Scenario {
 	@Column(name = "prompt", nullable = false, columnDefinition = "TEXT")
 	private String prompt;
 	
-	@Column(name = "scenarios_name", nullable = false, length = 100)
-	private String scenariosName;
+	@Column(name = "scenarios_description", nullable = false, length = 100)
+	private String scenariosDescription;
 	
 	@Column(name = "level", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
 	private ScenarioLevel level;
 	
-	@Column(name = "categoty", nullable = false, length = 50)
+	@Column(name = "category", nullable = false, length = 50)
 	private String category;
 
 }
