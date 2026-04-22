@@ -1,5 +1,6 @@
 package kr.co.mapspring.user.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -19,14 +20,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@Table(name = "users")
+@Table(name="users")
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-
-
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 public class User {
-	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false, updatable = false)
@@ -37,9 +35,15 @@ public class User {
 	
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
-
-	@Column(name = "nickname",unique = true, length = 50)
-	private String nickname;
+	
+	@Column(name = "birth_date", nullable = false)
+	private LocalDate birthDate;
+	
+	@Column(name = "address", nullable = false, length = 255)
+    private String address;
+	
+	@Column(name = "phone_number", nullable = false, unique = true,length = 20)
+    private String phoneNumber;
 	
 	@Column(name = "password_hash", length = 255)
 	private String passwordHash;
@@ -51,6 +55,9 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false, length = 20)
 	private UserRole role;
+	
+	@Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 	
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
