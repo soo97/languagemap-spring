@@ -5,12 +5,16 @@ import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
+import kr.co.mapspring.learning.enums.GoalPeriodType;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
 import kr.co.mapspring.learning.service.LearningGoalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +44,20 @@ public class LearningGoalServiceImpl implements LearningGoalService {
             throw new GoalSelectionLimitExceededException();
         }
 
-        UserGoal userGoal = UserGoal.create(userId, goalMaster);
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = calcultateEndDate(startDate, goalMaster);
+
+        UserGoal userGoal = UserGoal.of(userId, goalMaster, startDate, endDate);
 
         userGoalRepository.save(userGoal);
+    }
 
-
+    private LocalDate calcultateEndDate(LocalDate startDate, GoalMaster goalMaster) {
+        return switch (goalMaster.getGoalPeriodType()) {
+            case DAILY -> startDate;
+            case WEEKLY -> startDate.plusWeeks(1);
+            case MONTHLY -> startDate.plusMonths(1);
+            case NONE -> null;
+        };
     }
 }

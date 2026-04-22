@@ -15,8 +15,6 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -76,8 +74,28 @@ public class UserGoal {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // !! TEST STATIC FACTORY !!
-    public static UserGoal create(Long userId, GoalMaster goalMaster, LocalDate startDate, LocalDate endDate) {
+    public void updateCurrentValue(Integer currentValue) {
+        this.currentValue = currentValue;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void complete() {
+        this.status = UserGoalStatus.COMPLETED;
+        this.completedAt = LocalDateTime.now();
+    }
+
+    public void fail() {
+        this.status = UserGoalStatus.FAILED;
+    }
+
+    public void cancel() {
+        this.status = UserGoalStatus.CANCELED;
+    }
+
+    // 테스트 전용 생성 메서드
+    public static UserGoal of(Long userId, GoalMaster goalMaster,
+                              LocalDate startDate, LocalDate endDate) {
+
         UserGoal userGoal = new UserGoal();
         userGoal.userId = userId;
         userGoal.goalMaster = goalMaster;
@@ -85,9 +103,11 @@ public class UserGoal {
         userGoal.status = UserGoalStatus.ACTIVE;
         userGoal.startDate = startDate;
         userGoal.endDate = endDate;
-        userGoal.createdAt = LocalDateTime.now();
-        userGoal.updatedAt = LocalDateTime.now();
+
         return userGoal;
     }
+
+
+
 
 }

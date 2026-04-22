@@ -5,6 +5,9 @@ import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
+import kr.co.mapspring.learning.enums.GoalPeriodType;
+import kr.co.mapspring.learning.enums.GoalType;
+import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
 import kr.co.mapspring.learning.service.impl.LearningGoalServiceImpl;
@@ -17,9 +20,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Period;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -46,7 +51,11 @@ class LearningGoalServiceTest {
     void setUp() {
         userId = 1L;
         goalMasterId = 100L;
-        goalMaster = GoalMaster.create(goalMasterId, "하루 1회 학습");
+        goalMaster = GoalMaster.of(
+                goalMasterId,
+                "하루 1회 학습",
+                GoalPeriodType.DAILY
+        );
     }
 
     @Test
@@ -75,6 +84,12 @@ class LearningGoalServiceTest {
         assertEquals(userId, savedUserGoal.getUserId());
         assertEquals(goalMasterId, savedUserGoal.getGoalMaster().getGoalMasterId());
 
+        assertEquals(0, savedUserGoal.getCurrentValue());
+        assertEquals(UserGoalStatus.ACTIVE, savedUserGoal.getStatus());
+
+        assertEquals(savedUserGoal.getStartDate(), savedUserGoal.getStatus());
+
+        assertNull(savedUserGoal.getCompletedAt());
     }
 
     @Test

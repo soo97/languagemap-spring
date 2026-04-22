@@ -20,11 +20,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "study_log")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudyLog {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_log_id", nullable = false, updatable = false)
@@ -48,6 +45,18 @@ public class StudyLog {
     @Enumerated(EnumType.STRING)
     @Column(name = "study_type", nullable = false, length = 50)
     private StudyType studyType;
+
+    @Column(name = "pronunciation_score")
+    private Integer pronunciationScore;
+
+    @Column(name = "naturalness_score")
+    private Integer naturalnessScore;
+
+    @Column(name = "fluency_score")
+    private Integer fluencyScore;
+
+    @Column(name = "total_score")
+    private Integer totalScore;
 
     @Column(name = "earned_exp", nullable = false)
     private Integer earnedExp;
