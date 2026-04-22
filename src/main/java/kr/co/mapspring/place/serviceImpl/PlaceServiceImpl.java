@@ -2,6 +2,7 @@ package kr.co.mapspring.place.serviceImpl;
 
 import org.springframework.stereotype.Service;
 
+import kr.co.mapspring.global.exception.place.PlaceAlreadyExistsException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.SavePlaceDto;
@@ -28,6 +29,12 @@ public class PlaceServiceImpl implements PlaceService {
 		Long regionId = request.getRegionId();
 		Long scenarioId = request.getScenarioId();
 		String googlePlaceId = request.getGooglePlaceId();
+		
+		boolean placeEntity = placeRepository.existsByGooglePlaceId(googlePlaceId);
+		
+		if (placeEntity) {
+			throw new PlaceAlreadyExistsException();
+		}
 								
 		Region regionEntity = regionRepository.findById(regionId)
 				.orElseThrow(() -> new RegionNotFoundException());
@@ -35,11 +42,6 @@ public class PlaceServiceImpl implements PlaceService {
 		Scenario scenarioEntity = scenarioRepository.findById(scenarioId)
 				.orElseThrow(() -> new ScenarioNotFoundException());
 		
-		Place placeEntity = placeRepository.existsByGooglePlaceId(googlePlaceId);
-
-		if (placeEntity != null) {
-			throw new RuntimeException("이미 존재하는 장소입니다");
-		}
 		Place place = Place.of(request.getGooglePlaceId(),
 							   request.getPlaceName(),
 							   request.getPlaceDescription(),
