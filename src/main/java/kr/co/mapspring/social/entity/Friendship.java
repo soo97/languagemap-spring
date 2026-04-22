@@ -12,8 +12,6 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import kr.co.mapspring.social.enums.FriendshipStatus;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
