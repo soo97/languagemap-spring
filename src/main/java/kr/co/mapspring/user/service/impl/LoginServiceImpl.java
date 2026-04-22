@@ -3,9 +3,10 @@ package kr.co.mapspring.user.service.impl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.user.InactiveUserException;
 import kr.co.mapspring.global.exception.user.InvalidPasswordException;
-import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.user.dto.LoginRequest;
 import kr.co.mapspring.user.dto.LoginResponse;
 import kr.co.mapspring.user.entity.User;
@@ -26,14 +27,14 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-        		.orElseThrow(UserNotFoundException::new);
+        		.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-        	throw new InvalidPasswordException();
+        	throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         if (!user.isActive()) {
-        	throw new InactiveUserException();
+        	throw new CustomException(ErrorCode.INACTIVE_USER);
         }
 
         return LoginResponse.from(user);
