@@ -22,14 +22,12 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "friendship")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Friendship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friendship_id", nullable = false, updatable = false)
-    private Long friendId;
+    private Long friendshipId;
 
     @Column(name = "requester_id", nullable = false)
     private Long requesterId;
@@ -50,16 +48,14 @@ public class Friendship {
     @PrePersist
     public void prePersist() {
         this.requestedAt = LocalDateTime.now();
-        this.status = (this.status == null) ? FriendshipStatus.PENDING : this.status;
     }
 
     public static Friendship create(Long requesterId, Long addresseeId) {
-        return Friendship.builder()
-                .requesterId(requesterId)
-                .addresseeId(addresseeId)
-                .status(FriendshipStatus.PENDING)
-                .requestedAt(LocalDateTime.now())
-                .build();
+        Friendship friendship = new Friendship();
+        friendship.requesterId = requesterId;
+        friendship.addresseeId = addresseeId;
+        friendship.status = FriendshipStatus.PENDING;
+        return friendship;
     }
 
     public void accept() {
@@ -83,6 +79,22 @@ public class Friendship {
 
     public boolean isRelatedUser(Long userId) {
         return this.requesterId.equals(userId) || this.addresseeId.equals(userId);
+    }
+
+    // 테스트 전용 메서드
+    public static Friendship of(
+            Long frienshipId,
+            Long requesterId,
+            Long addresseeId,
+            FriendshipStatus status
+    ) {
+        Friendship friendship = new Friendship();
+        friendship.friendshipId = frienshipId;
+        friendship.requesterId = requesterId;
+        friendship.addresseeId = addresseeId;
+        friendship.status = status;
+        friendship.requestedAt = LocalDateTime.now();
+        return friendship;
     }
 
 }
