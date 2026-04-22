@@ -76,5 +76,33 @@ public class User {
 	    this.updatedAt = LocalDateTime.now();
 	}
 
+	
+	public static User create(
+	        String email,
+	        String name,
+	        LocalDate birthDate,
+	        String address,
+	        String phoneNumber,
+	        String passwordHash
+	) {
+	    User user = new User();
+	    
+	    user.email = email;
+	    user.name = name;
+	    user.birthDate = birthDate;
+	    user.address = address;
+	    user.phoneNumber = phoneNumber;
+	    user.passwordHash = passwordHash;
+	    
+	    user.status = UserStatus.ACTIVE;
+	    
+	    user.role = UserRole.USER;
+	    
+	    return user;
+	}
+	
+    public boolean isActive() {
+        return this.status == UserStatus.ACTIVE;
+    }
 
 }

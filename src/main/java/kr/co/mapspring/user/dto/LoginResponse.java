@@ -1,5 +1,11 @@
 package kr.co.mapspring.user.dto;
 
+import kr.co.mapspring.user.entity.User;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
 public class LoginResponse {
 	
 	private final Long userId;
@@ -13,19 +19,13 @@ public class LoginResponse {
         this.name = name;
         this.role = role;
     }
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRole() {
-        return role;
+    
+    public static LoginResponse from(User user) {
+        return LoginResponse.builder()
+                .userId(user.getUserId())         
+                .email(user.getEmail())            
+                .name(user.getName())             
+                .role(user.getRole().name())       
+                .build();                          
     }
 }
