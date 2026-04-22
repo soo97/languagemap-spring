@@ -3,6 +3,9 @@ package kr.co.mapspring.user.service.impl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.co.mapspring.global.exception.user.InactiveUserException;
+import kr.co.mapspring.global.exception.user.InvalidPasswordException;
+import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.user.dto.LoginRequest;
 import kr.co.mapspring.user.dto.LoginResponse;
 import kr.co.mapspring.user.entity.User;
@@ -23,14 +26,14 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+        		.orElseThrow(UserNotFoundException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        	throw new InvalidPasswordException();
         }
 
         if (!user.isActive()) {
-            throw new IllegalStateException("비활성 사용자입니다.");
+        	throw new InactiveUserException();
         }
 
         return LoginResponse.from(user);

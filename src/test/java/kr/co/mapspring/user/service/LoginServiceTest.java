@@ -3,7 +3,6 @@ package kr.co.mapspring.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.user.dto.LoginRequest;
 import kr.co.mapspring.user.dto.LoginResponse;
 import kr.co.mapspring.user.entity.User;
