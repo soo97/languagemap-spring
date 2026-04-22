@@ -61,6 +61,7 @@ class LearningGoalServiceTest {
     @Test
     @DisplayName("학습 목표를 정상적으로 선택한다")
     void 학습_목표를_정상적으로_선택한다() {
+        // given
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
@@ -70,8 +71,10 @@ class LearningGoalServiceTest {
         given(userGoalRepository.countByUserId(userId))
                 .willReturn(2);
 
+        // when
         learningGoalService.selectGoal(userId, goalMasterId);
 
+        // then
         verify(goalMasterRepository).findById(goalMasterId);
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
         verify(userGoalRepository).countByUserId(userId);
@@ -83,11 +86,10 @@ class LearningGoalServiceTest {
 
         assertEquals(userId, savedUserGoal.getUserId());
         assertEquals(goalMasterId, savedUserGoal.getGoalMaster().getGoalMasterId());
-
         assertEquals(0, savedUserGoal.getCurrentValue());
         assertEquals(UserGoalStatus.ACTIVE, savedUserGoal.getStatus());
 
-        assertEquals(savedUserGoal.getStartDate(), savedUserGoal.getStatus());
+        assertEquals(savedUserGoal.getStartDate(), savedUserGoal.getEndDate());
 
         assertNull(savedUserGoal.getCompletedAt());
     }
@@ -95,14 +97,15 @@ class LearningGoalServiceTest {
     @Test
     @DisplayName("존재하지 않는 목표는 선택할 수 없다")
     void 존재하지_않는_목표는_선택할_수_없다() {
+        // given
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.empty());
 
+        // when & then
         assertThrows(GoalMasterNotFoundException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
 
         verify(goalMasterRepository).findById(goalMasterId);
-
         verify(userGoalRepository, never()).existsByUserIdAndGoalMaster_GoalMasterId(any(), any());
         verify(userGoalRepository, never()).countByUserId(any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
@@ -111,12 +114,14 @@ class LearningGoalServiceTest {
     @Test
     @DisplayName("이미 선택한 목표는 중복 선택할 수 없다")
     void 이미_선택한_목표는_중복_선택할_수_없다() {
+        // given
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
         given(userGoalRepository.existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId))
                 .willReturn(true);
 
+        // when & then
         assertThrows(GoalAlreadySelectedException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
 

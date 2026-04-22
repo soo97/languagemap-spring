@@ -53,7 +53,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
     }
 
     private LocalDate calcultateEndDate(LocalDate startDate, GoalMaster goalMaster) {
-        return switch (goalMaster.getGoalPeriodType()) {
+        return switch (goalMaster.getPeriodType()) {
             case DAILY -> startDate;
             case WEEKLY -> startDate.plusWeeks(1);
             case MONTHLY -> startDate.plusMonths(1);

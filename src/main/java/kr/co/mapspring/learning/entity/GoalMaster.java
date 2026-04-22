@@ -48,7 +48,7 @@ public class GoalMaster {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "period_type", nullable = false, length = 20)
-    private GoalPeriodType goalPeriodType;
+    private GoalPeriodType periodType;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
@@ -72,11 +72,11 @@ public class GoalMaster {
 
 
     // 테스트 전용 생성 메서드
-    public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType goalPeriodType) {
+    public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType periodType) {
         GoalMaster goalMaster = new GoalMaster();
         goalMaster.goalMasterId = goalMasterId;
         goalMaster.goalTitle = goalTitle;
-        goalMaster.goalPeriodType = goalPeriodType;
+        goalMaster.periodType = periodType;
         return goalMaster;
     }
 }
