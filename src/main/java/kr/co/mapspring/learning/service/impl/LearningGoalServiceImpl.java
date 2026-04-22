@@ -3,9 +3,11 @@ package kr.co.mapspring.learning.service.impl;
 import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
+import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
+import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
 import kr.co.mapspring.learning.service.LearningGoalService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +53,20 @@ public class LearningGoalServiceImpl implements LearningGoalService {
         UserGoal userGoal = UserGoal.of(userId, goalMaster, startDate, endDate);
 
         userGoalRepository.save(userGoal);
+    }
+
+    @Override
+    @Transactional
+    public void cancelGoal(Long userGoalId) {
+        UserGoal userGoal = userGoalRepository.findById(userGoalId)
+                .orElseThrow(UserGoalNotFoundException::new);
+
+        userGoal.cancel();
+    }
+
+    @Override
+    public List<UserGoal> getActiveGoals(Long userId) {
+        return userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
     }
 
     private LocalDate calcultateEndDate(LocalDate startDate, GoalMaster goalMaster) {
