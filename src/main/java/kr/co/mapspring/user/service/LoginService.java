@@ -1,9 +1,9 @@
 package kr.co.mapspring.user.service;
 
-import kr.co.mapspring.user.dto.LoginRequest;
-import kr.co.mapspring.user.dto.LoginResponse;
+import kr.co.mapspring.user.dto.LoginDto;
 
 public interface LoginService {
 
-    LoginResponse login(LoginRequest request);
+    LoginDto.Response login(LoginDto.Request request);
+
 }

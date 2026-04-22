@@ -15,11 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.user.InactiveUserException;
 import kr.co.mapspring.global.exception.user.InvalidPasswordException;
-import kr.co.mapspring.global.exception.user.UserNotFoundException;
-import kr.co.mapspring.user.dto.LoginRequest;
-import kr.co.mapspring.user.dto.LoginResponse;
+import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
 import kr.co.mapspring.user.service.impl.LoginServiceImpl;
@@ -40,8 +39,8 @@ public class LoginServiceTest {
     void loginSuccess() {
         // given
         // 로그인 요청 생성
-        LoginRequest request = new LoginRequest("test@naver.com", "1234");
-
+    	LoginDto.Request request = new LoginDto.Request("test@naver.com", "1234");
+    	
         // 테스트용 사용자 생성
         User user = createUser("encodedPassword");
 
@@ -54,7 +53,7 @@ public class LoginServiceTest {
                 .willReturn(true);
 
         // when
-        LoginResponse response = loginService.login(request);
+        LoginDto.Response response = loginService.login(request);
 
         // then
         assertThat(response).isNotNull();
@@ -80,7 +79,7 @@ public class LoginServiceTest {
     void loginFailWhenUserNotFound() {
         // given
         // 존재하지 않는 이메일로 로그인 요청을 만든다.
-        LoginRequest request = new LoginRequest("notfound@naver.com", "1234");
+    	LoginDto.Request request = new LoginDto.Request("notfound@naver.com", "1234");
 
         // 해당 이메일로 조회하면 사용자가 없다고 가정한다.
         given(userRepository.findByEmail("notfound@naver.com"))
@@ -89,7 +88,8 @@ public class LoginServiceTest {
         // when & then
         // 로그인 시 UserNotFoundException이 발생하는지 확인한다.
         assertThatThrownBy(() -> loginService.login(request))
-                .isInstanceOf(UserNotFoundException.class);
+        .isInstanceOf(CustomException.class)
+        .hasMessage("존재하지 않는 이메일입니다.");
     }
     
     @Test
@@ -97,7 +97,7 @@ public class LoginServiceTest {
     void loginFailWhenPasswordInvalid() {
         // given
         // 로그인 요청을 만든다.
-        LoginRequest request = new LoginRequest("test@naver.com", "wrongPassword");
+    	LoginDto.Request request = new LoginDto.Request("test@naver.com", "wrongPassword");
 
         // 조회는 성공하는 사용자 객체를 만든다.
         User user = createUser("encodedPassword");
@@ -113,7 +113,8 @@ public class LoginServiceTest {
         // when & then
         // 로그인 시 InvalidPasswordException이 발생하는지 확인한다.
         assertThatThrownBy(() -> loginService.login(request))
-                .isInstanceOf(InvalidPasswordException.class);
+        .isInstanceOf(CustomException.class)
+        .hasMessage("비밀번호가 일치하지 않습니다.");
     }
     
     @Test
@@ -121,8 +122,7 @@ public class LoginServiceTest {
     void loginFailWhenUserInactive() {
         // given
         // 정상 이메일과 비밀번호 요청을 만든다.
-        LoginRequest request = new LoginRequest("test@naver.com", "1234");
-
+    	 LoginDto.Request request = new LoginDto.Request("test@naver.com", "1234");
         // ACTIVE가 아닌 사용자 객체를 만든다.
         User user = createInactiveUser("encodedPassword");
 
@@ -137,7 +137,8 @@ public class LoginServiceTest {
         // when & then
         // 상태가 ACTIVE가 아니므로 InactiveUserException이 발생해야 한다.
         assertThatThrownBy(() -> loginService.login(request))
-                .isInstanceOf(InactiveUserException.class);
+        .isInstanceOf(CustomException.class)
+        .hasMessage("비활성 사용자입니다.");
     }
     
     private User createInactiveUser(String passwordHash) {
