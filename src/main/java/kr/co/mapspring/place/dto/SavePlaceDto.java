@@ -9,7 +9,7 @@ public class SavePlaceDto {
 	
 	@Builder
 	@Getter
-	public static class RequestSaveDto {
+	public static class RequestSave {
 		private String googlePlaceId;
 		private String placeName;
 		private BigDecimal latitude;

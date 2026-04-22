@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,9 +44,10 @@ class PlaceServiceTest {
     private ScenarioRepository scenarioRepository;
 
     @Test
+    @DisplayName("장소 저장 성공")
     void 장소_저장_성공() {
         // given
-        SavePlaceDto.RequestSaveDto request = SavePlaceDto.RequestSaveDto.builder()
+        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -80,9 +82,10 @@ class PlaceServiceTest {
     }
 
     @Test
-    void 장소_저장_실패_중복된_구글장소ID() {
+    @DisplayName("장소 저장 실패 중복된 구글 장소ID")
+    void 장소_저장_실패_중복된_구글_장소ID() {
         // given
-        SavePlaceDto.RequestSaveDto request = SavePlaceDto.RequestSaveDto.builder()
+        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -101,9 +104,10 @@ class PlaceServiceTest {
     }
 
     @Test
+    @DisplayName("장소 저장 실패 존재하지 않는 지역")
     void 장소_저장_실패_존재하지_않는_지역() {
         // given
-        SavePlaceDto.RequestSaveDto request = SavePlaceDto.RequestSaveDto.builder()
+        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -125,9 +129,10 @@ class PlaceServiceTest {
     }
     
     @Test
+    @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
     void 장소_저장_실패_존재하지_않는_시나리오() {
         // given
-        SavePlaceDto.RequestSaveDto request = SavePlaceDto.RequestSaveDto.builder()
+        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")

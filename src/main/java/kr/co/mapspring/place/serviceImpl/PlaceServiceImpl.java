@@ -26,7 +26,7 @@ public class PlaceServiceImpl implements PlaceService {
 
 	@Override
 	@Transactional
-	public void savePlace(SavePlaceDto.RequestSaveDto request) {
+	public void savePlace(SavePlaceDto.RequestSave request) {
 		
 		Long regionId = request.getRegionId();
 		Long scenarioId = request.getScenarioId();
