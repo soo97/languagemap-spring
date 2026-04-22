@@ -1,5 +1,6 @@
 package kr.co.mapspring.place.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -17,8 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
+import kr.co.mapspring.place.dto.ReadPlaceDto;
 import kr.co.mapspring.place.dto.SavePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -26,7 +29,7 @@ import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
-import kr.co.mapspring.place.serviceImpl.PlaceServiceImpl;
+import kr.co.mapspring.place.service.impl.PlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PlaceServiceTest {
@@ -158,5 +161,60 @@ class PlaceServiceTest {
         // when & then
         assertThrows(ScenarioNotFoundException.class, () -> placeService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
+    }
+    
+    @Test
+    void 장소_조회_성공() {
+        // given
+        ReadPlaceDto.RequestRead request = ReadPlaceDto.RequestRead.builder()
+        		.placeId(1L)
+        		.build();
+
+        Region region = Region.builder()
+                .regionId(10L)
+                .build();
+
+        Scenario scenario = Scenario.builder()
+                .scenarioId(20L)
+                .build();
+
+        Place place = Place.builder()
+                .placeId(1L)
+                .googlePlaceId("google-place-123")
+                .placeName("스타벅스 강남점")
+                .placeDescription("커피를 주문할 수 있는 장소")
+                .latitude(new BigDecimal("37.12345678"))
+                .longitude(new BigDecimal("127.12345678"))
+                .region(region)
+                .scenario(scenario)
+                .build();
+
+        when(placeRepository.findById(request.getPlaceId()))
+                .thenReturn(Optional.of(place));
+
+        // when
+        ReadPlaceDto.ResponseRead response = placeService.readPlace(request);
+
+        // then
+        assertEquals("스타벅스 강남점", response.getPlaceName());
+        assertEquals("커피를 주문할 수 있는 장소", response.getPlaceDescription());
+        assertEquals(new BigDecimal("37.12345678"), response.getLatutude());
+        assertEquals(new BigDecimal("127.12345678"), response.getLongitude());
+        assertEquals(scenario.getScenariosDescription(), response.getScenarioDescription());
+        assertEquals(region.getCity(), response.getCity());
+    }
+
+    @Test
+    void 장소_조회_실패_존재하지_않는_장소() {
+        // given
+        ReadPlaceDto.RequestRead request = ReadPlaceDto.RequestRead.builder()
+        		.placeId(99L)
+        		.build();
+
+        when(placeRepository.findById(request.getPlaceId()))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(PlaceNotFoundException.class, () -> placeService.readPlace(request));
     }
 }

@@ -1,11 +1,13 @@
-package kr.co.mapspring.place.serviceImpl;
+package kr.co.mapspring.place.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.global.exception.place.PlaceAlreadyExistsException;
+import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
+import kr.co.mapspring.place.dto.ReadPlaceDto;
 import kr.co.mapspring.place.dto.SavePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -24,6 +26,7 @@ public class PlaceServiceImpl implements PlaceService {
 	private final RegionRepository regionRepository;
 	private final ScenarioRepository scenarioRepository;
 
+	// 장소 저장
 	@Override
 	@Transactional
 	public void savePlace(SavePlaceDto.RequestSave request) {
@@ -54,5 +57,20 @@ public class PlaceServiceImpl implements PlaceService {
 							   );
 
 		placeRepository.save(place);
+	}
+	
+	// 장소 조회
+	@Override
+	@Transactional(readOnly = true)
+	public ReadPlaceDto.ResponseRead readPlace(ReadPlaceDto.RequestRead request) {
+		
+		Long placeId = request.getPlaceId();
+		
+		Place place = placeRepository.findById(placeId)
+				.orElseThrow(PlaceNotFoundException::new);
+		
+		ReadPlaceDto.ResponseRead response = ReadPlaceDto.from(place);
+		
+		return response;
 	}
 }
