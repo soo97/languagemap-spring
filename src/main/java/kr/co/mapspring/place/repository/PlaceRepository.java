@@ -6,5 +6,5 @@ import kr.co.mapspring.place.entity.Place;
 
 public interface PlaceRepository extends JpaRepository<Place, Long>{
 
-	Place findByGooglePlaceId(String googlePlaceId);
+	Place existsByGooglePlaceId(String googlePlaceId);
 }

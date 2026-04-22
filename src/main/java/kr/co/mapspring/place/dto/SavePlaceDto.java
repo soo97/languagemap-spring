@@ -18,8 +18,8 @@ public class SavePlaceDto {
 		private BigDecimal latitude;
 		private BigDecimal longitude;
 		private String placeDescription;
-		private Long scenario;
-		private Long region;
+		private Long scenarioId;
+		private Long regionId;
 	}
 	
 	@Builder
