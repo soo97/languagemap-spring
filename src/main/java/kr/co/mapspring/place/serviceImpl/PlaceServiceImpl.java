@@ -1,7 +1,9 @@
 package kr.co.mapspring.place.serviceImpl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.place.PlaceAlreadyExistsException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.SavePlaceDto;
@@ -23,23 +25,25 @@ public class PlaceServiceImpl implements PlaceService {
 	private final ScenarioRepository scenarioRepository;
 
 	@Override
-	public void savePlace(SavePlaceDto.RequestSaveDto request) {
+	@Transactional
+	public void savePlace(SavePlaceDto.RequestSave request) {
 		
 		Long regionId = request.getRegionId();
 		Long scenarioId = request.getScenarioId();
 		String googlePlaceId = request.getGooglePlaceId();
+		
+		boolean placeExists = placeRepository.existsByGooglePlaceId(googlePlaceId);
+		
+		if (placeExists) {
+			throw new PlaceAlreadyExistsException();
+		}
 								
 		Region regionEntity = regionRepository.findById(regionId)
-				.orElseThrow(() -> new RegionNotFoundException());
+				.orElseThrow(RegionNotFoundException::new);
 		
 		Scenario scenarioEntity = scenarioRepository.findById(scenarioId)
-				.orElseThrow(() -> new ScenarioNotFoundException());
+				.orElseThrow(ScenarioNotFoundException::new);
 		
-		Place placeEntity = placeRepository.existsByGooglePlaceId(googlePlaceId);
-
-		if (placeEntity != null) {
-			throw new RuntimeException("이미 존재하는 장소입니다");
-		}
 		Place place = Place.of(request.getGooglePlaceId(),
 							   request.getPlaceName(),
 							   request.getPlaceDescription(),

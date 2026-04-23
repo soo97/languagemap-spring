@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import kr.co.mapspring.user.enums.UserRole;
 import kr.co.mapspring.user.enums.UserStatus;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -76,5 +77,58 @@ public class User {
 	    this.updatedAt = LocalDateTime.now();
 	}
 
+	
+	@Builder
+    private User(
+            Long userId,
+            String email,
+            String name,
+            LocalDate birthDate,
+            String address,
+            String phoneNumber,
+            String passwordHash,
+            UserStatus status,
+            UserRole role
+    ) {
+        this.userId = userId;
+        this.email = email;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.passwordHash = passwordHash;
+        this.status = status;
+        this.role = role;
+    }
+
+    public static User create(
+            String email,
+            String name,
+            LocalDate birthDate,
+            String address,
+            String phoneNumber,
+            String passwordHash
+    ) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .birthDate(birthDate)
+                .address(address)
+                .phoneNumber(phoneNumber)
+                .passwordHash(passwordHash)
+                .status(UserStatus.ACTIVE)
+                .role(UserRole.USER)
+                .build();
+    }
+
+	
+    public boolean isActive() {
+        return this.status == UserStatus.ACTIVE;
+    }
+    
+    // 테스트 전용 메서드 
+    public void deactivate() {
+        this.status = UserStatus.INACTIVE;
+    }
 
 }

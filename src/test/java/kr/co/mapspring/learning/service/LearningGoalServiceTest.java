@@ -88,9 +88,7 @@ class LearningGoalServiceTest {
         assertEquals(goalMasterId, savedUserGoal.getGoalMaster().getGoalMasterId());
         assertEquals(0, savedUserGoal.getCurrentValue());
         assertEquals(UserGoalStatus.ACTIVE, savedUserGoal.getStatus());
-
         assertEquals(savedUserGoal.getStartDate(), savedUserGoal.getEndDate());
-
         assertNull(savedUserGoal.getCompletedAt());
     }
 
@@ -127,7 +125,6 @@ class LearningGoalServiceTest {
 
         verify(goalMasterRepository).findById(goalMasterId);
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
-
         verify(userGoalRepository, never()).countByUserId(any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
@@ -135,6 +132,7 @@ class LearningGoalServiceTest {
     @Test
     @DisplayName("학습 목표는 최대 3개까지만 선택할 수 있다")
     void 학습_목표는_최대_3개까지만_선택할_수_있다() {
+        // given
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
@@ -142,15 +140,15 @@ class LearningGoalServiceTest {
                 .willReturn(false);
 
         given(userGoalRepository.countByUserId(userId))
-                .willReturn(3);
+                .willReturn(4);
 
+        // when & then
         assertThrows(GoalSelectionLimitExceededException.class,
                 () -> learningGoalService.selectGoal(userId, goalMasterId));
 
         verify(goalMasterRepository).findById(goalMasterId);
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
         verify(userGoalRepository).countByUserId(userId);
-
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
