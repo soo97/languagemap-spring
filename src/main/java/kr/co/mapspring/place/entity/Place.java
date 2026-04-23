@@ -96,4 +96,13 @@ public class Place {
 		return place;
 		
 	}
+
+	public void update(String placeName, 
+			  	   String placeDescription, 
+			  	   Scenario scenario) 
+	{
+		this.placeName = placeName;
+		this.placeDescription = placeDescription;
+		this.scenario = scenario;
+	}
 }
