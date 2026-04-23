@@ -11,4 +11,12 @@ public interface FavoritePlaceService {
      */
     void addFavoritePlace(Long userId, Long placeId);
 
+    /**
+     * 사용자의 즐겨찾기 장소를 삭제한다.
+     *
+     * @param userId 사용자 ID
+     * @param placeId 삭제할 장소 ID
+     */
+    void removeFavoritePlace(Long userId, Long placeId);
+
 }

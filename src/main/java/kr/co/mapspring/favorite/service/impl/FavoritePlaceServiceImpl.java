@@ -4,6 +4,7 @@ import kr.co.mapspring.favorite.entity.FavoritePlace;
 import kr.co.mapspring.favorite.repository.FavoritePlaceRepository;
 import kr.co.mapspring.favorite.service.FavoritePlaceService;
 import kr.co.mapspring.global.exception.favorite.FavoritePlaceAlreadyExistsException;
+import kr.co.mapspring.global.exception.favorite.FavoritePlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,14 @@ public class FavoritePlaceServiceImpl implements FavoritePlaceService {
 
         FavoritePlace favoritePlace = FavoritePlace.create(userId, placeId);
         favoritePlaceRepository.save(favoritePlace);
+    }
 
+    @Override
+    @Transactional
+    public void removeFavoritePlace(Long userId, Long placeId) {
+        FavoritePlace favoritePlace = favoritePlaceRepository.findByUserIdAndPlaceId(userId, placeId)
+                .orElseThrow(FavoritePlaceNotFoundException::new);
+
+        favoritePlaceRepository.delete(favoritePlace);
     }
 }

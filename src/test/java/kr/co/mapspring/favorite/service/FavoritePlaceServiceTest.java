@@ -4,6 +4,7 @@ import kr.co.mapspring.favorite.entity.FavoritePlace;
 import kr.co.mapspring.favorite.repository.FavoritePlaceRepository;
 import kr.co.mapspring.favorite.service.impl.FavoritePlaceServiceImpl;
 import kr.co.mapspring.global.exception.favorite.FavoritePlaceAlreadyExistsException;
+import kr.co.mapspring.global.exception.favorite.FavoritePlaceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,5 +69,39 @@ public class FavoritePlaceServiceTest {
 
         verify(favoritePlaceRepository).existsByUserIdAndPlaceId(userId, placeId);
         verify(favoritePlaceRepository, never()).save(any(FavoritePlace.class));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 장소를 정상적으로 삭제한다")
+    void 즐겨찾기_장소를_정상적으로_삭제한다() {
+
+        Long userId = 1L;
+        Long placeId = 10L;
+        FavoritePlace favoritePlace = FavoritePlace.of(1L, userId, placeId);
+
+        given(favoritePlaceRepository.findByUserIdAndPlaceId(userId, placeId))
+                .willReturn(Optional.of(favoritePlace));
+
+        favoritePlaceService.removeFavoritePlace(userId, placeId);
+
+        verify(favoritePlaceRepository).findByUserIdAndPlaceId(userId, placeId);
+        verify(favoritePlaceRepository).delete(favoritePlace);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 즐겨찾기 장소는 삭제할 수 없다")
+    void 존재하지_않는_즐겨찾기_장소는_삭제할_수_없다() {
+
+        Long userId = 1L;
+        Long placeId = 10L;
+
+        given(favoritePlaceRepository.findByUserIdAndPlaceId(userId, placeId))
+                .willReturn(Optional.empty());
+
+        assertThrows(FavoritePlaceNotFoundException.class,
+                () -> favoritePlaceService.removeFavoritePlace(userId, placeId));
+
+        verify(favoritePlaceRepository).findByUserIdAndPlaceId(userId, placeId);
+        verify(favoritePlaceRepository, never()).delete(any(FavoritePlace.class));
     }
 }

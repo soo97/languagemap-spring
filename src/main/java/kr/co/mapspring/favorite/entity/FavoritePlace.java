@@ -50,4 +50,15 @@ public class FavoritePlace {
         this.createdAt = LocalDateTime.now();
     }
 
+    // 테스트 전용 메서드
+    public static FavoritePlace of(Long favoritePlaceId, Long userId, Long placeId) {
+        FavoritePlace favoritePlace = new FavoritePlace();
+        favoritePlace.favoritePlaceId = favoritePlaceId;
+        favoritePlace.userId = userId;
+        favoritePlace.placeId = placeId;
+        favoritePlace.createdAt = LocalDateTime.now();
+        return favoritePlace;
+    }
+
+
 }

@@ -49,4 +49,14 @@ public class FavoriteScenario {
     protected void perPersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    // 테스트 전용 메서드
+    public static FavoriteScenario of(Long favoriteScenarioId, Long userId, Long scenarioId) {
+        FavoriteScenario favoriteScenario = new FavoriteScenario();
+        favoriteScenario.favoriteScenarioId = favoriteScenarioId;
+        favoriteScenario.userId = userId;
+        favoriteScenario.scenarioId = scenarioId;
+        favoriteScenario.createdAt = LocalDateTime.now();
+        return favoriteScenario;
+    }
 }
