@@ -1,6 +1,8 @@
 package kr.co.mapspring.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import kr.co.mapspring.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,25 +16,33 @@ public class SignUpDto {
     @NoArgsConstructor
     @Schema(description = "회원가입 요청 DTO")
     public static class RequestSignUp {
-
+    	
+    	@NotBlank
         @Schema(description = "사용자 이름", example = "홍길동")
         private String name;
-
+    	
+    	@NotBlank
         @Schema(description = "생년월일", example = "2000-01-01")
         private String birthDate;
-
+    	
+    	@NotBlank
         @Schema(description = "주소", example = "서울시 강남구")
         private String address;
-
+    	
+    	@NotBlank
         @Schema(description = "전화번호", example = "010-1234-5678")
         private String phoneNumber;
-
+    	
+    	@Email
+    	@NotBlank
         @Schema(description = "이메일", example = "test@naver.com")
         private String email;
-
+    	
+    	@NotBlank
         @Schema(description = "비밀번호", example = "1234")
         private String password;
-
+    	
+    	@NotBlank
         @Schema(description = "비밀번호 확인", example = "1234")
         private String passwordConfirm;
     }
