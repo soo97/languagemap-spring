@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +55,9 @@ class LearningGoalServiceTest {
         goalMaster = GoalMaster.of(
                 goalMasterId,
                 "하루 1회 학습",
-                GoalPeriodType.DAILY
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                1
         );
     }
 
@@ -158,8 +161,11 @@ class LearningGoalServiceTest {
         // given
         Long userGoalId = 10L;
         UserGoal userGoal = UserGoal.of(
+                userGoalId,
                 userId,
                 goalMaster,
+                0,
+                UserGoalStatus.ACTIVE,
                 java.time.LocalDate.now(),
                 java.time.LocalDate.now()
         );
@@ -196,17 +202,23 @@ class LearningGoalServiceTest {
     void 사용자의_진행_중인_목표_목록을_조회한다() {
         // given
         UserGoal activeGoal1 = UserGoal.of(
+                1L,
                 userId,
                 goalMaster,
-                java.time.LocalDate.now(),
-                java.time.LocalDate.now()
+                0,
+                UserGoalStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now()
         );
 
         UserGoal activeGoal2 = UserGoal.of(
+                2L,
                 userId,
                 goalMaster,
-                java.time.LocalDate.now(),
-                java.time.LocalDate.now()
+                0,
+                UserGoalStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now()
         );
 
         given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE))
