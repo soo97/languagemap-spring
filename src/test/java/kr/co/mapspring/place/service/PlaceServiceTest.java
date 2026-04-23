@@ -60,13 +60,9 @@ class PlaceServiceTest {
                 .regionId(1L)
                 .build();
 
-        Region region = Region.builder()
-                .regionId(1L)
-                .build();
+        Region region = Region.from(1L);
 
-        Scenario scenario = Scenario.builder()
-                .scenarioId(1L)
-                .build();
+        Scenario scenario = Scenario.from(1L);
 
         when(placeRepository.existsByGooglePlaceId(request.getGooglePlaceId()))
                 .thenReturn(false);
@@ -145,9 +141,7 @@ class PlaceServiceTest {
                 .regionId(1L)
                 .build();
 
-        Region region = Region.builder()
-                .regionId(1L)
-                .build();
+        Region region = Region.from(1L);
 
         when(placeRepository.existsByGooglePlaceId(request.getGooglePlaceId()))
                 .thenReturn(false);
@@ -170,13 +164,9 @@ class PlaceServiceTest {
         		.placeId(1L)
         		.build();
 
-        Region region = Region.builder()
-                .regionId(10L)
-                .build();
+        Region region = Region.from(10L);
 
-        Scenario scenario = Scenario.builder()
-                .scenarioId(20L)
-                .build();
+        Scenario scenario = Scenario.from(20L);
 
         Place place = Place.builder()
                 .placeId(1L)
@@ -198,7 +188,7 @@ class PlaceServiceTest {
         // then
         assertEquals("스타벅스 강남점", response.getPlaceName());
         assertEquals("커피를 주문할 수 있는 장소", response.getPlaceDescription());
-        assertEquals(new BigDecimal("37.12345678"), response.getLatutude());
+        assertEquals(new BigDecimal("37.12345678"), response.getLatitude());
         assertEquals(new BigDecimal("127.12345678"), response.getLongitude());
         assertEquals(scenario.getScenariosDescription(), response.getScenarioDescription());
         assertEquals(region.getCity(), response.getCity());
