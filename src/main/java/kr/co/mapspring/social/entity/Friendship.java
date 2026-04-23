@@ -30,7 +30,7 @@ public class Friendship {
     @Column(name = "requester_id", nullable = false)
     private Long requesterId;
 
-    @Column(name = "addresseeId", nullable = false)
+    @Column(name = "addressee_id", nullable = false)
     private Long addresseeId;
 
     @Enumerated(EnumType.STRING)
