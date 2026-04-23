@@ -7,7 +7,6 @@ import kr.co.mapspring.learning.enums.GoalType;
 import java.util.List;
 
 public interface LearningGoalService {
-
     /**
      * 사용자가 학습 목표를 선택한다.
      *

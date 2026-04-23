@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @AllArgsConstructor
-@Builder
 public class Scenario {
 	
 	@Id
@@ -45,5 +44,32 @@ public class Scenario {
 	
 	@Column(name = "category", nullable = false, length = 50)
 	private String category;
+	
+	// 테스트 코드 실행용
+	public static Scenario from(Long scenarioId) {
+		Scenario scenario = new Scenario();
+	
+		scenario.scenarioId = scenarioId;
+		
+		return scenario;
+	}
+
+	public static Scenario testOf(long scenarioId, 
+								  String prompt, 
+								  String scenariosDescription, 
+								  int completeExp, 
+								  ScenarioLevel level,
+								  String category
+								  ) {
+		Scenario scenario = new Scenario();
+		scenario.scenarioId = scenarioId;
+		scenario.prompt = prompt;
+		scenario.scenariosDescription =  scenariosDescription;
+		scenario.completeExp = completeExp;
+		scenario.level = level;
+		scenario.category = category;
+		
+		return scenario;
+	}
 
 }
