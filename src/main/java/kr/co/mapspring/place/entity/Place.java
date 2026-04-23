@@ -16,7 +16,6 @@ import lombok.*;
 @Entity
 @Table(name = "place")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 public class Place {
 	
