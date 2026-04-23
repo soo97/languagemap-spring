@@ -10,7 +10,7 @@ public class CoachingEntryDto {
 
     @Getter
     @Builder
-    public static class Response {
+    public static class ResponseGetCoachingEntry {
         private Long sessionId;
         private Long placeId;
         private String placeName;
@@ -18,12 +18,12 @@ public class CoachingEntryDto {
         private String city;
         private String placeDescription;
         private String evaluation;
-        private List<MessageItem> sessionMessages;
+        private List<ResponseMessageItem> sessionMessages;
     }
 
     @Getter
     @Builder
-    public static class MessageItem {
+    public static class ResponseMessageItem {
         private Long messageId;
         private SessionMessageRole role;
         private String message;
