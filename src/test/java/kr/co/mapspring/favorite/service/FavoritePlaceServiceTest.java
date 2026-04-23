@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,5 +104,27 @@ public class FavoritePlaceServiceTest {
 
         verify(favoritePlaceRepository).findByUserIdAndPlaceId(userId, placeId);
         verify(favoritePlaceRepository, never()).delete(any(FavoritePlace.class));
+    }
+
+    @Test
+    @DisplayName("사용자의 즐겨찾기 장소 목록을 조회한다")
+    void 사용자의_즐겨찾기_장소_목록을_조회한다() {
+
+        Long userId = 1L;
+
+        FavoritePlace favoritePlace1 = FavoritePlace.of(1L, userId, 10L);
+        FavoritePlace favoritePlace2 = FavoritePlace.of(2L, userId, 20L);
+
+        given(favoritePlaceRepository.findAllByUserId(userId))
+                .willReturn(List.of(favoritePlace1, favoritePlace2));
+
+        List<FavoritePlace> result = favoritePlaceService.getFavoritePlaces(userId);
+
+        verify(favoritePlaceRepository).findAllByUserId(userId);
+        assertEquals(2, result.size());
+        assertEquals(10L, result.get(0).getPlaceId());
+        assertEquals(20L, result.get(1).getPlaceId());
+
+
     }
 }

@@ -1,5 +1,9 @@
 package kr.co.mapspring.favorite.service;
 
+import kr.co.mapspring.favorite.entity.FavoritePlace;
+
+import java.util.List;
+
 public interface FavoritePlaceService {
     /**
      * 사용자의 즐겨찾기 장소를 추가한다.
@@ -18,5 +22,13 @@ public interface FavoritePlaceService {
      * @param placeId 삭제할 장소 ID
      */
     void removeFavoritePlace(Long userId, Long placeId);
+
+    /**
+     * 사용자의 즐겨찾기 장소 목록을 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @return 사용자의 즐겨찾기 장소 목록
+     */
+    List<FavoritePlace> getFavoritePlaces(Long userId);
 
 }

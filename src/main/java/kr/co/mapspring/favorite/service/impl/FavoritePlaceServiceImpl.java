@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,5 +38,10 @@ public class FavoritePlaceServiceImpl implements FavoritePlaceService {
                 .orElseThrow(FavoritePlaceNotFoundException::new);
 
         favoritePlaceRepository.delete(favoritePlace);
+    }
+
+    @Override
+    public List<FavoritePlace> getFavoritePlaces(Long userId) {
+        return favoritePlaceRepository.findAllByUserId(userId);
     }
 }
