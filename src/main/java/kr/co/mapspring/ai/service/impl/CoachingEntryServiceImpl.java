@@ -17,6 +17,7 @@ import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.SessionEvaluationRepository;
 import kr.co.mapspring.place.repository.SessionMessageRepository;
 import lombok.RequiredArgsConstructor;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -57,13 +58,16 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
                 .sessionMessages(messageItems)
                 .build();
     }
+    
+    private static final DateTimeFormatter MESSAGE_CREATED_AT_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private CoachingEntryDto.ResponseMessageItem toMessageItem(SessionMessage sessionMessage) {
         return CoachingEntryDto.ResponseMessageItem.builder()
                 .messageId(sessionMessage.getMessageId())
                 .role(sessionMessage.getRole())
                 .message(sessionMessage.getMessage())
-                .createdAt(sessionMessage.getCreatedAt().toString())
+                .createdAt(sessionMessage.getCreatedAt().format(MESSAGE_CREATED_AT_FORMATTER))
                 .build();
     }
 }
