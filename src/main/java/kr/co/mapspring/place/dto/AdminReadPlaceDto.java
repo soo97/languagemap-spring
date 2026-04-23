@@ -7,7 +7,7 @@ import kr.co.mapspring.place.entity.Place;
 import lombok.Builder;
 import lombok.Getter;
 
-public class ReadPlaceDto {
+public class AdminReadPlaceDto {
 	
 	@Builder
 	@Getter
@@ -26,8 +26,8 @@ public class ReadPlaceDto {
 		private String scenarioDescription;
 		private String city;
 		
-		public static ReadPlaceDto.ResponseRead from (Place place) {
-			return ReadPlaceDto.ResponseRead.builder()
+		public static AdminReadPlaceDto.ResponseRead from (Place place) {
+			return AdminReadPlaceDto.ResponseRead.builder()
 					.placeName(place.getPlaceName())
 					.placeDescription(place.getPlaceDescription())
 					.latitude(place.getLatitude())

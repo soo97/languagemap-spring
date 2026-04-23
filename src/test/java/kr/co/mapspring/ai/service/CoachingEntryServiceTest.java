@@ -47,9 +47,6 @@ class CoachingEntryServiceTest {
     private CoachingEntryServiceImpl coachingEntryService;
 
     private LearningSession learningSession;
-    private Place place;
-    private Region region;
-    private Scenario scenario;
     private SessionMessage userMessage;
     private SessionMessage assistantMessage;
     private SessionEvaluation sessionEvaluation;

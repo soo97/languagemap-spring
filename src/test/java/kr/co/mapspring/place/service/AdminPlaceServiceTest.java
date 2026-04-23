@@ -21,21 +21,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
-import kr.co.mapspring.place.dto.ReadPlaceDto;
-import kr.co.mapspring.place.dto.SavePlaceDto;
+import kr.co.mapspring.place.dto.AdminReadPlaceDto;
+import kr.co.mapspring.place.dto.AdminSavePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
-import kr.co.mapspring.place.service.impl.PlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-class PlaceServiceTest {
+class AdminPlaceServiceTest {
 
     @InjectMocks
-    private PlaceServiceImpl placeService;
+    private AdminPlaceService adminPlaceService;
 
     @Mock
     private PlaceRepository placeRepository;
@@ -50,7 +49,7 @@ class PlaceServiceTest {
     @DisplayName("장소 저장 성공")
     void 장소_저장_성공() {
         // given
-        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
+    	AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -74,7 +73,7 @@ class PlaceServiceTest {
                 .thenReturn(Optional.of(scenario));
 
         // when
-        placeService.savePlace(request);
+        adminPlaceService.savePlace(request);
 
         // then
         verify(placeRepository, times(1)).save(any(Place.class));
@@ -84,7 +83,7 @@ class PlaceServiceTest {
     @DisplayName("장소 저장 실패 중복된 구글 장소ID")
     void 장소_저장_실패_중복된_구글_장소ID() {
         // given
-        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
+        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -98,7 +97,7 @@ class PlaceServiceTest {
                 .thenReturn(true);
 
         // when & then
-        assertThrows(RuntimeException.class, () -> placeService.savePlace(request));
+        assertThrows(RuntimeException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
 
@@ -106,7 +105,7 @@ class PlaceServiceTest {
     @DisplayName("장소 저장 실패 존재하지 않는 지역")
     void 장소_저장_실패_존재하지_않는_지역() {
         // given
-        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
+    	AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -123,7 +122,7 @@ class PlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(RegionNotFoundException.class, () -> placeService.savePlace(request));
+        assertThrows(RegionNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
     
@@ -131,7 +130,7 @@ class PlaceServiceTest {
     @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
     void 장소_저장_실패_존재하지_않는_시나리오() {
         // given
-        SavePlaceDto.RequestSave request = SavePlaceDto.RequestSave.builder()
+    	AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -153,14 +152,14 @@ class PlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(ScenarioNotFoundException.class, () -> placeService.savePlace(request));
+        assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
     
     @Test
     void 장소_조회_성공() {
         // given
-        ReadPlaceDto.RequestRead request = ReadPlaceDto.RequestRead.builder()
+        AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(1L)
         		.build();
 
@@ -182,7 +181,7 @@ class PlaceServiceTest {
                 .thenReturn(Optional.of(place));
 
         // when
-        ReadPlaceDto.ResponseRead response = placeService.readPlace(request);
+        AdminReadPlaceDto.ResponseRead response = adminPlaceService.readPlace(request);
 
         // then
         assertEquals("스타벅스 강남점", response.getPlaceName());
@@ -196,7 +195,7 @@ class PlaceServiceTest {
     @Test
     void 장소_조회_실패_존재하지_않는_장소() {
         // given
-        ReadPlaceDto.RequestRead request = ReadPlaceDto.RequestRead.builder()
+        AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(99L)
         		.build();
 
@@ -204,6 +203,6 @@ class PlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(PlaceNotFoundException.class, () -> placeService.readPlace(request));
+        assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.readPlace(request));
     }
 }
