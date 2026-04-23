@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +17,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "scenario")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AllArgsConstructor
 public class Scenario {
 	
 	@Id
@@ -58,7 +56,7 @@ public class Scenario {
 	}
 	
 	// 테스트 코드 실행용
-	public static Scenario from(Long scenarioId) {
+	public static Scenario withId(Long scenarioId) {
 		Scenario scenario = new Scenario();
 	
 		scenario.scenarioId = scenarioId;
@@ -68,7 +66,7 @@ public class Scenario {
 
 	public static Scenario testOf(long scenarioId, 
 								  String prompt, 
-								  String scenariosDescription, 
+								  String scenarioDescription, 
 								  int completeExp, 
 								  ScenarioLevel level,
 								  String category
@@ -76,7 +74,7 @@ public class Scenario {
 		Scenario scenario = new Scenario();
 		scenario.scenarioId = scenarioId;
 		scenario.prompt = prompt;
-		scenario.scenarioDescription =  scenariosDescription;
+		scenario.scenarioDescription =  scenarioDescription;
 		scenario.completeExp = completeExp;
 		scenario.level = level;
 		scenario.category = category;

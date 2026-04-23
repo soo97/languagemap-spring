@@ -59,9 +59,9 @@ class AdminPlaceServiceTest {
                 .regionId(1L)
                 .build();
 
-        Region region = Region.from(1L);
+        Region region = Region.withId(1L);
 
-        Scenario scenario = Scenario.from(1L);
+        Scenario scenario = Scenario.withId(1L);
 
         when(placeRepository.existsByGooglePlaceId(request.getGooglePlaceId()))
                 .thenReturn(false);
@@ -140,7 +140,7 @@ class AdminPlaceServiceTest {
                 .regionId(1L)
                 .build();
 
-        Region region = Region.from(1L);
+        Region region = Region.withId(1L);
 
         when(placeRepository.existsByGooglePlaceId(request.getGooglePlaceId()))
                 .thenReturn(false);
@@ -164,9 +164,9 @@ class AdminPlaceServiceTest {
         		.placeId(1L)
         		.build();
 
-        Region region = Region.from(10L);
+        Region region = Region.withId(10L);
 
-        Scenario scenario = Scenario.from(20L);
+        Scenario scenario = Scenario.withId(20L);
 
         Place place = Place.testOf(1L, 
         					   "google-place-123",
@@ -220,9 +220,9 @@ class AdminPlaceServiceTest {
                 .scenarioId(2L)
                 .build();
 
-        Region region = Region.from(10L);
-        Scenario oldScenario = Scenario.from(1L);
-        Scenario newScenario = Scenario.from(2L);
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
+        Scenario newScenario = Scenario.withId(2L);
 
         Place place = Place.testOf(
                 placeId,
@@ -283,8 +283,8 @@ class AdminPlaceServiceTest {
                 .scenarioId(999L)
                 .build();
 
-        Region region = Region.from(10L);
-        Scenario oldScenario = Scenario.from(1L);
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
 
         Place place = Place.testOf(
                 placeId,
