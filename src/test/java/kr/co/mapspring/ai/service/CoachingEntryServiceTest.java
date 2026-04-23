@@ -47,40 +47,37 @@ class CoachingEntryServiceTest {
     private CoachingEntryServiceImpl coachingEntryService;
 
     private LearningSession learningSession;
-    private Place place;
-    private Region region;
-    private Scenario scenario;
     private SessionMessage userMessage;
     private SessionMessage assistantMessage;
     private SessionEvaluation sessionEvaluation;
 
     @BeforeEach
     void setUp() throws Exception {
-        region = Region.builder()
-                .regionId(1L)
-                .country("Australia")
-                .city("Sydney")
-                .build();
+    	Region region = Region.testOf(1L, 
+    						   		  "Australia", 
+    				   	 			  "Sydney");
 
-        scenario = Scenario.builder()
-                .scenarioId(2L)
-                .prompt("coffee ordering prompt")
-                .scenariosDescription("Cafe ordering")
-                .completeExp(10)
-                .level(ScenarioLevel.BEGINNER)
-                .category("CAFE")
-                .build();
+    	Scenario scenario = Scenario.testOf(
+    	        2L,
+    	        "coffee ordering prompt",
+    	        "Cafe ordering",
+    	        10,
+    	        ScenarioLevel.BEGINNER,
+    	        "CAFE"
+    	);
 
-        place = Place.builder()
-                .placeId(3L)
-                .googlePlaceId("google-place-1")
-                .placeName("Cafe Stage 888")
-                .placeDescription("Sydney CBD cafe")
-                .latitude(new BigDecimal("37.12345678"))
-                .longitude(new BigDecimal("127.12345678"))
-                .region(region)
-                .scenario(scenario)
-                .build();
+
+    	Place place = Place.testOf(
+    	        3L,
+    	        "google-place-1",
+    	        "Cafe Stage 888",
+    	        "인천시 서구",
+    	        "Sydney CBD cafe",
+    	        new BigDecimal("37.12345678"),
+    	        new BigDecimal("127.12345678"),
+    	        region,
+    	        scenario
+    	);
 
         learningSession = createInstance(LearningSession.class);
         setField(learningSession, "sessionId", 10L);

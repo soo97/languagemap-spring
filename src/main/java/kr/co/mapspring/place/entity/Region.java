@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Builder
 public class Region {
 	
 	@Id
@@ -30,6 +29,23 @@ public class Region {
 	
 	@Column(name = "city", nullable = false, length = 50)
 	private String city;
+	
+	// 테스트 코드 실행용
+	public static Region from(Long regionId) {
+		Region region = new Region();
+		region.regionId = regionId;
+		return region;
+	}
+
+	// CoachingEntryServiceTest 테스트 코드 실행용
+	public static Region testOf(long regionId, String country, String city) {
+		Region region = new Region();
+		region.regionId = regionId;
+		region.country = country;
+		region.city = city;
+		
+		return region;
+	}
 	
 	
 
