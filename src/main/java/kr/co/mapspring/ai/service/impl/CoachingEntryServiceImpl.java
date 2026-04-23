@@ -1,4 +1,4 @@
-package kr.co.mapspring.ai.serviceImpl;
+package kr.co.mapspring.ai.service.impl;
 
 import java.util.List;
 

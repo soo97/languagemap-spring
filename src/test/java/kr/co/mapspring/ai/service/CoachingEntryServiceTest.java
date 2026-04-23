@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kr.co.mapspring.ai.dto.CoachingEntryDto;
-import kr.co.mapspring.ai.serviceImpl.CoachingEntryServiceImpl;
+import kr.co.mapspring.ai.service.impl.CoachingEntryServiceImpl;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
