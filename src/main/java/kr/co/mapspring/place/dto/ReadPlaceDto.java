@@ -1,6 +1,7 @@
 package kr.co.mapspring.place.dto;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import kr.co.mapspring.place.entity.Place;
 import lombok.Builder;
@@ -24,17 +25,21 @@ public class ReadPlaceDto {
 		private String scenarioDescription;
 		private String city;
 		
-	}
-	
-	public static ReadPlaceDto.ResponseRead from (Place place) {
-		return ReadPlaceDto.ResponseRead.builder()
-				.placeName(place.getPlaceName())
-				.placeDescription(place.getPlaceDescription())
-				.latitude(place.getLatitude())
-				.longitude(place.getLongitude())
-				.city(place.getRegion().getCity())
-				.scenarioDescription(place.getScenario().getScenariosDescription())
-				.build();
+		public static ReadPlaceDto.ResponseRead from (Place place) {
+			return ReadPlaceDto.ResponseRead.builder()
+					.placeName(place.getPlaceName())
+					.placeDescription(place.getPlaceDescription())
+					.latitude(place.getLatitude())
+					.longitude(place.getLongitude())
+					.city(Optional.ofNullable(place.getRegion())
+							.map(region -> region.getCity())
+							.orElse(null))
+					.scenarioDescription(Optional.ofNullable(place.getScenario())
+							.map(scenario -> scenario.getScenariosDescription())
+							.orElse(null))
+					.build();
+		}
+		
 	}
 
 }
