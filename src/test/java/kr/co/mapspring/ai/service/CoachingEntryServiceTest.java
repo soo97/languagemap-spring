@@ -120,7 +120,7 @@ class CoachingEntryServiceTest {
                 .thenReturn(Optional.of(sessionEvaluation));
 
         // when
-        CoachingEntryDto.Response response = coachingEntryService.getCoachingEntryData(sessionId);
+        CoachingEntryDto.ResponseGetCoachingEntry response = coachingEntryService.getCoachingEntryData(sessionId);
 
         // then
         assertThat(response.getSessionId()).isEqualTo(10L);

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.ai.dto.CoachingEntryDto;
 import kr.co.mapspring.ai.service.CoachingEntryService;
+import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -27,9 +28,9 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
     private final SessionEvaluationRepository sessionEvaluationRepository;
 
     @Override
-    public CoachingEntryDto.Response getCoachingEntryData(Long sessionId) {
+    public CoachingEntryDto.ResponseGetCoachingEntry getCoachingEntryData(Long sessionId) {
         LearningSession learningSession = learningSessionRepository.findBySessionId(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("학습 세션을 찾을 수 없습니다. sessionId=" + sessionId));
+        		.orElseThrow(LearningSessionNotFoundException::new);
 
         Place place = learningSession.getPlace();
         Region region = place.getRegion();
@@ -41,11 +42,11 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
                 .map(SessionEvaluation::getEvaluation)
                 .orElse("");
 
-        List<CoachingEntryDto.MessageItem> messageItems = sessionMessages.stream()
+        List<CoachingEntryDto.ResponseMessageItem> messageItems = sessionMessages.stream()
                 .map(this::toMessageItem)
                 .toList();
 
-        return CoachingEntryDto.Response.builder()
+        return CoachingEntryDto.ResponseGetCoachingEntry.builder()
                 .sessionId(learningSession.getSessionId())
                 .placeId(place.getPlaceId())
                 .placeName(place.getPlaceName())
@@ -57,8 +58,8 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
                 .build();
     }
 
-    private CoachingEntryDto.MessageItem toMessageItem(SessionMessage sessionMessage) {
-        return CoachingEntryDto.MessageItem.builder()
+    private CoachingEntryDto.ResponseMessageItem toMessageItem(SessionMessage sessionMessage) {
+        return CoachingEntryDto.ResponseMessageItem.builder()
                 .messageId(sessionMessage.getMessageId())
                 .role(sessionMessage.getRole())
                 .message(sessionMessage.getMessage())

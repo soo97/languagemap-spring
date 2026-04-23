@@ -4,5 +4,5 @@ import kr.co.mapspring.ai.dto.CoachingEntryDto;
 
 public interface CoachingEntryService {
 
-    CoachingEntryDto.Response getCoachingEntryData(Long sessionId);
+    CoachingEntryDto.ResponseGetCoachingEntry getCoachingEntryData(Long sessionId);
 }
