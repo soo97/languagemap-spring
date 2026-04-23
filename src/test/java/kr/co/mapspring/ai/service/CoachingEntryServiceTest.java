@@ -82,25 +82,25 @@ class CoachingEntryServiceTest {
                 .scenario(scenario)
                 .build();
 
-        learningSession = new LearningSession();
+        learningSession = createInstance(LearningSession.class);
         setField(learningSession, "sessionId", 10L);
         setField(learningSession, "place", place);
 
-        userMessage = new SessionMessage();
+        userMessage = createInstance(SessionMessage.class);
         setField(userMessage, "messageId", 100L);
         setField(userMessage, "session", learningSession);
         setField(userMessage, "role", SessionMessageRole.USER);
         setField(userMessage, "message", "I would like a latte.");
         setField(userMessage, "createdAt", LocalDateTime.of(2026, 4, 22, 10, 0));
 
-        assistantMessage = new SessionMessage();
+        assistantMessage = createInstance(SessionMessage.class);
         setField(assistantMessage, "messageId", 101L);
         setField(assistantMessage, "session", learningSession);
         setField(assistantMessage, "role", SessionMessageRole.ASSISTANT);
         setField(assistantMessage, "message", "Sure. Is that for here or to go?");
         setField(assistantMessage, "createdAt", LocalDateTime.of(2026, 4, 22, 10, 1));
 
-        sessionEvaluation = new SessionEvaluation();
+        sessionEvaluation = createInstance(SessionEvaluation.class);
         setField(sessionEvaluation, "evaluationId", 1000L);
         setField(sessionEvaluation, "session", learningSession);
         setField(sessionEvaluation, "evaluation", "발음 보통, 표현 좋음, 속도 개선 필요");
@@ -141,6 +141,16 @@ class CoachingEntryServiceTest {
         Field field = findField(target.getClass(), fieldName);
         field.setAccessible(true);
         field.set(target, value);
+    }
+    
+    private <T> T createInstance(Class<T> clazz) {
+        try {
+            var constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
