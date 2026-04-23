@@ -1,7 +1,6 @@
 package kr.co.mapspring.learning.service;
 
 public interface LearningGoalService {
-
     /**
      *
      * @param userId
