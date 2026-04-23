@@ -1,5 +1,7 @@
 package kr.co.mapspring.place.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
 import kr.co.mapspring.user.entity.User;
@@ -27,6 +30,12 @@ public class LearningSession {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "session_id", nullable = false, updatable = false)
 	private Long sessionId;
+	
+	@Column(name = "start_time", nullable = false)
+	private LocalDateTime startTime;
+	
+	@Column(name = "endTime")
+	private LocalDateTime endTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -39,4 +48,9 @@ public class LearningSession {
 	@Column(name = "study_status", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
 	private LearningSessionStatus studyStatus = LearningSessionStatus.READY;
+	
+	@PrePersist
+	public void prePersist() {
+		this.startTime = LocalDateTime.now();
+	}
 }
