@@ -7,6 +7,7 @@ import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
+import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
@@ -219,8 +220,6 @@ class LearningGoalServiceTest {
         assertEquals(2, result.size());
         assertEquals(UserGoalStatus.ACTIVE, result.get(0).getStatus());
         assertEquals(UserGoalStatus.ACTIVE, result.get(1).getStatus());
-
-
     }
 
 }

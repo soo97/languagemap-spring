@@ -32,6 +32,7 @@ public class UserGoal {
     @Column(name = "user_goal_id", nullable = false, updatable = false)
     private Long userGoalId;
 
+//    TODO: 엔티티 확정 후 매핑 예정
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id", nullable = false)
     @Column(name = "user_id", nullable = false)
@@ -74,6 +75,17 @@ public class UserGoal {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public static UserGoal create(Long userId, GoalMaster goalMaster, LocalDate startDate, LocalDate endDate) {
+        UserGoal userGoal = new UserGoal();
+        userGoal.userId = userId;
+        userGoal.goalMaster = goalMaster;
+        userGoal.currentValue = 0;
+        userGoal.status = UserGoalStatus.ACTIVE;
+        userGoal.startDate = startDate;
+        userGoal.endDate = endDate;
+        return userGoal;
+    }
+
     public void updateCurrentValue(Integer currentValue) {
         this.currentValue = currentValue;
         this.updatedAt = LocalDateTime.now();
@@ -82,28 +94,31 @@ public class UserGoal {
     public void complete() {
         this.status = UserGoalStatus.COMPLETED;
         this.completedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void fail() {
         this.status = UserGoalStatus.FAILED;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void cancel() {
         this.status = UserGoalStatus.CANCELED;
+        this.updatedAt = LocalDateTime.now();
     }
 
     // 테스트 전용 생성 메서드
-    public static UserGoal of(Long userId, GoalMaster goalMaster,
-                              LocalDate startDate, LocalDate endDate) {
-
+    public static UserGoal of(Long userGoalId, Long userId, GoalMaster goalMaster, Integer currentValue, UserGoalStatus status, LocalDate startDate, LocalDate endDate) {
         UserGoal userGoal = new UserGoal();
+        userGoal.userGoalId = userGoalId;
         userGoal.userId = userId;
         userGoal.goalMaster = goalMaster;
-        userGoal.currentValue = 0;
-        userGoal.status = UserGoalStatus.ACTIVE;
+        userGoal.currentValue = currentValue;
+        userGoal.status = status;
         userGoal.startDate = startDate;
         userGoal.endDate = endDate;
-
+        userGoal.createdAt = LocalDateTime.now();
+        userGoal.updatedAt = LocalDateTime.now();
         return userGoal;
     }
 
