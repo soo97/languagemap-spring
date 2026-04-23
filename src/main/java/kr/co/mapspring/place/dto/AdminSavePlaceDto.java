@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 
-public class SavePlaceDto {
+public class AdminSavePlaceDto {
 	
 	@Builder
 	@Getter

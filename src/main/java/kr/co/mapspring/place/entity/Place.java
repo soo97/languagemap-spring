@@ -18,7 +18,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Builder
 public class Place {
 	
 	@Id
@@ -57,14 +56,37 @@ public class Place {
 						   Scenario scenario,
 						   Region region) {
 
-		return Place.builder()
-				.googlePlaceId(googlePlaceId)
-				.placeName(placeName)
-				.placeDescription(placeDescription)
-				.latitude(latitude)
-				.longitude(longitude)
-				.scenario(scenario)
-				.region(region)
-				.build();
+		Place place = new Place();
+		place.googlePlaceId = googlePlaceId;
+		place.placeName = placeName;
+		place.placeDescription = placeDescription;
+		place.latitude = latitude;
+		place.longitude = longitude;
+		place.scenario = scenario;
+		place.region = region;
+		return place;
+	}
+	
+	// 테스트 코드 실행용
+	public static Place testOf (Long placeId,
+							    String googlePlaceId,
+							    String placeName,
+							    String placeDescription,
+							    BigDecimal latitude,
+							    BigDecimal longitude,
+							    Region region,
+							    Scenario scenario)
+	{
+		Place place = new Place();
+		place.placeId = placeId;
+		place.googlePlaceId = googlePlaceId;
+		place.placeName = placeName;
+		place.placeDescription = placeDescription;
+		place.latitude = latitude;
+		place.longitude = longitude;
+		place.region = region;
+		place.scenario = scenario;
+		return place;
+		
 	}
 }
