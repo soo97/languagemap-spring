@@ -6,6 +6,7 @@ import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededExcep
 import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
+import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,5 +77,43 @@ public class LearningGoalServiceImpl implements LearningGoalService {
             case MONTHLY -> startDate.plusMonths(1);
             case NONE -> null;
         };
+    }
+
+    @Override
+    @Transactional
+    public void updateGoalProgress(Long userId, GoalType goalType, Integer amount) {
+        List<UserGoal> activeGoals = userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+
+        for (UserGoal userGoal : activeGoals) {
+            if (userGoal.getGoalMaster().getGoalType() != goalType) {
+                continue;
+            }
+
+            int updatedValue = userGoal.getCurrentValue() + amount;
+            userGoal.updateCurrentValue(updatedValue);
+
+            if (updatedValue >= userGoal.getGoalMaster().getTargetValue()) {
+                userGoal.complete();
+            }
+        }
+    }
+
+    @Override
+    public List<UserGoal> getCompletedGoals(Long userId) {
+        return userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.COMPLETED);
+    }
+
+    @Override
+    public List<GoalMaster> getAvailableGoals(Long userId) {
+        List<GoalMaster> activeGoalMasters = goalMasterRepository.findAllByIsActiveTrue();
+        List<UserGoal> activeUserGoals = userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+
+        Set<Long> selectedGoalIds = activeUserGoals.stream()
+                .map(userGoal -> userGoal.getGoalMaster().getGoalMasterId())
+                .collect(Collectors.toSet());
+
+        return activeGoalMasters.stream()
+                .filter(goalMaster -> !selectedGoalIds.contains(goalMaster.getGoalMasterId()))
+                .toList();
     }
 }

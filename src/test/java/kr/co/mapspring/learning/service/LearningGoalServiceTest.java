@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -232,6 +233,139 @@ class LearningGoalServiceTest {
         assertEquals(2, result.size());
         assertEquals(UserGoalStatus.ACTIVE, result.get(0).getStatus());
         assertEquals(UserGoalStatus.ACTIVE, result.get(1).getStatus());
+    }
+
+    @Test
+    @DisplayName("진행 중인 목표의 진행도를 정상적으로 증가시킨다")
+    void 진행중인_목표의_진행도를_정상적으로_증가시킨다() {
+
+        GoalMaster progressGoalMaster = GoalMaster.of(
+                goalMasterId,
+                "하루 3회 학습",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                3
+        );
+
+        UserGoal userGoal = UserGoal.of(
+                1L,
+                userId,
+                progressGoalMaster,
+                1,
+                UserGoalStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now()
+        );
+
+        given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE))
+                .willReturn(List.of(userGoal));
+
+        learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
+
+        verify(userGoalRepository).findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        assertEquals(2, userGoal.getCurrentValue());
+        assertEquals(UserGoalStatus.ACTIVE, userGoal.getStatus());
+    }
+
+    @Test
+    @DisplayName("목표 진행도가 목표값에 도달하면 완료 처리한다")
+    void 목표_진행도가_목표값에_도달하면_완료_처리한다() {
+
+        GoalMaster progressGoalMaster = GoalMaster.of(
+                goalMasterId,
+                "하루 3회 학습",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                3
+        );
+
+        UserGoal userGoal = UserGoal.of(
+                1L,
+                userId,
+                progressGoalMaster,
+                2,
+                UserGoalStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now()
+        );
+
+        given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE))
+                .willReturn(List.of(userGoal));
+
+        learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
+
+        verify(userGoalRepository).findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        assertEquals(3, userGoal.getCurrentValue());
+        assertEquals(UserGoalStatus.COMPLETED, userGoal.getStatus());
+    }
+
+    @Test
+    @DisplayName("사용자의 완료된 목표 목록을 조회한다")
+    void 사용자의_완료된_목표_목록을_조회한다() {
+
+        UserGoal completedGoal1 = UserGoal.of(
+                1L,
+                userId,
+                goalMaster,
+                1,
+                UserGoalStatus.COMPLETED,
+                LocalDate.now(),
+                LocalDate.now()
+        );
+
+        UserGoal completedGoal2 = UserGoal.of(
+                1L,
+                userId,
+                goalMaster,
+                1,
+                UserGoalStatus.COMPLETED,
+                LocalDate.now(),
+                LocalDate.now()
+        );
+
+        given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.COMPLETED))
+                .willReturn(List.of(completedGoal1, completedGoal2));
+
+        List<UserGoal> result = learningGoalService.getCompletedGoals(userId);
+
+        verify(userGoalRepository).findAllByUserIdAndStatus(userId, UserGoalStatus.COMPLETED);
+        assertEquals(2, result.size());
+        assertEquals(UserGoalStatus.COMPLETED, result.get(0).getStatus());
+        assertEquals(UserGoalStatus.COMPLETED, result.get(1).getStatus());
+    }
+
+    @Test
+    @DisplayName("사용자가 아직 선택하지 않은 목표 목록을 조회한다")
+    void 사용자가_아직_선택하지_않은_목표_목록을_조회한다() {
+
+        GoalMaster goal1 = GoalMaster.of(1L, "하루 1회 학습", GoalPeriodType.DAILY, GoalType.STUDY_COUNT, 1);
+        GoalMaster goal2 = GoalMaster.of(2L, "하루 3회 학습", GoalPeriodType.DAILY, GoalType.STUDY_COUNT, 3);
+        GoalMaster goal3 = GoalMaster.of(3L, "주간 말하기 5회", GoalPeriodType.WEEKLY, GoalType.SPEAKING_COUNT, 5);
+
+        UserGoal selectedGoal = UserGoal.of(
+                10L,
+                userId,
+                goal1,
+                0,
+                UserGoalStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now()
+        );
+
+        given(goalMasterRepository.findAllByIsActiveTrue())
+                .willReturn(List.of(goal1, goal2, goal3));
+
+        given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE))
+                .willReturn(List.of(selectedGoal));
+
+        List<GoalMaster> result = learningGoalService.getAvailableGoals(userId);
+
+        verify(goalMasterRepository).findAllByIsActiveTrue();
+        verify(userGoalRepository).findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+
+        assertEquals(2, result.size());
+        assertEquals(2L, result.get(0).getGoalMasterId());
+        assertEquals(3L, result.get(1).getGoalMasterId());
     }
 
 }
