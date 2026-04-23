@@ -3,10 +3,10 @@ package kr.co.mapspring.learning.service;
 import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
+import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
-import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Period;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -150,6 +149,78 @@ class LearningGoalServiceTest {
         verify(userGoalRepository).existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
         verify(userGoalRepository).countByUserId(userId);
         verify(userGoalRepository, never()).save(any(UserGoal.class));
+    }
+
+    @Test
+    @DisplayName("진행 중인 목표를 정상적으로 해제한다")
+    void 진행_중인_목표를_정상적으로_해제한다() {
+        // given
+        Long userGoalId = 10L;
+        UserGoal userGoal = UserGoal.of(
+                userId,
+                goalMaster,
+                java.time.LocalDate.now(),
+                java.time.LocalDate.now()
+        );
+
+        given(userGoalRepository.findById(userGoalId))
+                .willReturn(Optional.of(userGoal));
+
+        // when
+        learningGoalService.cancelGoal(userGoalId);
+
+        // then
+        verify(userGoalRepository).findById(userGoalId);
+        assertEquals(UserGoalStatus.CANCELED, userGoal.getStatus());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자 목표는 해제할 수 없다")
+    void 존재하지_않는_사용자_목표는_해제할_수_없다() {
+        // given
+        Long userGoalId = 999L;
+
+        given(userGoalRepository.findById(userGoalId))
+                .willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(UserGoalNotFoundException.class,
+                () -> learningGoalService.cancelGoal(userGoalId));
+
+        verify(userGoalRepository).findById(userGoalId);
+    }
+
+    @Test
+    @DisplayName("사용자의 진행 중인 목표 목록을 조회한다")
+    void 사용자의_진행_중인_목표_목록을_조회한다() {
+        // given
+        UserGoal activeGoal1 = UserGoal.of(
+                userId,
+                goalMaster,
+                java.time.LocalDate.now(),
+                java.time.LocalDate.now()
+        );
+
+        UserGoal activeGoal2 = UserGoal.of(
+                userId,
+                goalMaster,
+                java.time.LocalDate.now(),
+                java.time.LocalDate.now()
+        );
+
+        given(userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE))
+                .willReturn(java.util.List.of(activeGoal1, activeGoal2));
+
+        // when
+        java.util.List<UserGoal> result = learningGoalService.getActiveGoals(userId);
+
+        // then
+        verify(userGoalRepository).findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        assertEquals(2, result.size());
+        assertEquals(UserGoalStatus.ACTIVE, result.get(0).getStatus());
+        assertEquals(UserGoalStatus.ACTIVE, result.get(1).getStatus());
+
+
     }
 
 }
