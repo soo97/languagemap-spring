@@ -19,10 +19,10 @@ public class ReadPlaceDto {
 	public static class ResponseRead {
 		private String placeName;
 		private String placeDescription;
-		private BigDecimal latutude;
+		private BigDecimal latitude;
 		private BigDecimal longitude;
 		private String scenarioDescription;
-		private String City;
+		private String city;
 		
 	}
 	
@@ -30,9 +30,9 @@ public class ReadPlaceDto {
 		return ReadPlaceDto.ResponseRead.builder()
 				.placeName(place.getPlaceName())
 				.placeDescription(place.getPlaceDescription())
-				.latutude(place.getLatitude())
+				.latitude(place.getLatitude())
 				.longitude(place.getLongitude())
-				.City(place.getRegion().getCity())
+				.city(place.getRegion().getCity())
 				.scenarioDescription(place.getScenario().getScenariosDescription())
 				.build();
 	}
