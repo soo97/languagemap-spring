@@ -31,14 +31,14 @@ public class LearningSession {
 	@Column(name = "session_id", nullable = false, updatable = false)
 	private Long sessionId;
 	
-	@Column(name = "start_time", nullable = false)
+	@Column(name = "start_time", nullable = false, updatable = false)
 	private LocalDateTime startTime;
 	
 	@Column(name = "endTime")
 	private LocalDateTime endTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	 
 	@ManyToOne(fetch = FetchType.LAZY)
