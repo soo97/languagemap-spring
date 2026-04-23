@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    // 로그인 비즈니스 로직은 서비스가 담당한다.
     private final LoginService loginService;
 
     @PostMapping("/login")
@@ -23,6 +22,7 @@ public class AuthController {
             @RequestBody LoginDto.RequestLogin request
     ) {
         LoginDto.ResponseLogin response = loginService.login(request);
+        
         return ApiResponseDTO.success("로그인 성공", response);
     }
 }
