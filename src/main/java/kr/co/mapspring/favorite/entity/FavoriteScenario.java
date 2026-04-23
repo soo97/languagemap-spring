@@ -1,0 +1,52 @@
+package kr.co.mapspring.favorite.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "favorite_scenario")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class FavoriteScenario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "favorite_scenario_id", nullable = false, updatable = false)
+    private Long favoriteScenarioId;
+
+//    TODO: 추후 엔티티 확정 시 연관관계로 매핑 예정
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+//    TODO: 추후 엔티티 확정 시 연관관계로 매핑 예정
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "scenario_id", nullable = false)
+    @Column(name = "scenario_id", nullable = false)
+    private Long scenarioId;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    public static FavoriteScenario create(Long userId, Long scenarioId) {
+        FavoriteScenario favoriteScenario = new FavoriteScenario();
+        favoriteScenario.userId = userId;
+        favoriteScenario.scenarioId = scenarioId;
+        return favoriteScenario;
+    }
+
+    @PrePersist
+    protected void perPersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+}
