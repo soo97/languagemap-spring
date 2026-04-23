@@ -20,6 +20,7 @@ public class ReadPlaceDto {
 	public static class ResponseRead {
 		private String placeName;
 		private String placeDescription;
+		private String placeAddress;
 		private BigDecimal latitude;
 		private BigDecimal longitude;
 		private String scenarioDescription;
@@ -31,6 +32,7 @@ public class ReadPlaceDto {
 					.placeDescription(place.getPlaceDescription())
 					.latitude(place.getLatitude())
 					.longitude(place.getLongitude())
+					.placeAddress(place.getPlaceAddress())
 					.city(Optional.ofNullable(place.getRegion())
 							.map(region -> region.getCity())
 							.orElse(null))

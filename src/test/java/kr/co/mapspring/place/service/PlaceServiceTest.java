@@ -169,7 +169,9 @@ class PlaceServiceTest {
         Scenario scenario = Scenario.from(20L);
 
         Place place = Place.testOf(1L, 
-        					   "google-place-123", "스타벅스 강남점", 
+        					   "google-place-123",
+        					   "스타벅스 강남점",
+        					   "인천시 서구",
         					   "커피를 주문할 수 있는 장소", 
         					   new BigDecimal("37.12345678"), 
         					   new BigDecimal("127.12345678"), 

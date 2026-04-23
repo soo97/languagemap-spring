@@ -54,4 +54,22 @@ public class Scenario {
 		return scenario;
 	}
 
+	public static Scenario testOf(long scenarioId, 
+								  String prompt, 
+								  String scenariosDescription, 
+								  int completeExp, 
+								  ScenarioLevel level,
+								  String category
+								  ) {
+		Scenario scenario = new Scenario();
+		scenario.scenarioId = scenarioId;
+		scenario.prompt = prompt;
+		scenario.scenariosDescription =  scenariosDescription;
+		scenario.completeExp = completeExp;
+		scenario.level = level;
+		scenario.category = category;
+		
+		return scenario;
+	}
+
 }

@@ -49,6 +49,7 @@ public class PlaceServiceImpl implements PlaceService {
 		
 		Place place = Place.of(request.getGooglePlaceId(),
 							   request.getPlaceName(),
+							   request.getPlaceAddress(),
 							   request.getPlaceDescription(),
 							   request.getLatitude(),
 							   request.getLongitude(),
@@ -69,7 +70,7 @@ public class PlaceServiceImpl implements PlaceService {
 		Place place = placeRepository.findById(placeId)
 				.orElseThrow(PlaceNotFoundException::new);
 		
-		ReadPlaceDto.ResponseRead response = ReadPlaceDto.from(place);
+		ReadPlaceDto.ResponseRead response = ReadPlaceDto.ResponseRead.from(place);
 		
 		return response;
 	}

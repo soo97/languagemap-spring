@@ -12,6 +12,7 @@ public class SavePlaceDto {
 	public static class RequestSave {
 		private String googlePlaceId;
 		private String placeName;
+		private String placeAddress;
 		private BigDecimal latitude;
 		private BigDecimal longitude;
 		private String placeDescription;
