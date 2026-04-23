@@ -34,6 +34,9 @@ public class Place {
 	@Column(name = "place_description", nullable = false, columnDefinition = "TEXT")
 	private String placeDescription;
 	
+	@Column(name = "place_address", nullable = false, length = 255)
+	private String placeAddress;
+	
 	@Column(name = "latitude", nullable = false, precision = 11, scale = 8)
 	private BigDecimal latitude;
 	
@@ -50,6 +53,7 @@ public class Place {
 	
 	public static Place of(String googlePlaceId,
 						   String placeName,
+						   String placeAddress,
 						   String placeDescription,
 						   BigDecimal latitude,
 						   BigDecimal longitude,
@@ -59,6 +63,7 @@ public class Place {
 		Place place = new Place();
 		place.googlePlaceId = googlePlaceId;
 		place.placeName = placeName;
+		place.placeAddress = placeAddress;
 		place.placeDescription = placeDescription;
 		place.latitude = latitude;
 		place.longitude = longitude;
@@ -71,6 +76,7 @@ public class Place {
 	public static Place testOf (Long placeId,
 							    String googlePlaceId,
 							    String placeName,
+							    String placeAddress,
 							    String placeDescription,
 							    BigDecimal latitude,
 							    BigDecimal longitude,
@@ -81,6 +87,7 @@ public class Place {
 		place.placeId = placeId;
 		place.googlePlaceId = googlePlaceId;
 		place.placeName = placeName;
+		place.placeAddress = placeAddress;
 		place.placeDescription = placeDescription;
 		place.latitude = latitude;
 		place.longitude = longitude;

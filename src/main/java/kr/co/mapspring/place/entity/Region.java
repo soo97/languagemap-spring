@@ -35,6 +35,16 @@ public class Region {
 		region.regionId = regionId;
 		return region;
 	}
+
+	// CoachingEntryServiceTest 테스트 코드 실행용
+	public static Region testOf(long regionId, String country, String city) {
+		Region region = new Region();
+		region.regionId = regionId;
+		region.country = country;
+		region.city = city;
+		
+		return region;
+	}
 	
 	
 

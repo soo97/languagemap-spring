@@ -11,7 +11,6 @@ import jakarta.persistence.Table;
 import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +19,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @AllArgsConstructor
-@Builder
 public class Scenario {
 	
 	@Id
@@ -64,6 +62,24 @@ public class Scenario {
 		Scenario scenario = new Scenario();
 	
 		scenario.scenarioId = scenarioId;
+		
+		return scenario;
+	}
+
+	public static Scenario testOf(long scenarioId, 
+								  String prompt, 
+								  String scenariosDescription, 
+								  int completeExp, 
+								  ScenarioLevel level,
+								  String category
+								  ) {
+		Scenario scenario = new Scenario();
+		scenario.scenarioId = scenarioId;
+		scenario.prompt = prompt;
+		scenario.scenarioDescription =  scenariosDescription;
+		scenario.completeExp = completeExp;
+		scenario.level = level;
+		scenario.category = category;
 		
 		return scenario;
 	}

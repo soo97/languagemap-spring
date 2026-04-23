@@ -34,8 +34,7 @@ import kr.co.mapspring.place.repository.ScenarioRepository;
 class AdminPlaceServiceTest {
 
     @InjectMocks
-    private AdminPlaceService placeService;
-
+    private AdminPlaceService adminPlaceService;
     @Mock
     private PlaceRepository placeRepository;
 
@@ -61,9 +60,7 @@ class AdminPlaceServiceTest {
 
         Region region = Region.from(1L);
 
-        Scenario scenario = Scenario.builder()
-                .scenarioId(1L)
-                .build();
+        Scenario scenario = Scenario.from(1L);
 
         when(placeRepository.existsByGooglePlaceId(request.getGooglePlaceId()))
                 .thenReturn(false);
@@ -75,7 +72,7 @@ class AdminPlaceServiceTest {
                 .thenReturn(Optional.of(scenario));
 
         // when
-        placeService.savePlace(request);
+        adminPlaceService.savePlace(request);
 
         // then
         verify(placeRepository, times(1)).save(any(Place.class));
@@ -99,7 +96,7 @@ class AdminPlaceServiceTest {
                 .thenReturn(true);
 
         // when & then
-        assertThrows(RuntimeException.class, () -> placeService.savePlace(request));
+        assertThrows(RuntimeException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
 
@@ -124,7 +121,7 @@ class AdminPlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(RegionNotFoundException.class, () -> placeService.savePlace(request));
+        assertThrows(RegionNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
     
@@ -154,7 +151,7 @@ class AdminPlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(ScenarioNotFoundException.class, () -> placeService.savePlace(request));
+        assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
     
@@ -170,7 +167,9 @@ class AdminPlaceServiceTest {
         Scenario scenario = Scenario.from(20L);
 
         Place place = Place.testOf(1L, 
-        					   "google-place-123", "스타벅스 강남점", 
+        					   "google-place-123",
+        					   "스타벅스 강남점",
+        					   "인천시 서구",
         					   "커피를 주문할 수 있는 장소", 
         					   new BigDecimal("37.12345678"), 
         					   new BigDecimal("127.12345678"), 
@@ -181,7 +180,7 @@ class AdminPlaceServiceTest {
                 .thenReturn(Optional.of(place));
 
         // when
-        AdminReadPlaceDto.ResponseRead response = placeService.readPlace(request);
+        AdminReadPlaceDto.ResponseRead response = adminPlaceService.readPlace(request);
 
         // then
         assertEquals("스타벅스 강남점", response.getPlaceName());
@@ -203,7 +202,6 @@ class AdminPlaceServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(PlaceNotFoundException.class, () -> placeService.readPlace(request));
+        assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.readPlace(request));
     }
-
 }

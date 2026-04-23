@@ -24,8 +24,11 @@ public class AdminPlaceService {
 	private final PlaceRepository placeRepository;
 	private final RegionRepository regionRepository;
 	private final ScenarioRepository scenarioRepository;
-	
+
 	// 장소 생성
+
+	// 장소 저장
+	@Transactional
 	public void savePlace(AdminSavePlaceDto.RequestSave request) {
 		
 		Long regionId = request.getRegionId();
@@ -46,6 +49,7 @@ public class AdminPlaceService {
 		
 		Place place = Place.of(request.getGooglePlaceId(),
 							   request.getPlaceName(),
+							   request.getPlaceAddress(),
 							   request.getPlaceDescription(),
 							   request.getLatitude(),
 							   request.getLongitude(),
@@ -65,7 +69,7 @@ public class AdminPlaceService {
 		Place place = placeRepository.findById(placeId)
 				.orElseThrow(PlaceNotFoundException::new);
 		
-		AdminReadPlaceDto.ResponseRead response = AdminReadPlaceDto.from(place);
+		AdminReadPlaceDto.ResponseRead response = AdminReadPlaceDto.ResponseRead.from(place);
 		
 		return response;
 	}
