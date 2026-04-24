@@ -249,7 +249,7 @@ class AdminScenarioServiceTest {
 
         // when
         List<AdminScenarioListDto.ResponseList> responseList =
-                adminScenarioService.ScenarioList(null);
+                adminScenarioService.scenarioList(null);
 
         // then
         assertEquals(2, responseList.size());
@@ -278,7 +278,7 @@ class AdminScenarioServiceTest {
 
         // when
         List<AdminScenarioListDto.ResponseList> responseList =
-                adminScenarioService.ScenarioList(" ");
+                adminScenarioService.scenarioList(" ");
 
         // then
         assertEquals(1, responseList.size());
@@ -308,7 +308,7 @@ class AdminScenarioServiceTest {
 
         // when
         List<AdminScenarioListDto.ResponseList> responseList =
-                adminScenarioService.ScenarioList(keyword);
+                adminScenarioService.scenarioList(keyword);
 
         // then
         assertEquals(1, responseList.size());
