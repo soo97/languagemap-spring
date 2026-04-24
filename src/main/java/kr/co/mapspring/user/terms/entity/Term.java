@@ -66,4 +66,12 @@ public class Term {
         this.updatedAt = LocalDateTime.now();
     }
     
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public boolean isRequired() {
+        return this.required;
+    }
+    
 }
