@@ -1,9 +1,9 @@
 package kr.co.mapspring.favorite.dto;
 
-import kr.co.mapspring.favorite.entity.FavoritePlace;
 import kr.co.mapspring.favorite.entity.FavoriteScenario;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,14 +11,14 @@ public class FavoriteScenarioDto {
 
 //    TODO: 스웨거 문서 작성
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class RequestAddFavoriteScenario {
         private Long userId;
         private Long scenarioId;
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class RequestRemoveFavoriteScenario {
         private Long userId;
         private Long scenarioId;

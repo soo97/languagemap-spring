@@ -3,20 +3,21 @@ package kr.co.mapspring.favorite.dto;
 import kr.co.mapspring.favorite.entity.FavoritePlace;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 public class FavoritePlaceDto {
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class RequestAddFavoritePlace {
         private Long userId;
         private Long placeId;
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class RequestRemoveFavoritePlace {
         private Long userId;
         private Long placeId;
