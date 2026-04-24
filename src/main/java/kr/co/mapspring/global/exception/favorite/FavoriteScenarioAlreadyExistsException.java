@@ -1,9 +1,12 @@
 package kr.co.mapspring.global.exception.favorite;
 
-public class FavoriteScenarioAlreadyExistsException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class FavoriteScenarioAlreadyExistsException extends CustomException {
 
     public FavoriteScenarioAlreadyExistsException() {
-        super("이미 즐겨찾기한 시나리오입니다.");
+        super(ErrorCode.FAVORITE_SCENARIO_ALREADY_EXISTS);
     }
 
 }

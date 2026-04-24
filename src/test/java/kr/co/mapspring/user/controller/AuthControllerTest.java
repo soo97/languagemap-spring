@@ -20,6 +20,7 @@ import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.GlobalExceptionHandler;
 import kr.co.mapspring.user.dto.LoginDto;
+import kr.co.mapspring.user.dto.SignUpDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
 
@@ -169,4 +170,103 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("입력값 검증 실패"));
     }
+    @Test
+    @DisplayName("회원가입 요청이 성공하면 공통 성공 응답을 반환한다")
+    void signUpSuccess() throws Exception {
+        // given
+        SignUpDto.ResponseSignUp response = SignUpDto.ResponseSignUp.builder()
+                .userId(1L)
+                .email("test@naver.com")
+                .name("홍길동")
+                .build();
+
+        // 회원가입 서비스가 성공 응답을 반환한다고 가정한다.
+        given(signUpService.signUp(org.mockito.ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willReturn(response);
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("회원가입 성공"))
+                .andExpect(jsonPath("$.data.userId").value(1))
+                .andExpect(jsonPath("$.data.email").value("test@naver.com"))
+                .andExpect(jsonPath("$.data.name").value("홍길동"));
+    }
+
+    @Test
+    @DisplayName("이미 존재하는 이메일이면 409 실패 응답을 반환한다")
+    void signUpFailWhenEmailAlreadyExists() throws Exception {
+        // given
+        given(signUpService.signUp(org.mockito.ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willThrow(new kr.co.mapspring.global.exception.user.EmailAlreadyExistsException());
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다."));
+    }
+
+    @Test
+    @DisplayName("비밀번호 확인이 일치하지 않으면 400 실패 응답을 반환한다")
+    void signUpFailWhenPasswordConfirmDoesNotMatch() throws Exception {
+        // given
+        given(signUpService.signUp(org.mockito.ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willThrow(new kr.co.mapspring.global.exception.user.PasswordConfirmMismatchException());
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "4321"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
+    }
+    
+    
+    
 }
