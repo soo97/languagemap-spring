@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/favorites/scenarios")
+@RequestMapping("/api/favorites/scenarios")
 public class FavoriteScenarioController implements FavoriteScenarioControllerDocs {
 
     private final FavoriteScenarioService favoriteScenarioService;
