@@ -5,7 +5,7 @@ import lombok.Getter;
 
 public class StartCoachingSessionDto {
 	
-	 @Getter
+	 	@Getter
 	    @Builder
 	    public static class RequestStartCoachingSession {
 	        private Long sessionId;
