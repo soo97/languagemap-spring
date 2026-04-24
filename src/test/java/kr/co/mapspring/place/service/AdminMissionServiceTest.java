@@ -43,7 +43,6 @@ class AdminMissionServiceTest {
         AdminCreateMissionDto.RequestCreate request = AdminCreateMissionDto.RequestCreate.builder()
                 .missionTitle("카페에서 주문하기")
                 .missionDescription("카페에서 영어로 커피를 주문하는 미션")
-                .missionStatus(MissionStatus.READY)
                 .scenarioId(1L)
                 .build();
 
@@ -66,7 +65,6 @@ class AdminMissionServiceTest {
         AdminCreateMissionDto.RequestCreate request = AdminCreateMissionDto.RequestCreate.builder()
                 .missionTitle("카페에서 주문하기")
                 .missionDescription("카페에서 영어로 커피를 주문하는 미션")
-                .missionStatus(MissionStatus.READY)
                 .scenarioId(999L)
                 .build();
 

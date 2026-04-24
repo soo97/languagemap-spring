@@ -64,6 +64,7 @@ public class Scenario {
 		return scenario;
 	}
 
+	// 테스트 코드 실행용
 	public static Scenario testOf(long scenarioId, 
 								  String prompt, 
 								  String scenarioDescription, 

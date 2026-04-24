@@ -45,8 +45,8 @@ class AdminPlaceServiceTest {
     private ScenarioRepository scenarioRepository;
 
     @Test
-    @DisplayName("장소 저장 성공")
-    void 장소_저장_성공() {
+    @DisplayName("장소 생성 성공")
+    void 장소_생성_성공() {
         // given
         AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
@@ -79,8 +79,8 @@ class AdminPlaceServiceTest {
     }
 
     @Test
-    @DisplayName("장소 저장 실패 중복된 구글 장소ID")
-    void 장소_저장_실패_중복된_구글_장소ID() {
+    @DisplayName("장소 생성 실패 중복된 구글 장소ID")
+    void 장소_생성_실패_중복된_구글_장소ID() {
         // given
         AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
@@ -126,8 +126,8 @@ class AdminPlaceServiceTest {
     }
     
     @Test
-    @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
-    void 장소_저장_실패_존재하지_않는_시나리오() {
+    @DisplayName("장소 생성 실패 존재하지 않는 시나리오")
+    void 장소_생성_실패_존재하지_않는_시나리오() {
         // given
         AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")

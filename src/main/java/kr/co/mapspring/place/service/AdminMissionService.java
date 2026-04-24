@@ -28,9 +28,8 @@ public class AdminMissionService {
 				.orElseThrow(ScenarioNotFoundException::new);
 		
 		Mission mission = Mission.create(request.getMissionTitle(),
-													   request.getMissionDescription(),
-													   request.getMissionStatus(),
-													   scenario);
+										 request.getMissionDescription(),
+										 scenario);
 		
 		missionRepository.save(mission);
 		
