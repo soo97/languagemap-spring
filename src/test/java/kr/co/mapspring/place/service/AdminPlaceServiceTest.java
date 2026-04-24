@@ -23,6 +23,7 @@ import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
+import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
