@@ -246,6 +246,38 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다."));
     }
+    
+    @Test
+    @DisplayName("이미 존재하는 전화번호이면 409 실패 응답을 반환한다")
+    void signUpFailWhenPhoneNumberAlreadyExists() throws Exception {
+        // given
+        given(signUpService.signUp(ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willThrow(new CustomException(ErrorCode.PHONE_NUMBER_ALREADY_EXISTS));
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234",
+                  "serviceAgree": true,
+                  "privacyAgree": true,
+                  "marketingAgree": false
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("이미 존재하는 전화번호입니다."));
+    }
 
     @Test
     @DisplayName("비밀번호 확인이 일치하지 않으면 400 실패 응답을 반환한다")

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.global.exception.user.EmailAlreadyExistsException;
 import kr.co.mapspring.global.exception.user.PasswordConfirmMismatchException;
+import kr.co.mapspring.global.exception.user.PhoneNumberAlreadyExistsException;
 import kr.co.mapspring.global.exception.user.PrivacyTermsRequiredException;
 import kr.co.mapspring.global.exception.user.ServiceTermsRequiredException;
 import kr.co.mapspring.global.exception.user.TermsNotFoundException;
@@ -37,6 +38,10 @@ public class SignUpServiceImpl implements SignUpService {
     public SignUpDto.ResponseSignUp signUp(SignUpDto.RequestSignUp request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException();
+        }
+        
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new PhoneNumberAlreadyExistsException();
         }
 
         if (!request.getPassword().equals(request.getPasswordConfirm())) {

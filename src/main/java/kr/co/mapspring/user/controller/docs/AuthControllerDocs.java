@@ -117,6 +117,23 @@ public interface AuthControllerDocs {
                     )
             ),
             @ApiResponse(
+                    responseCode = "409",
+                    description = "이미 존재하는 전화번호",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 409,
+                                              "message": "이미 존재하는 전화번호입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "400",
                     description = "비밀번호 확인 불일치",
                     content = @Content(
@@ -192,22 +209,22 @@ public interface AuthControllerDocs {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = SignUpDto.RequestSignUp.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "name": "홍길동",
-                                              "birthDate": "2000-01-01",
-                                              "address": "서울시 강남구",
-                                              "phoneNumber": "010-1234-5678",
-                                              "email": "test@naver.com",
-                                              "password": "1234",
-                                              "passwordConfirm": "1234",
-                                              "serviceAgree": true,
-                                              "privacyAgree": true,
-                                              "marketingAgree": false
-                                            }
-                                            """
-                            )
+                            		examples = @ExampleObject(
+                            		        value = """
+                            		                {
+                            		                  "name": "홍길동",
+                            		                  "birthDate": "2000-01-01",
+                            		                  "address": "서울시 강남구",
+                            		                  "phoneNumber": "010-1234-5678",
+                            		                  "email": "test@naver.com",
+                            		                  "password": "1234",
+                            		                  "passwordConfirm": "1234",
+                            		                  "serviceAgree": true,
+                            		                  "privacyAgree": true,
+                            		                  "marketingAgree": false
+                            		                }
+                            		                """
+                            		)
                     )
             )
             SignUpDto.RequestSignUp request
