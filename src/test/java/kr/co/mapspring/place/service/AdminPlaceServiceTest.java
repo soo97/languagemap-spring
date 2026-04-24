@@ -21,21 +21,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
+import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
-import kr.co.mapspring.place.dto.AdminSavePlaceDto;
-import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminPlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminPlaceServiceTest {
 
     @InjectMocks
-    private AdminPlaceService adminPlaceService;
+    private AdminPlaceServiceImpl adminPlaceService;
     @Mock
     private PlaceRepository placeRepository;
 
@@ -46,10 +46,10 @@ class AdminPlaceServiceTest {
     private ScenarioRepository scenarioRepository;
 
     @Test
-    @DisplayName("장소 저장 성공")
-    void 장소_저장_성공() {
+    @DisplayName("장소 생성 성공")
+    void 장소_생성_성공() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -80,10 +80,10 @@ class AdminPlaceServiceTest {
     }
 
     @Test
-    @DisplayName("장소 저장 실패 중복된 구글 장소ID")
-    void 장소_저장_실패_중복된_구글_장소ID() {
+    @DisplayName("장소 생성 실패 중복된 구글 장소ID")
+    void 장소_생성_실패_중복된_구글_장소ID() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -105,7 +105,7 @@ class AdminPlaceServiceTest {
     @DisplayName("장소 저장 실패 존재하지 않는 지역")
     void 장소_저장_실패_존재하지_않는_지역() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -127,10 +127,10 @@ class AdminPlaceServiceTest {
     }
     
     @Test
-    @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
-    void 장소_저장_실패_존재하지_않는_시나리오() {
+    @DisplayName("장소 생성 실패 존재하지 않는 시나리오")
+    void 장소_생성_실패_존재하지_않는_시나리오() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")

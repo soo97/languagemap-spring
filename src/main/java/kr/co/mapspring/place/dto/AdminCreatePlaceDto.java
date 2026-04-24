@@ -5,11 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 
-public class AdminSavePlaceDto {
+public class AdminCreatePlaceDto {
 	
 	@Builder
 	@Getter
-	public static class RequestSave {
+	public static class RequestCreate {
 		private String googlePlaceId;
 		private String placeName;
 		private String placeAddress;
