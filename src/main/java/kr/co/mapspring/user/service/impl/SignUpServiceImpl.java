@@ -80,7 +80,7 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     private Terms getActiveTerms(TermsType termsType) {
-        return termsRepository.findByTypeAndActiveTrue(termsType)
+        return termsRepository.findByTermTypeAndActiveTrue(termsType)
                 .orElseThrow(TermsNotFoundException::new);
     }
 

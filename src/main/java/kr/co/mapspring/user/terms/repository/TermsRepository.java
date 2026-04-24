@@ -11,8 +11,7 @@ import kr.co.mapspring.user.terms.enums.TermsType;
 public interface TermsRepository extends JpaRepository<Terms, Long> {
 
     // 활성화된 특정 타입의 약관 1개 조회
-    Optional<Terms> findByTypeAndActiveTrue(TermsType type);
-
+	Optional<Terms> findByTermTypeAndActiveTrue(TermsType termType);
     // 현재 활성화된 약관 전체 조회
     List<Terms> findAllByActiveTrue();
 }

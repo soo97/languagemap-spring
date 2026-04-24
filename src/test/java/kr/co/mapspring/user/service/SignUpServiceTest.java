@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
@@ -89,11 +90,11 @@ class SignUpServiceTest {
         Terms privacyTerms = createTerms(2L, TermsType.PRIVACY, true, true);
         Terms marketingTerms = createTerms(3L, TermsType.MARKETING, false, true);
 
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.SERVICE))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.SERVICE))
                 .willReturn(Optional.of(serviceTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.PRIVACY))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.PRIVACY))
                 .willReturn(Optional.of(privacyTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.MARKETING))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.MARKETING))
                 .willReturn(Optional.of(marketingTerms));
 
         given(userRepository.save(any(User.class)))
@@ -200,11 +201,11 @@ class SignUpServiceTest {
         Terms privacyTerms = createTerms(2L, TermsType.PRIVACY, true, true);
         Terms marketingTerms = createTerms(3L, TermsType.MARKETING, false, true);
 
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.SERVICE))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.SERVICE))
                 .willReturn(Optional.of(serviceTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.PRIVACY))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.PRIVACY))
                 .willReturn(Optional.of(privacyTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.MARKETING))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.MARKETING))
                 .willReturn(Optional.of(marketingTerms));
 
         given(userRepository.save(any(User.class)))
@@ -261,11 +262,11 @@ class SignUpServiceTest {
         Terms privacyTerms = createTerms(2L, TermsType.PRIVACY, true, true);
         Terms marketingTerms = createTerms(3L, TermsType.MARKETING, false, true);
 
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.SERVICE))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.SERVICE))
                 .willReturn(Optional.of(serviceTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.PRIVACY))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.PRIVACY))
                 .willReturn(Optional.of(privacyTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.MARKETING))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.MARKETING))
                 .willReturn(Optional.of(marketingTerms));
 
         given(userRepository.save(any(User.class)))
@@ -369,11 +370,11 @@ class SignUpServiceTest {
         Terms privacyTerms = createTerms(2L, TermsType.PRIVACY, true, true);
         Terms marketingTerms = createTerms(3L, TermsType.MARKETING, false, true);
 
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.SERVICE))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.SERVICE))
                 .willReturn(Optional.of(serviceTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.PRIVACY))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.PRIVACY))
                 .willReturn(Optional.of(privacyTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.MARKETING))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.MARKETING))
                 .willReturn(Optional.of(marketingTerms));
 
         given(userRepository.save(any(User.class)))
@@ -428,11 +429,11 @@ class SignUpServiceTest {
         Terms privacyTerms = createTerms(2L, TermsType.PRIVACY, true, true);
         Terms marketingTerms = createTerms(3L, TermsType.MARKETING, false, true);
 
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.SERVICE))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.SERVICE))
                 .willReturn(Optional.of(serviceTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.PRIVACY))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.PRIVACY))
                 .willReturn(Optional.of(privacyTerms));
-        given(termsRepository.findByTypeAndActiveTrue(TermsType.MARKETING))
+        given(termsRepository.findByTermTypeAndActiveTrue(TermsType.MARKETING))
                 .willReturn(Optional.of(marketingTerms));
 
         given(userRepository.save(any(User.class)))
@@ -442,9 +443,13 @@ class SignUpServiceTest {
         signUpService.signUp(request);
 
         // then
-        then(userTermsAgreementRepository).should().save(any(UserTermsAgreement.class));
-    }
+        ArgumentCaptor<UserTermsAgreement> agreementCaptor =
+                ArgumentCaptor.forClass(UserTermsAgreement.class);
 
+        then(userTermsAgreementRepository).should(times(3)).save(agreementCaptor.capture());
+
+        assertThat(agreementCaptor.getAllValues()).hasSize(3);}
+        
     // 테스트에서 사용할 약관 엔티티 생성 헬퍼
     private Terms createTerms(Long termId, TermsType type, boolean required, boolean active) {
         return Terms.builder()
