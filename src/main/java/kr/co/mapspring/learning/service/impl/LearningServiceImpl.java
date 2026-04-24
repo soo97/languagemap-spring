@@ -2,9 +2,11 @@ package kr.co.mapspring.learning.service.impl;
 
 import kr.co.mapspring.learning.entity.StudyLog;
 import kr.co.mapspring.learning.entity.StudyScore;
+import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.StudyType;
 import kr.co.mapspring.learning.repository.StudyLogRepository;
 import kr.co.mapspring.learning.repository.StudyScoreRepository;
+import kr.co.mapspring.learning.service.LearningGoalService;
 import kr.co.mapspring.learning.service.LearningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class LearningServiceImpl implements LearningService {
 
     private final StudyLogRepository studyLogRepository;
     private final StudyScoreRepository studyScoreRepository;
+    private final LearningGoalService learningGoalService;
 
     @Override
     @Transactional
@@ -39,5 +42,7 @@ public class LearningServiceImpl implements LearningService {
         );
 
         studyScoreRepository.save(studyScore);
+
+        learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
     }
 }

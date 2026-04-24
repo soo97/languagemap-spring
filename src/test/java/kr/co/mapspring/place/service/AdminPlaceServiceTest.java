@@ -124,7 +124,7 @@ class AdminPlaceServiceTest {
         assertThrows(RegionNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
-    
+
     @Test
     @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
     void 장소_저장_실패_존재하지_않는_시나리오() {
@@ -154,7 +154,7 @@ class AdminPlaceServiceTest {
         assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
-    
+
     @Test
     @DisplayName("장소 조회 성공")
     void 장소_조회_성공() {
@@ -167,14 +167,14 @@ class AdminPlaceServiceTest {
 
         Scenario scenario = Scenario.withId(20L);
 
-        Place place = Place.testOf(1L, 
+        Place place = Place.testOf(1L,
         					   "google-place-123",
         					   "스타벅스 강남점",
         					   "인천시 서구",
-        					   "커피를 주문할 수 있는 장소", 
-        					   new BigDecimal("37.12345678"), 
-        					   new BigDecimal("127.12345678"), 
-        					   region, 
+        					   "커피를 주문할 수 있는 장소",
+        					   new BigDecimal("37.12345678"),
+        					   new BigDecimal("127.12345678"),
+        					   region,
         					   scenario);
 
         when(placeRepository.findById(request.getPlaceId()))
@@ -206,7 +206,7 @@ class AdminPlaceServiceTest {
         // when & then
         assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.readPlace(request));
     }
-    
+
     @Test
     @DisplayName("장소 수정 성공")
     void 장소_수정_성공() {

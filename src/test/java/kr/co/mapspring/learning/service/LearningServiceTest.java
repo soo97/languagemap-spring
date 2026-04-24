@@ -2,6 +2,7 @@ package kr.co.mapspring.learning.service;
 
 import kr.co.mapspring.learning.entity.StudyLog;
 import kr.co.mapspring.learning.entity.StudyScore;
+import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.StudyType;
 import kr.co.mapspring.learning.repository.StudyLogRepository;
 import kr.co.mapspring.learning.repository.StudyScoreRepository;
@@ -27,6 +28,9 @@ class LearningServiceTest {
 
     @Mock
     private StudyScoreRepository studyScoreRepository;
+
+    @Mock
+    private LearningGoalService learningGoalService;
 
     @InjectMocks
     private LearningServiceImpl learningService;
@@ -54,7 +58,8 @@ class LearningServiceTest {
                 earnedExp,
                 naturalnessScore,
                 fluencyScore,
-                totalScore);
+                totalScore
+        );
 
         ArgumentCaptor<StudyLog> studyLogCaptor = ArgumentCaptor.forClass(StudyLog.class);
         ArgumentCaptor<StudyScore> studyScoreCaptor = ArgumentCaptor.forClass(StudyScore.class);
@@ -74,6 +79,8 @@ class LearningServiceTest {
         assertEquals(naturalnessScore, savedStudyScore.getNaturalnessScore());
         assertEquals(fluencyScore, savedStudyScore.getFluencyScore());
         assertEquals(totalScore, savedStudyScore.getTotalScore());
+
+        verify(learningGoalService).updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
     }
 
 }
