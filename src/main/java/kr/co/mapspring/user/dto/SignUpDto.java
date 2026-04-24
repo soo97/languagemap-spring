@@ -47,6 +47,15 @@ public class SignUpDto {
     	@NotBlank
         @Schema(description = "비밀번호 확인", example = "1234")
         private String passwordConfirm;
+    	
+    	@Schema(description = "서비스 이용약관 동의 여부", example = "true")
+        private Boolean serviceAgree;
+
+        @Schema(description = "개인정보 수집 및 이용 동의 여부", example = "true")
+        private Boolean privacyAgree;
+
+        @Schema(description = "마케팅 정보 수신 동의 여부", example = "false")
+        private Boolean marketingAgree;
     }
 
     @Getter
