@@ -1,5 +1,5 @@
-package kr.co.mapspring.place.service;
 
+package kr.co.mapspring.place.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +24,8 @@ public class AdminPlaceService {
 	private final PlaceRepository placeRepository;
 	private final RegionRepository regionRepository;
 	private final ScenarioRepository scenarioRepository;
+
+	// 장소 생성
 
 	// 장소 저장
 	@Transactional
