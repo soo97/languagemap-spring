@@ -20,15 +20,15 @@ import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateMissionDto;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.place.enums.MissionStatus;
 import kr.co.mapspring.place.repository.MissionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminMissionServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminMissionServiceTest {
 
     @InjectMocks
-    private AdminMissionService adminMissionService;
+    private AdminMissionServiceImpl adminMissionService;
 
     @Mock
     private MissionRepository missionRepository;

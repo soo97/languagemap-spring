@@ -29,12 +29,13 @@ import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminPlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminPlaceServiceTest {
 
     @InjectMocks
-    private AdminPlaceService adminPlaceService;
+    private AdminPlaceServiceImpl adminPlaceService;
     @Mock
     private PlaceRepository placeRepository;
 

@@ -22,12 +22,13 @@ import kr.co.mapspring.place.dto.AdminReadScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.enums.ScenarioLevel;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminScenarioServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminScenarioServiceTest {
 
     @InjectMocks
-    private AdminScenarioService scenarioService;
+    private AdminScenarioServiceImpl scenarioService;
 
     @Mock
     private ScenarioRepository scenarioRepository;
@@ -109,7 +110,7 @@ class AdminScenarioServiceTest {
     void 시나리오_조회_실패_존재하지_않는_시나리오() {
         // given
         Long scenarioId = 999L;
-
+        
         AdminReadScenarioDto.RequestRead request = AdminReadScenarioDto.RequestRead.builder()
                 .scenarioId(scenarioId)
                 .build();
