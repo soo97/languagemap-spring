@@ -52,7 +52,7 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 	// 시나리오 리스트 조회 및 검색
 	@Override
 	@Transactional(readOnly = true)
-	public List<AdminScenarioListDto.ResponseList> ScenarioList(String keyword) {
+	public List<AdminScenarioListDto.ResponseList> scenarioList(String keyword) {
 		
 		List<AdminScenarioListDto.ResponseList> responseList;
 		
