@@ -92,7 +92,7 @@ public interface AuthControllerDocs {
             )
             LoginDto.RequestLogin request
     );
-
+    
     @Operation(
             summary = "회원가입",
             description = "이름, 생년월일, 주소, 전화번호, 이메일, 비밀번호를 입력받아 회원가입을 처리합니다."
