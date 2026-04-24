@@ -16,7 +16,7 @@ public class CoachingEntryDto {
         private String placeName;
         private String country;
         private String city;
-        private String placeDescription;
+        private String placeAddress;
         private String evaluation;
         private List<ResponseMessageItem> sessionMessages;
     }
