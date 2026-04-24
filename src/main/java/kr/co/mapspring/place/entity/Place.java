@@ -50,7 +50,7 @@ public class Place {
 	@JoinColumn(name = "scenario_id", nullable = false)
 	private Scenario scenario;
 	
-	public static Place of(String googlePlaceId,
+	public static Place create (String googlePlaceId,
 						   String placeName,
 						   String placeAddress,
 						   String placeDescription,
