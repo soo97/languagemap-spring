@@ -15,6 +15,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import kr.co.mapspring.user.terms.enums.TermsType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -53,6 +54,26 @@ public class Terms {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+    
+    // 테스트용 코드
+    @Builder
+    private Terms(
+            Long termId,
+            String title,
+            String content,
+            String version,
+            TermsType type,
+            boolean required,
+            boolean active
+    ) {
+        this.termId = termId;
+        this.title = title;
+        this.content = content;
+        this.version = version;
+        this.termType = type;
+        this.required = required;
+        this.active = active;
+    }
     
     @PrePersist
     protected void prePersist() {
