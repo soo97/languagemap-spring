@@ -100,7 +100,7 @@ class CoachingEntryServiceTest {
         sessionEvaluation = createInstance(SessionEvaluation.class);
         setField(sessionEvaluation, "evaluationId", 1000L);
         setField(sessionEvaluation, "session", learningSession);
-        setField(sessionEvaluation, "evaluation", "발음 보통, 표현 좋음, 속도 개선 필요");
+        setField(sessionEvaluation, "evaluation", "표현 좋음, 속도 개선 필요");
     }
 
     @Test
@@ -125,8 +125,8 @@ class CoachingEntryServiceTest {
         assertThat(response.getPlaceName()).isEqualTo("Cafe Stage 888");
         assertThat(response.getCountry()).isEqualTo("Australia");
         assertThat(response.getCity()).isEqualTo("Sydney");
-        assertThat(response.getPlaceDescription()).isEqualTo("Sydney CBD cafe");
-        assertThat(response.getEvaluation()).isEqualTo("발음 보통, 표현 좋음, 속도 개선 필요");
+        assertThat(response.getPlaceAddress()).isEqualTo("인천시 서구");
+        assertThat(response.getEvaluation()).isEqualTo("표현 좋음, 속도 개선 필요");
         assertThat(response.getSessionMessages()).hasSize(2);
         assertThat(response.getSessionMessages().get(0).getRole()).isEqualTo(SessionMessageRole.USER);
         assertThat(response.getSessionMessages().get(0).getMessage()).isEqualTo("I would like a latte.");
