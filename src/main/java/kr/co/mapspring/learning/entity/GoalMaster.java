@@ -68,7 +68,7 @@ public class GoalMaster {
     }
 
     @PreUpdate
-    public void preUpdate() {
+    protected void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 

@@ -65,13 +65,13 @@ public class UserGoal {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    protected void onCreate() {
+    protected void PreCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    protected void PreUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
