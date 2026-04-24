@@ -279,6 +279,68 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
     }
     
+    @Test
+    @DisplayName("서비스 이용약관에 동의하지 않으면 400 실패 응답을 반환한다")
+    void signUpFailWhenServiceTermsNotAgreed() throws Exception {
+        // given
+        given(signUpService.signUp(ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willThrow(new CustomException(ErrorCode.SERVICE_TERMS_REQUIRED));
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234",
+                  "serviceAgree": false,
+                  "privacyAgree": true,
+                  "marketingAgree": false
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("서비스 이용약관 동의는 필수입니다."));
+    }
     
+    @Test
+    @DisplayName("개인정보 수집 및 이용에 동의하지 않으면 400 실패 응답을 반환한다")
+    void signUpFailWhenPrivacyTermsNotAgreed() throws Exception {
+        // given
+        given(signUpService.signUp(ArgumentMatchers.any(SignUpDto.RequestSignUp.class)))
+                .willThrow(new CustomException(ErrorCode.PRIVACY_TERMS_REQUIRED));
+
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000-01-01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234",
+                  "serviceAgree": true,
+                  "privacyAgree": false,
+                  "marketingAgree": false
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("개인정보 수집 및 이용 동의는 필수입니다."));
+    }
     
 }
