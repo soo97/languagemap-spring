@@ -41,5 +41,12 @@ public interface AdminScenarioService {
 	 */
 	void deleteScenario(Long ScenarioId);
 	
+	/**
+	 * 관리자 시나리오 검색 및 조회 기능
+	 * 
+	 * @param keyword 검색시 필요한 키워드, 카테고리 종류로 검색 
+	 * 		  ex) 카페, 공항 등.... null이나 빈칸이라면 전체 조회
+	 * @return 조회된 시나리오 리스트 
+	 */
 	List<AdminScenarioListDto.ResponseList> scenarioList(String keyword);
 }
