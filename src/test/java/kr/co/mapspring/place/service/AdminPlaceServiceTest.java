@@ -308,4 +308,51 @@ class AdminPlaceServiceTest {
         // when & then
         assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.updatePlace(placeId, request));
     }
+    
+    @Test
+    @DisplayName("장소 삭제 성공")
+    void 장소_삭제_성공() {
+        // given
+        Long placeId = 1L;
+
+        Region region = Region.withId(1L);
+        Scenario scenario = Scenario.withId(1L);
+
+        Place place = Place.testOf(
+                placeId,
+                "google-place-123",
+                "스타벅스 강남점",
+                "인천시 서구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.of(place));
+
+        // when
+        adminPlaceService.deletePlace(placeId);
+
+        // then
+        verify(placeRepository, times(1)).delete(place);
+    }
+    
+    @Test
+    @DisplayName("장소 삭제 실패 존재하지 않는 장소")
+    void 장소_삭제_실패_존재하지_않는_장소() {
+        // given
+        Long placeId = 999L;
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(PlaceNotFoundException.class,
+                () -> adminPlaceService.deletePlace(placeId));
+
+        verify(placeRepository, never()).delete(any());
+    }
 }

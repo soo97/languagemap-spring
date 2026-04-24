@@ -7,10 +7,11 @@ import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 
 public interface AdminPlaceService {
 
-	 void savePlace(AdminCreatePlaceDto.RequestCreate request);
+	void savePlace(AdminCreatePlaceDto.RequestCreate request);
 		
-	 AdminReadPlaceDto.ResponseRead readPlace(AdminReadPlaceDto.RequestRead request); 
+	AdminReadPlaceDto.ResponseRead readPlace(AdminReadPlaceDto.RequestRead request); 
 	 
-	 void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request);
-		
+	void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request);
+	
+	void deletePlace(Long PlaceId);
 }

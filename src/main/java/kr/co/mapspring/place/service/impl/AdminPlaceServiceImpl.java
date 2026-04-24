@@ -93,5 +93,17 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 					 request.getPlaceDescription(),
 					 scenario); 
 	}
+	
+	// 장소 삭제
+	@Override
+	@Transactional
+	public void deletePlace(Long placeId) {
+		
+		Place place = placeRepository.findById(placeId)
+				.orElseThrow(PlaceNotFoundException::new);
+		
+		placeRepository.delete(place);
+		
+	}
 
 }
