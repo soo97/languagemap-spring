@@ -158,8 +158,8 @@ class AdminPlaceServiceTest {
     }
     
     @Test
-    @DisplayName("장소 조회 성공")
-    void 장소_조회_성공() {
+    @DisplayName("장소 상세 조회 성공")
+    void 장소_상세_조회_성공() {
         // given
         AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(1L)
@@ -195,8 +195,8 @@ class AdminPlaceServiceTest {
     }
 
     @Test
-    @DisplayName("장소 조회 실패 존재하지 않는 장소")
-    void 장소_조회_실패_존재하지_않는_장소() {
+    @DisplayName("장소 상세 조회 실패 존재하지 않는 장소")
+    void 장소_상세_조회_실패_존재하지_않는_장소() {
         // given
         AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(99L)

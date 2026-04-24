@@ -61,7 +61,7 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 		placeRepository.save(place);
 	}
 	
-	// 장소 조회
+	// 장소 상세 조회
 	@Override
 	@Transactional(readOnly = true)
 	public AdminReadPlaceDto.ResponseRead readPlace(AdminReadPlaceDto.RequestRead request) {
