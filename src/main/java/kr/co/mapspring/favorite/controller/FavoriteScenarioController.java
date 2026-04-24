@@ -1,5 +1,6 @@
 package kr.co.mapspring.favorite.controller;
 
+import kr.co.mapspring.favorite.controller.docs.FavoriteScenarioControllerDocs;
 import kr.co.mapspring.favorite.dto.FavoriteScenarioDto;
 import kr.co.mapspring.favorite.entity.FavoriteScenario;
 import kr.co.mapspring.favorite.service.FavoriteScenarioService;
@@ -17,10 +18,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/favorites/scenarios")
-public class FavoriteScenarioController {
+public class FavoriteScenarioController implements FavoriteScenarioControllerDocs {
 
     private final FavoriteScenarioService favoriteScenarioService;
 
+    @Override
     @PostMapping
     public void addFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestAddFavoriteScenario request) {
         favoriteScenarioService.addFavoriteScenario(
@@ -29,6 +31,7 @@ public class FavoriteScenarioController {
         );
     }
 
+    @Override
     @DeleteMapping
     public void removeFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestRemoveFavoriteScenario request) {
         favoriteScenarioService.removeFavoriteScenario(
@@ -37,6 +40,7 @@ public class FavoriteScenarioController {
         );
     }
 
+    @Override
     @GetMapping
     public List<FavoriteScenarioDto.ResponseFavoriteScenario> getFavoriteScenarios(@RequestParam Long userId) {
         List<FavoriteScenario> favoriteScenarios = favoriteScenarioService.getFavoriteScenarios(userId);

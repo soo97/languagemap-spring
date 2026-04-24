@@ -1,5 +1,6 @@
 package kr.co.mapspring.favorite.controller;
 
+import kr.co.mapspring.favorite.controller.docs.FavoritePlaceControllerDocs;
 import kr.co.mapspring.favorite.dto.FavoritePlaceDto;
 import kr.co.mapspring.favorite.entity.FavoritePlace;
 import kr.co.mapspring.favorite.service.FavoritePlaceService;
@@ -17,10 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/favorites/places")
 @RequiredArgsConstructor
-public class FavoritePlaceController {
+public class FavoritePlaceController implements FavoritePlaceControllerDocs {
 
     private final FavoritePlaceService favoritePlaceService;
 
+    @Override
     @PostMapping
     public void addFavoritePlace(@RequestBody FavoritePlaceDto.RequestAddFavoritePlace request) {
         favoritePlaceService.addFavoritePlace(
@@ -29,6 +31,7 @@ public class FavoritePlaceController {
         );
     }
 
+    @Override
     @DeleteMapping
     public void removeFavoritePlace(@RequestBody FavoritePlaceDto.RequestRemoveFavoritePlace request) {
         favoritePlaceService.removeFavoritePlace(
@@ -37,6 +40,7 @@ public class FavoritePlaceController {
         );
     }
 
+    @Override
     @GetMapping
     public List<FavoritePlaceDto.ResponseFavoritePlace> getFavoritePlaces(@RequestParam Long userId) {
         List<FavoritePlace> favoritePlaces = favoritePlaceService.getFavoritePlaces(userId);
