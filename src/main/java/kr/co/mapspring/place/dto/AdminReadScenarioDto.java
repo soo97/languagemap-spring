@@ -22,7 +22,7 @@ public class AdminReadScenarioDto {
 		private String category;
 		private Integer completeExp;
 		
-		public static AdminReadScenarioDto.ResponseRead from (Scenario scenario) {
+		public static AdminReadScenarioDto.ResponseRead from(Scenario scenario) {
 			
 			return AdminReadScenarioDto.ResponseRead.builder()
 					.prompt(scenario.getPrompt())

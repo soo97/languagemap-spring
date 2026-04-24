@@ -83,12 +83,12 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 			
 		Place place = placeRepository.findById(placeId)
 				.orElseThrow(PlaceNotFoundException::new);
-//
+
 		Long scenarioId = request.getScenarioId();
-//
+
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);
-//		
+		
 		place.update(request.getPlaceName(),
 					 request.getPlaceDescription(),
 					 scenario); 

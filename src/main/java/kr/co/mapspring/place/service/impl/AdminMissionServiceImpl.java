@@ -22,7 +22,7 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 	// 미션 생성
 	@Override
 	@Transactional
-	public void createMission (AdminCreateMissionDto.RequestCreate request) {
+	public void createMission(AdminCreateMissionDto.RequestCreate request) {
 		
 		Long scenarioId = request.getScenarioId();
 		
