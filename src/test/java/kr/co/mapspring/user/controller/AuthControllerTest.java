@@ -157,4 +157,32 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.message").value("비활성 사용자입니다."));
     }
+    
+    @Test
+    @DisplayName("생년월일 형식이 올바르지 않으면 400 실패 응답을 반환한다")
+    void signUpFailWhenBirthDateFormatIsInvalid() throws Exception {
+        // given
+        String requestBody = """
+                {
+                  "name": "홍길동",
+                  "birthDate": "2000/01/01",
+                  "address": "서울시 강남구",
+                  "phoneNumber": "010-1234-5678",
+                  "email": "test@naver.com",
+                  "password": "1234",
+                  "passwordConfirm": "1234"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message")
+                        .value("생년월일 형식이 올바르지 않습니다. yyyy-MM-dd 형식으로 입력해주세요."));
+    }
+    
 }

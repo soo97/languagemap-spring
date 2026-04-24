@@ -43,7 +43,7 @@ class SignUpServiceTest {
         // 회원가입 요청 객체를 만든다.
         SignUpDto.RequestSignUp request = new SignUpDto.RequestSignUp(
                 "홍길동",
-                "2000-01-01",
+                LocalDate.of(2000, 1, 1),
                 "서울시 강남구",
                 "010-1234-5678",
                 "test@naver.com",
@@ -93,7 +93,7 @@ class SignUpServiceTest {
         // 이미 가입된 이메일로 회원가입 요청을 만든다.
         SignUpDto.RequestSignUp request = new SignUpDto.RequestSignUp(
                 "홍길동",
-                "2000-01-01",
+                LocalDate.of(2000, 1, 1),
                 "서울시 강남구",
                 "010-1234-5678",
                 "test@naver.com",
@@ -120,7 +120,7 @@ class SignUpServiceTest {
         // 비밀번호와 비밀번호 확인값이 서로 다른 회원가입 요청을 만든다.
         SignUpDto.RequestSignUp request = new SignUpDto.RequestSignUp(
                 "홍길동",
-                "2000-01-01",
+                LocalDate.of(2000, 1, 1),
                 "서울시 강남구",
                 "010-1234-5678",
                 "test@naver.com",
@@ -146,7 +146,7 @@ class SignUpServiceTest {
         // given
         SignUpDto.RequestSignUp request = new SignUpDto.RequestSignUp(
                 "홍길동",
-                "2000-01-01",
+                LocalDate.of(2000, 1, 1),
                 "서울시 강남구",
                 "010-1234-5678",
                 "test@naver.com",
@@ -195,7 +195,7 @@ class SignUpServiceTest {
         // given
         SignUpDto.RequestSignUp request = new SignUpDto.RequestSignUp(
                 "홍길동",
-                "2000-01-01",
+                LocalDate.of(2000, 1, 1),
                 "서울시 강남구",
                 "010-1234-5678",
                 "test@naver.com",
@@ -238,4 +238,6 @@ class SignUpServiceTest {
         assertThat(capturedUser.getRole())
                 .isEqualTo(kr.co.mapspring.user.enums.UserRole.USER);
     }
+    
+    
 }
