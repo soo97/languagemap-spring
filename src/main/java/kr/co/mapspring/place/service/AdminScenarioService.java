@@ -3,7 +3,7 @@ package kr.co.mapspring.place.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.mapspring.place.dto.AdminSaveScenarioDto;
+import kr.co.mapspring.place.dto.AdminCreateScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.ScenarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class AdminScenarioService {
 	
 	// 시나리오 생성
 	@Transactional
-	public void saveScenario(AdminSaveScenarioDto.RequestSave request) {
+	public void createScenario(AdminCreateScenarioDto.RequestCreate request) {
 		
-		Scenario scenario = Scenario.of(request.getPrompt(),
+		Scenario scenario = Scenario.create(request.getPrompt(),
 										request.getScenarioDescription(),
 										request.getCompleteExp(),
 										request.getLevel(),

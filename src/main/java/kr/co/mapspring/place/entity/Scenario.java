@@ -40,7 +40,7 @@ public class Scenario {
 	@Column(name = "category", nullable = false, length = 50)
 	private String category;
 	
-	public static Scenario of(String prompt,
+	public static Scenario create(String prompt,
 							  String scenarioDescription,
 							  Integer completeExp,
 							  ScenarioLevel level,

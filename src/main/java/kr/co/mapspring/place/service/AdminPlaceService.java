@@ -7,9 +7,8 @@ import kr.co.mapspring.global.exception.place.PlaceAlreadyExistsException;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
+import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
-import kr.co.mapspring.place.dto.AdminSavePlaceDto;
-import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -27,10 +26,8 @@ public class AdminPlaceService {
 	private final ScenarioRepository scenarioRepository;
 
 	// 장소 생성
-
-	// 장소 저장
 	@Transactional
-	public void savePlace(AdminSavePlaceDto.RequestSave request) {
+	public void savePlace(AdminCreatePlaceDto.RequestCreate request) {
 		
 		Long regionId = request.getRegionId();
 		Long scenarioId = request.getScenarioId();
@@ -48,7 +45,7 @@ public class AdminPlaceService {
 		Scenario scenarioEntity = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);
 		
-		Place place = Place.of(request.getGooglePlaceId(),
+		Place place = Place.create(request.getGooglePlaceId(),
 							   request.getPlaceName(),
 							   request.getPlaceAddress(),
 							   request.getPlaceDescription(),
