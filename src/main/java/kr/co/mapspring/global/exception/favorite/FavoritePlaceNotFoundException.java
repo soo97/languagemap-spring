@@ -1,7 +1,10 @@
 package kr.co.mapspring.global.exception.favorite;
 
-public class FavoritePlaceNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
-    public FavoritePlaceNotFoundException() { super("존재하지 않는 즐겨찾기 장소입니다."); }
+public class FavoritePlaceNotFoundException extends CustomException {
+
+    public FavoritePlaceNotFoundException() { super(ErrorCode.FAVORITE_PLACE_NOT_FOUND); }
 
 }

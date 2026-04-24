@@ -15,8 +15,15 @@ public enum ErrorCode {
     //User 로그인용
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
-    INACTIVE_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다."),;
-	
+    INACTIVE_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다."),
+
+    // ===== Favorite =====
+    FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
+    FAVORITE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 장소입니다."),
+
+    FAVORITE_SCENARIO_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 시나리오입니다."),
+    FAVORITE_SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 시나리오입니다."),;
+
 
     private final HttpStatus status;
     private final String message;
