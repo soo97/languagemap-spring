@@ -71,4 +71,21 @@ public class AdminPlaceService {
 		
 		return response;
 	}
+	
+	// 장소 수정
+	@Transactional
+	public void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request) {
+		
+		Place place = placeRepository.findById(placeId)
+				.orElseThrow(PlaceNotFoundException::new);
+		
+		Long scenarioId = request.getScenarioId();
+		
+		Scenario scenario = scenarioRepository.findById(scenarioId)
+				.orElseThrow(ScenarioNotFoundException::new);
+		
+		place.update(request.getPlaceName(),
+				 request.getPlaceDescription(),
+				 scenario);
+	}
 }
