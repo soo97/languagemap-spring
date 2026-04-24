@@ -49,4 +49,11 @@ public class CoachingSession {
 	public void prePersist() {
 		this.studiedAt = LocalDateTime.now();
 	}
+	
+	public static CoachingSession start(LearningSession learningSession) {
+	    CoachingSession coachingSession = new CoachingSession();
+	    coachingSession.learningSession = learningSession;
+	    coachingSession.coachingSessionStatus = CoachingSessionStatus.RUNNING;
+	    return coachingSession;
+	}
 }

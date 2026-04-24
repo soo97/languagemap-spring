@@ -16,7 +16,6 @@ import lombok.*;
 @Entity
 @Table(name = "place")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 public class Place {
 	
@@ -95,5 +94,14 @@ public class Place {
 		place.scenario = scenario;
 		return place;
 		
+	}
+
+	public void update(String placeName, 
+			  	   String placeDescription, 
+			  	   Scenario scenario) 
+	{
+		this.placeName = placeName;
+		this.placeDescription = placeDescription;
+		this.scenario = scenario;
 	}
 }

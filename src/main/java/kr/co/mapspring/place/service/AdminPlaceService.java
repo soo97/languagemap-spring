@@ -1,5 +1,5 @@
-package kr.co.mapspring.place.service;
 
+package kr.co.mapspring.place.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +9,7 @@ import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
 import kr.co.mapspring.place.dto.AdminSavePlaceDto;
+import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -24,6 +25,8 @@ public class AdminPlaceService {
 	private final PlaceRepository placeRepository;
 	private final RegionRepository regionRepository;
 	private final ScenarioRepository scenarioRepository;
+
+	// 장소 생성
 
 	// 장소 저장
 	@Transactional
@@ -70,5 +73,22 @@ public class AdminPlaceService {
 		AdminReadPlaceDto.ResponseRead response = AdminReadPlaceDto.ResponseRead.from(place);
 		
 		return response;
+	}
+	
+	// 장소 수정
+	@Transactional
+	public void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request) {
+		
+		Place place = placeRepository.findById(placeId)
+				.orElseThrow(PlaceNotFoundException::new);
+		
+		Long scenarioId = request.getScenarioId();
+		
+		Scenario scenario = scenarioRepository.findById(scenarioId)
+				.orElseThrow(ScenarioNotFoundException::new);
+		
+		place.update(request.getPlaceName(),
+				 request.getPlaceDescription(),
+				 scenario);
 	}
 }

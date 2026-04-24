@@ -7,15 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "region")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 public class Region {
 	
@@ -31,7 +28,7 @@ public class Region {
 	private String city;
 	
 	// 테스트 코드 실행용
-	public static Region from(Long regionId) {
+	public static Region withId(Long regionId) {
 		Region region = new Region();
 		region.regionId = regionId;
 		return region;
