@@ -4,6 +4,7 @@ import kr.co.mapspring.favorite.controller.docs.FavoriteScenarioControllerDocs;
 import kr.co.mapspring.favorite.dto.FavoriteScenarioDto;
 import kr.co.mapspring.favorite.entity.FavoriteScenario;
 import kr.co.mapspring.favorite.service.FavoriteScenarioService;
+import kr.co.mapspring.global.dto.ApiResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,30 +25,28 @@ public class FavoriteScenarioController implements FavoriteScenarioControllerDoc
 
     @Override
     @PostMapping
-    public void addFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestAddFavoriteScenario request) {
-        favoriteScenarioService.addFavoriteScenario(
-                request.getUserId(),
-                request.getScenarioId()
-        );
+    public ApiResponseDTO<Void> addFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestAddFavoriteScenario request) {
+        favoriteScenarioService.addFavoriteScenario(request.getUserId(), request.getScenarioId());
+        return ApiResponseDTO.success("즐겨찾기 추가 완료");
     }
 
     @Override
     @DeleteMapping
-    public void removeFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestRemoveFavoriteScenario request) {
-        favoriteScenarioService.removeFavoriteScenario(
-                request.getUserId(),
-                request.getScenarioId()
-        );
+    public ApiResponseDTO<Void> removeFavoriteScenario(@RequestBody FavoriteScenarioDto.RequestRemoveFavoriteScenario request) {
+        favoriteScenarioService.removeFavoriteScenario(request.getUserId(), request.getScenarioId());
+        return ApiResponseDTO.success("즐겨찾기 삭제 완료");
     }
 
     @Override
     @GetMapping
-    public List<FavoriteScenarioDto.ResponseFavoriteScenario> getFavoriteScenarios(@RequestParam Long userId) {
-        List<FavoriteScenario> favoriteScenarios = favoriteScenarioService.getFavoriteScenarios(userId);
+    public ApiResponseDTO<List<FavoriteScenarioDto.ResponseFavoriteScenario>> getFavoriteScenarios(@RequestParam Long userId) {
+        List<FavoriteScenarioDto.ResponseFavoriteScenario> result =
+                favoriteScenarioService.getFavoriteScenarios(userId)
+                        .stream()
+                        .map(FavoriteScenarioDto.ResponseFavoriteScenario::from)
+                        .toList();
 
-        return favoriteScenarios.stream()
-                .map(FavoriteScenarioDto.ResponseFavoriteScenario::from)
-                .toList();
+        return ApiResponseDTO.success(result);
     }
 
 }
