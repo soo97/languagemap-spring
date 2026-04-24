@@ -71,6 +71,15 @@ public class Place {
 		return place;
 	}
 	
+	public void update(String placeName, 
+		  	   String placeDescription, 
+		  	   Scenario scenario) 
+	{
+	this.placeName = placeName;
+	this.placeDescription = placeDescription;
+	this.scenario = scenario;
+	}
+	
 	// 테스트 코드 실행용
 	public static Place testOf (Long placeId,
 							    String googlePlaceId,
@@ -95,14 +104,5 @@ public class Place {
 		return place;
 		
 	}
-
-	public void update(String placeName, 
-		  	   String placeDescription, 
-		  	   Scenario scenario) 
-{
-	this.placeName = placeName;
-	this.placeDescription = placeDescription;
-	this.scenario = scenario;
-}
 	
 }
