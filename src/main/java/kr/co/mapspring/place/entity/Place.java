@@ -97,11 +97,12 @@ public class Place {
 	}
 
 	public void update(String placeName, 
-			  	   String placeDescription, 
-			  	   Scenario scenario) 
-	{
-		this.placeName = placeName;
-		this.placeDescription = placeDescription;
-		this.scenario = scenario;
-	}
+		  	   String placeDescription, 
+		  	   Scenario scenario) 
+{
+	this.placeName = placeName;
+	this.placeDescription = placeDescription;
+	this.scenario = scenario;
+}
+	
 }

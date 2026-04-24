@@ -214,7 +214,6 @@ class AdminPlaceServiceTest {
     void 장소_수정_성공() {
         // given
         Long placeId = 1L;
-
         AdminUpdatePlaceDto.RequestUpdate request = AdminUpdatePlaceDto.RequestUpdate.builder()
                 .placeName("수정된 장소명")
                 .placeDescription("수정된 장소 설명")
@@ -252,7 +251,8 @@ class AdminPlaceServiceTest {
         assertEquals(newScenario, place.getScenario());
     }
 
-    @Test
+
+    @Test 
     @DisplayName("장소 수정 실패 존재하지 않는 장소")
     void 장소_수정_실패_존재하지_않는_장소() {
         // given

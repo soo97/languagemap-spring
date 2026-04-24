@@ -9,6 +9,7 @@ import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
+import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -74,4 +75,23 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 		
 		return response;
 	}
+	
+	// 장소 수정
+	@Override
+	@Transactional
+	public void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request) {
+			
+		Place place = placeRepository.findById(placeId)
+				.orElseThrow(PlaceNotFoundException::new);
+//
+		Long scenarioId = request.getScenarioId();
+//
+		Scenario scenario = scenarioRepository.findById(scenarioId)
+				.orElseThrow(ScenarioNotFoundException::new);
+//		
+		place.update(request.getPlaceName(),
+					 request.getPlaceDescription(),
+					 scenario); 
+	}
+
 }
