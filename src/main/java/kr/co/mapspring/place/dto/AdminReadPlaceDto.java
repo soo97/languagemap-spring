@@ -2,7 +2,6 @@ package kr.co.mapspring.place.dto;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-
 import kr.co.mapspring.place.entity.Place;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,11 +36,13 @@ public class AdminReadPlaceDto {
 							.map(region -> region.getCity())
 							.orElse(null))
 					.scenarioDescription(Optional.ofNullable(place.getScenario())
-							.map(scenario -> scenario.getScenariosDescription())
+							.map(scenario -> scenario.getScenarioDescription())
 							.orElse(null))
 					.build();
 		}
 		
 	}
+	
+		
+	}
 
-}
