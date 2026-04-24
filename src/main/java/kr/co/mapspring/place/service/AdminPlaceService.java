@@ -13,5 +13,4 @@ public interface AdminPlaceService {
 	 
 	 void updatePlace(Long placeId, AdminUpdatePlaceDto.RequestUpdate request);
 		
-		
 }

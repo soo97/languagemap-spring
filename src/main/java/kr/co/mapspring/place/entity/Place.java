@@ -104,4 +104,5 @@ public class Place {
 	this.placeDescription = placeDescription;
 	this.scenario = scenario;
 }
+	
 }
