@@ -1,14 +1,18 @@
 package kr.co.mapspring.global.exception;
 
-import kr.co.mapspring.global.dto.ApiResponseDTO;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
+import kr.co.mapspring.global.dto.ApiResponseDTO;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -41,6 +45,15 @@ public class GlobalExceptionHandler {
                         errors
                 ));
     }
+    
+    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMessageConversionException.class})
+    public ResponseEntity<ApiResponseDTO<Object>> handleRequestBodyParseException(Exception e) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.BAD_REQUEST,
+                        "입력값 검증 실패"
+                ));
+    }
 
     // 모든 예외 처리 (최종 fallback)
     @ExceptionHandler(Exception.class)
@@ -52,18 +65,4 @@ public class GlobalExceptionHandler {
                         "서버 내부 오류가 발생했습니다."
                 ));
     }
-    
- // JSON 요청 바인딩 실패 처리
- // 예: birthDate에 "2000/01/01" 같은 잘못된 날짜 형식이 들어온 경우
- @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
- public ResponseEntity<ApiResponseDTO<Object>> handleHttpMessageNotReadableException(
-         org.springframework.http.converter.HttpMessageNotReadableException e
- ) {
-	 
-     return ResponseEntity.badRequest()
-             .body(ApiResponseDTO.fail(
-                     org.springframework.http.HttpStatus.BAD_REQUEST,
-                     "요청 데이터 형식이 올바르지 않습니다."
-             ));
- }
 }
