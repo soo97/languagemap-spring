@@ -18,6 +18,5 @@ public class StartCoachingSessionDto {
 	        private Long coachingSessionId;
 	        private Long sessionId;
 	        private String coachingSessionStatus;
-	        private String optionType;
 	    }
 }

@@ -14,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class StartCoachingSessionServiceImpl implements StartCoachingSessionService {
 
     private final CoachingSessionRepository coachingSessionRepository;
     private final LearningSessionRepository learningSessionRepository;
 
     @Override
+    @Transactional
     public StartCoachingSessionDto.ResponseStartCoachingSession startCoachingSession(
             StartCoachingSessionDto.RequestStartCoachingSession request) {
 
@@ -36,7 +37,6 @@ public class StartCoachingSessionServiceImpl implements StartCoachingSessionServ
                 .coachingSessionId(coachingSession.getCoachingSessionId())
                 .sessionId(coachingSession.getLearningSession().getSessionId())
                 .coachingSessionStatus(coachingSession.getCoachingSessionStatus().name())
-                .optionType(request.getOptionType())
                 .build();
     }
 }

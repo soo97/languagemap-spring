@@ -73,7 +73,6 @@ class StartCoachingSessionServiceTest {
         assertEquals(100L, response.getCoachingSessionId());
         assertEquals(10L, response.getSessionId());
         assertEquals(CoachingSessionStatus.RUNNING.name(), response.getCoachingSessionStatus());
-        assertEquals("WORD", response.getOptionType());
         verify(coachingSessionRepository).save(any(CoachingSession.class));
     }
 
@@ -104,7 +103,6 @@ class StartCoachingSessionServiceTest {
         assertEquals(200L, response.getCoachingSessionId());
         assertEquals(10L, response.getSessionId());
         assertEquals(CoachingSessionStatus.RUNNING.name(), response.getCoachingSessionStatus());
-        assertEquals("GRAMMAR", response.getOptionType());
         verify(coachingSessionRepository, never()).save(any(CoachingSession.class));
     }
 
