@@ -1,5 +1,7 @@
 package kr.co.mapspring.user.dto;
 
+import java.time.LocalDate;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +25,7 @@ public class SignUpDto {
     	
     	@NotBlank
         @Schema(description = "생년월일", example = "2000-01-01")
-        private String birthDate;
+    	private LocalDate birthDate;
     	
     	@NotBlank
         @Schema(description = "주소", example = "서울시 강남구")
