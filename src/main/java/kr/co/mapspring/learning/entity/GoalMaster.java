@@ -28,6 +28,7 @@ public class GoalMaster {
     @Column(name = "goal_master_id", nullable = false, updatable = false)
     private Long goalMasterId;
 
+//    TODO: 엔티티 확정 후 매핑 예정
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "badge_id", nullable = false)
     @Column(name = "badge_id")
@@ -63,20 +64,38 @@ public class GoalMaster {
     protected void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.isActive = true;
     }
 
     @PreUpdate
-    public void preUpdate() {
+    protected void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public static GoalMaster create(Long badgeId, GoalType goalType, String goalTitle, String goalDescription, Integer targetValue, GoalPeriodType periodType
+    ) {
+        GoalMaster goalMaster = new GoalMaster();
+        goalMaster.badgeId = badgeId;
+        goalMaster.goalType = goalType;
+        goalMaster.goalTitle = goalTitle;
+        goalMaster.goalDescription = goalDescription;
+        goalMaster.targetValue = targetValue;
+        goalMaster.periodType = periodType;
+        goalMaster.isActive = true;
+        return goalMaster;
+    }
 
-    // 테스트 전용 생성 메서드
-    public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType periodType) {
+    // 테스트 전용 메서드
+    public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType periodType, GoalType goalType, Integer targetValue) {
         GoalMaster goalMaster = new GoalMaster();
         goalMaster.goalMasterId = goalMasterId;
         goalMaster.goalTitle = goalTitle;
         goalMaster.periodType = periodType;
+        goalMaster.goalType = goalType;
+        goalMaster.targetValue = targetValue;
+        goalMaster.isActive = true;
+        goalMaster.createdAt = LocalDateTime.now();
+        goalMaster.updatedAt = LocalDateTime.now();
         return goalMaster;
     }
 }
