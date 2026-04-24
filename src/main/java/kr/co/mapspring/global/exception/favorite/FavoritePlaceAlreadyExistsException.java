@@ -1,6 +1,10 @@
 package kr.co.mapspring.global.exception.favorite;
 
-public class FavoritePlaceAlreadyExistsException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
-    public FavoritePlaceAlreadyExistsException() { super("이미 즐겨찾기한 장소입니다."); }
+public class FavoritePlaceAlreadyExistsException extends CustomException {
+
+    public FavoritePlaceAlreadyExistsException() { super(ErrorCode.FAVORITE_PLACE_ALREADY_EXISTS); }
+
 }
