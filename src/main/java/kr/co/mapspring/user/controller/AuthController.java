@@ -1,10 +1,5 @@
 package kr.co.mapspring.user.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.user.controller.docs.AuthControllerDocs;
 import kr.co.mapspring.user.dto.LoginDto;
@@ -12,6 +7,7 @@ import kr.co.mapspring.user.dto.SignUpDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
