@@ -1,6 +1,7 @@
 package kr.co.mapspring.place.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateMissionDto;
@@ -17,6 +18,8 @@ public class AdminMissionService {
 	private final ScenarioRepository scenarioRepository;
 	private final MissionRepository missionRepository;
 	
+	// 미션 생성
+	@Transactional
 	public void createMission (AdminCreateMissionDto.RequestCreate request) {
 		
 		Long scenarioId = request.getScenarioId();
