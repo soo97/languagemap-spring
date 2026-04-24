@@ -23,6 +23,7 @@ import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
+import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -204,5 +205,105 @@ class AdminPlaceServiceTest {
 
         // when & then
         assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.readPlace(request));
+    }
+    
+    @Test
+    @DisplayName("장소 수정 성공")
+    void 장소_수정_성공() {
+        // given
+        Long placeId = 1L;
+        
+        AdminUpdatePlaceDto.RequestUpdate request = AdminUpdatePlaceDto.RequestUpdate.builder()
+                .placeName("수정된 장소명")
+                .placeDescription("수정된 장소 설명")
+                .scenarioId(2L)
+                .build();
+
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
+        Scenario newScenario = Scenario.withId(2L);
+
+        Place place = Place.testOf(
+                placeId,
+                "google-place-123",
+                "기존 장소명",
+                "인천시 서구",
+                "기존 장소 설명",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                oldScenario
+        );
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.of(place));
+
+        when(scenarioRepository.findById(request.getScenarioId()))
+                .thenReturn(Optional.of(newScenario));
+
+        // when
+        adminPlaceService.updatePlace(placeId, request);
+
+        // then
+        assertEquals("수정된 장소명", place.getPlaceName());
+        assertEquals("수정된 장소 설명", place.getPlaceDescription());
+        assertEquals(newScenario, place.getScenario());
+    }
+
+    @Test 
+    @DisplayName("장소 수정 실패 존재하지 않는 장소")
+    void 장소_수정_실패_존재하지_않는_장소() {
+        // given
+        Long placeId = 999L;
+
+        AdminUpdatePlaceDto.RequestUpdate request = AdminUpdatePlaceDto.RequestUpdate.builder()
+                .placeName("수정된 장소명")
+                .placeDescription("수정된 장소 설명")
+                .scenarioId(2L)
+                .build();
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.updatePlace(placeId, request));
+        verify(scenarioRepository, never()).findById(any());
+    }
+
+    @Test
+    @DisplayName("장소 수정 실패 존재하지 않는 시나리오")
+    void 장소_수정_실패_존재하지_않는_시나리오() {
+        // given
+        Long placeId = 1L;
+
+        AdminUpdatePlaceDto.RequestUpdate request = AdminUpdatePlaceDto.RequestUpdate.builder()
+                .placeName("수정된 장소명")
+                .placeDescription("수정된 장소 설명")
+                .scenarioId(999L)
+                .build();
+
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
+
+        Place place = Place.testOf(
+                placeId,
+                "google-place-123",
+                "기존 장소명",
+                "인천시 서구",
+                "기존 장소 설명",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                oldScenario
+        );
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.of(place));
+
+        when(scenarioRepository.findById(request.getScenarioId()))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.updatePlace(placeId, request));
     }
 }
