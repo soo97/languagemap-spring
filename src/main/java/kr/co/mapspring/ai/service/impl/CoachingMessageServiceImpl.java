@@ -54,6 +54,9 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
 
     @Override
     public CoachingMessageDto.ResponseGetCoachingMessages getCoachingMessages(Long coachingSessionId) {
+        coachingSessionRepository.findById(coachingSessionId)
+                .orElseThrow(CoachingSessionNotFoundException::new);
+
         List<CoachingMessageDto.ResponseCoachingMessage> messages = coachingMessageRepository
                 .findByCoachingSession_CoachingSessionIdOrderByCreatedAtAsc(coachingSessionId)
                 .stream()

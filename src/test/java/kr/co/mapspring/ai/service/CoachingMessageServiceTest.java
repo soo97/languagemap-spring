@@ -266,10 +266,27 @@ class CoachingMessageServiceTest {
 
         verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));
     }
+    
+    @Test
+    @DisplayName("코칭 메시지 목록 조회 실패 - 코칭 세션이 존재하지 않는다")
+    void 코칭_메시지_목록_조회_실패_세션없음() {
+        Long coachingSessionId = 999L;
+
+        when(coachingSessionRepository.findById(coachingSessionId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> coachingMessageService.getCoachingMessages(coachingSessionId))
+                .isInstanceOf(CoachingSessionNotFoundException.class)
+                .hasMessage("코칭 세션을 찾을 수 없습니다.");
+
+        verify(coachingMessageRepository, never())
+                .findByCoachingSession_CoachingSessionIdOrderByCreatedAtAsc(coachingSessionId);
+    }
 
     @Test
     @DisplayName("코칭 메시지 목록 조회 성공")
     void 코칭_메시지_목록_조회_성공() {
+        when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession)); 
         when(coachingMessageRepository.findByCoachingSession_CoachingSessionIdOrderByCreatedAtAsc(100L))
                 .thenReturn(List.of(userMessage, assistantMessage));
 
@@ -285,6 +302,7 @@ class CoachingMessageServiceTest {
     @Test
     @DisplayName("코칭 메시지 목록 조회 성공 - 메시지가 없으면 빈 리스트 반환")
     void 코칭_메시지_목록_조회_성공_빈리스트() {
+        when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession)); 
         when(coachingMessageRepository.findByCoachingSession_CoachingSessionIdOrderByCreatedAtAsc(100L))
                 .thenReturn(List.of());
 
@@ -298,6 +316,7 @@ class CoachingMessageServiceTest {
     @Test
     @DisplayName("코칭 메시지 목록 조회 성공 - 생성시간 오름차순")
     void 코칭_메시지_목록_조회_성공_오름차순() {
+        when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession)); 
         when(coachingMessageRepository.findByCoachingSession_CoachingSessionIdOrderByCreatedAtAsc(100L))
                 .thenReturn(List.of(userMessage, assistantMessage));
 
