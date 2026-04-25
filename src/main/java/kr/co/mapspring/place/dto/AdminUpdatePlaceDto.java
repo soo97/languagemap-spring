@@ -12,5 +12,4 @@ public class AdminUpdatePlaceDto {
 		private String placeDescription;
 		private Long scenarioId;
 	}
-
 }
