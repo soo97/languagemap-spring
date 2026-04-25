@@ -20,15 +20,15 @@ import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateMissionDto;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.place.enums.MissionStatus;
 import kr.co.mapspring.place.repository.MissionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminMissionServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminMissionServiceTest {
 
     @InjectMocks
-    private AdminMissionService adminMissionService;
+    private AdminMissionServiceImpl adminMissionService;
 
     @Mock
     private MissionRepository missionRepository;
@@ -43,7 +43,6 @@ class AdminMissionServiceTest {
         AdminCreateMissionDto.RequestCreate request = AdminCreateMissionDto.RequestCreate.builder()
                 .missionTitle("카페에서 주문하기")
                 .missionDescription("카페에서 영어로 커피를 주문하는 미션")
-                .missionStatus(MissionStatus.READY)
                 .scenarioId(1L)
                 .build();
 
@@ -66,7 +65,6 @@ class AdminMissionServiceTest {
         AdminCreateMissionDto.RequestCreate request = AdminCreateMissionDto.RequestCreate.builder()
                 .missionTitle("카페에서 주문하기")
                 .missionDescription("카페에서 영어로 커피를 주문하는 미션")
-                .missionStatus(MissionStatus.READY)
                 .scenarioId(999L)
                 .build();
 
