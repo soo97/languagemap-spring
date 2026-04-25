@@ -1,5 +1,6 @@
 package kr.co.mapspring.learning.service.impl;
 
+import kr.co.mapspring.learning.dto.LearningLogDto;
 import kr.co.mapspring.learning.entity.StudyLog;
 import kr.co.mapspring.learning.entity.StudyScore;
 import kr.co.mapspring.learning.enums.GoalType;
@@ -11,6 +12,8 @@ import kr.co.mapspring.learning.service.LearningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +47,17 @@ public class LearningServiceImpl implements LearningService {
         studyScoreRepository.save(studyScore);
 
         learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
+    }
+
+    @Override
+    public List<LearningLogDto.ResponseLog> getStudyLogs(Long userId) {
+        List<StudyScore> studyScores = studyScoreRepository.findAllByStudyLog_UserId(userId);
+
+        return studyScores.stream()
+                .map(studyScore -> LearningLogDto.ResponseLog.from(
+                        studyScore.getStudyLog(),
+                        studyScore
+                ))
+                .toList();
     }
 }

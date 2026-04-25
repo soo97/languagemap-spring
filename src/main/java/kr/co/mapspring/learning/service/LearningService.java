@@ -1,6 +1,9 @@
 package kr.co.mapspring.learning.service;
 
+import kr.co.mapspring.learning.dto.LearningLogDto;
 import kr.co.mapspring.learning.enums.StudyType;
+
+import java.util.List;
 
 public interface LearningService {
 
@@ -16,4 +19,12 @@ public interface LearningService {
      * @param totalScore 종합 점수
      */
     void recordStudyLog(Long userId, Long sessionId, StudyType studyType, Integer earnedExp, Integer naturalnessScore, Integer fluencyScore, Integer totalScore);
+
+    /**
+     * 사용자의 학습 기록 목록을 조회한다.
+     *
+     * @param userId 사용자 ID
+     * @return 학습 기록 목록
+     */
+    List<LearningLogDto.ResponseLog> getStudyLogs(Long userId);
 }
