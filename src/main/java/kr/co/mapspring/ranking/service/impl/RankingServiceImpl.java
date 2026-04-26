@@ -2,6 +2,7 @@ package kr.co.mapspring.ranking.service.impl;
 
 import jakarta.transaction.Transactional;
 import kr.co.mapspring.ranking.dto.RankingDto;
+import kr.co.mapspring.ranking.repository.RankingRepository;
 import kr.co.mapspring.ranking.service.RankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
