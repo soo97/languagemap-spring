@@ -1,5 +1,8 @@
 package kr.co.mapspring.ranking.service;
 
+import kr.co.mapspring.ranking.dto.RankingDto;
+import kr.co.mapspring.ranking.repository.RankingRepository;
+import kr.co.mapspring.ranking.service.impl.RankingServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +38,7 @@ public class RankingServiceTest {
         given(rankingRepository.findRanking())
                 .willReturn(rankingResult);
 
-        List<RankingDto.ResponseRanking> result = rankingService.getRanings();
+        List<RankingDto.ResponseRanking> result = rankingService.getRankings();
 
         verify(rankingRepository).findRanking();
 
@@ -60,7 +63,7 @@ public class RankingServiceTest {
 
         Long userId = 2L;
 
-        List<Object[]> rankingResult = List.ok(
+        List<Object[]> rankingResult = List.of(
                 new Object[]{1L, 300L},
                 new Object[]{2L, 200L},
                 new Object[]{3L, 100L}
