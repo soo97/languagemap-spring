@@ -152,7 +152,7 @@ public interface AuthControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "생년월일 형식 오류 또는 요청 형식 오류",
+                    description = "입력값 검증 실패",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
@@ -200,6 +200,23 @@ public interface AuthControllerDocs {
                                             """
                             )
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "활성 약관 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 404,
+                                              "message": "활성 약관 정보를 찾을 수 없습니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     ApiResponseDTO<SignUpDto.ResponseSignUp> signUp(
@@ -209,22 +226,22 @@ public interface AuthControllerDocs {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = SignUpDto.RequestSignUp.class),
-                            		examples = @ExampleObject(
-                            		        value = """
-                            		                {
-                            		                  "name": "홍길동",
-                            		                  "birthDate": "2000-01-01",
-                            		                  "address": "서울시 강남구",
-                            		                  "phoneNumber": "010-1234-5678",
-                            		                  "email": "test@naver.com",
-                            		                  "password": "1234",
-                            		                  "passwordConfirm": "1234",
-                            		                  "serviceAgree": true,
-                            		                  "privacyAgree": true,
-                            		                  "marketingAgree": false
-                            		                }
-                            		                """
-                            		)
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "name": "홍길동",
+                                              "birthDate": "2000-01-01",
+                                              "address": "서울시 강남구",
+                                              "phoneNumber": "010-0000-0001",
+                                              "email": "test@test1.com",
+                                              "password": "1234",
+                                              "passwordConfirm": "1234",
+                                              "serviceAgree": true,
+                                              "privacyAgree": true,
+                                              "marketingAgree": false
+                                            }
+                                            """
+                            )
                     )
             )
             SignUpDto.RequestSignUp request
