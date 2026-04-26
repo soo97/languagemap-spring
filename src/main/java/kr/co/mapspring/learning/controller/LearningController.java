@@ -20,7 +20,7 @@ public class LearningController implements LearningControllerDocs {
 
     private LearningService learningService;
 
-    @GetMapping("logs")
+    @GetMapping("/logs")
     public ResponseEntity<ApiResponseDTO<List<LearningLogDto.ResponseLog>>> getStudyLogs(@RequestParam("userId") Long userId) {
         List<LearningLogDto.ResponseLog> result = learningService.getStudyLogs(userId);
 
