@@ -16,23 +16,18 @@ public interface StartCoachingSessionControllerDocs {
 
     @Operation(
             summary = "AI 코칭 세션 시작",
-            description = "지도 학습 세션 ID와 선택 옵션을 기준으로 AI 코칭 세션을 시작한다. 진행 중인 세션이 있으면 기존 세션을 반환한다."
-    )
+            description = "지도 학습 세션 ID와 선택 옵션을 기준으로 AI 코칭 세션을 시작한다. 진행 중인 세션이 있으면 기존 세션을 반환한다.")
+    
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "코칭 세션 시작 성공",
-                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class))
-            ),
+                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class))),
             @ApiResponse(responseCode = "404",
                     description = "학습 세션 없음",
-                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class))
-            ),
+                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class))),
             @ApiResponse(responseCode = "500",
                     description = "서버 오류",
-                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class))
-            )
-    })
+                    content = @Content(schema = @Schema(implementation = ApiResponseDTO.class)))})
     ResponseEntity<ApiResponseDTO<StartCoachingSessionDto.ResponseStartCoachingSession>> startCoachingSession(
-            StartCoachingSessionDto.RequestStartCoachingSession request
-    );
+            StartCoachingSessionDto.RequestStartCoachingSession request);
 }

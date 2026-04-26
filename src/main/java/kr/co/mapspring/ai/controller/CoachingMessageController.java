@@ -40,7 +40,7 @@ public class CoachingMessageController implements CoachingMessageControllerDocs 
     @Override
     @GetMapping("/{coachingSessionId}")
     public ResponseEntity<ApiResponseDTO<CoachingMessageDto.ResponseGetCoachingMessages>> getCoachingMessages(
-            @PathVariable ("coachingSessionId")Long coachingSessionId
+            @PathVariable ("CoachingSessionId")Long coachingSessionId
     ) {
         // 코칭 세션 기준 메시지 목록 조회
         CoachingMessageDto.ResponseGetCoachingMessages response =
