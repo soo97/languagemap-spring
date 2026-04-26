@@ -28,6 +28,14 @@ public enum ErrorCode {
 	PRIVACY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "개인정보 수집 및 이용 동의는 필수입니다."),
 	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "활성 약관 정보를 찾을 수 없습니다.");
 
+    // Favorite Place
+    FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
+    FAVORITE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 장소입니다."),
+
+    // Favorite Scenario
+    FAVORITE_SCENARIO_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 시나리오입니다."),
+    FAVORITE_SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 시나리오입니다.");
+
     private final HttpStatus status;
     private final String message;
 

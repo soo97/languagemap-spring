@@ -40,7 +40,7 @@ public class Scenario {
 	@Column(name = "category", nullable = false, length = 50)
 	private String category;
 	
-	public static Scenario of(String prompt,
+	public static Scenario create(String prompt,
 							  String scenarioDescription,
 							  Integer completeExp,
 							  ScenarioLevel level,
@@ -55,6 +55,19 @@ public class Scenario {
 		return scenario;
 	}
 	
+	public void update(String prompt,
+			   String scenarioDescription,
+			   ScenarioLevel level,
+			   String category,
+			   Integer completeExp) {
+	
+		this.prompt = prompt;
+		this.scenarioDescription = scenarioDescription;
+		this.level = level;
+		this.category = category;
+		this.completeExp = completeExp;
+}
+	
 	// 테스트 코드 실행용
 	public static Scenario withId(Long scenarioId) {
 		Scenario scenario = new Scenario();
@@ -64,6 +77,7 @@ public class Scenario {
 		return scenario;
 	}
 
+	// 테스트 코드 실행용
 	public static Scenario testOf(long scenarioId, 
 								  String prompt, 
 								  String scenarioDescription, 

@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
+import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
-import kr.co.mapspring.place.dto.AdminSavePlaceDto;
 import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -30,12 +30,13 @@ import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
+import kr.co.mapspring.place.service.impl.AdminPlaceServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AdminPlaceServiceTest {
 
     @InjectMocks
-    private AdminPlaceService adminPlaceService;
+    private AdminPlaceServiceImpl adminPlaceService;
     @Mock
     private PlaceRepository placeRepository;
 
@@ -46,10 +47,10 @@ class AdminPlaceServiceTest {
     private ScenarioRepository scenarioRepository;
 
     @Test
-    @DisplayName("장소 저장 성공")
-    void 장소_저장_성공() {
+    @DisplayName("장소 생성 성공")
+    void 장소_생성_성공() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -80,10 +81,10 @@ class AdminPlaceServiceTest {
     }
 
     @Test
-    @DisplayName("장소 저장 실패 중복된 구글 장소ID")
-    void 장소_저장_실패_중복된_구글_장소ID() {
+    @DisplayName("장소 생성 실패 중복된 구글 장소ID")
+    void 장소_생성_실패_중복된_구글_장소ID() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -105,7 +106,7 @@ class AdminPlaceServiceTest {
     @DisplayName("장소 저장 실패 존재하지 않는 지역")
     void 장소_저장_실패_존재하지_않는_지역() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -127,10 +128,10 @@ class AdminPlaceServiceTest {
     }
     
     @Test
-    @DisplayName("장소 저장 실패 존재하지 않는 시나리오")
-    void 장소_저장_실패_존재하지_않는_시나리오() {
+    @DisplayName("장소 생성 실패 존재하지 않는 시나리오")
+    void 장소_생성_실패_존재하지_않는_시나리오() {
         // given
-        AdminSavePlaceDto.RequestSave request = AdminSavePlaceDto.RequestSave.builder()
+        AdminCreatePlaceDto.RequestCreate request = AdminCreatePlaceDto.RequestCreate.builder()
                 .googlePlaceId("csdf34asd")
                 .placeName("스타벅스")
                 .placeDescription("커피 파는 곳")
@@ -157,8 +158,8 @@ class AdminPlaceServiceTest {
     }
     
     @Test
-    @DisplayName("장소 조회 성공")
-    void 장소_조회_성공() {
+    @DisplayName("장소 상세 조회 성공")
+    void 장소_상세_조회_성공() {
         // given
         AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(1L)
@@ -194,8 +195,8 @@ class AdminPlaceServiceTest {
     }
 
     @Test
-    @DisplayName("장소 조회 실패 존재하지 않는 장소")
-    void 장소_조회_실패_존재하지_않는_장소() {
+    @DisplayName("장소 상세 조회 실패 존재하지 않는 장소")
+    void 장소_상세_조회_실패_존재하지_않는_장소() {
         // given
         AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
         		.placeId(99L)
@@ -213,16 +214,15 @@ class AdminPlaceServiceTest {
     void 장소_수정_성공() {
         // given
         Long placeId = 1L;
-
         AdminUpdatePlaceDto.RequestUpdate request = AdminUpdatePlaceDto.RequestUpdate.builder()
                 .placeName("수정된 장소명")
                 .placeDescription("수정된 장소 설명")
                 .scenarioId(2L)
                 .build();
 
-        Region region = Region.from(10L);
-        Scenario oldScenario = Scenario.from(1L);
-        Scenario newScenario = Scenario.from(2L);
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
+        Scenario newScenario = Scenario.withId(2L);
 
         Place place = Place.testOf(
                 placeId,
@@ -251,7 +251,8 @@ class AdminPlaceServiceTest {
         assertEquals(newScenario, place.getScenario());
     }
 
-    @Test
+
+    @Test 
     @DisplayName("장소 수정 실패 존재하지 않는 장소")
     void 장소_수정_실패_존재하지_않는_장소() {
         // given
@@ -283,8 +284,8 @@ class AdminPlaceServiceTest {
                 .scenarioId(999L)
                 .build();
 
-        Region region = Region.from(10L);
-        Scenario oldScenario = Scenario.from(1L);
+        Region region = Region.withId(10L);
+        Scenario oldScenario = Scenario.withId(1L);
 
         Place place = Place.testOf(
                 placeId,
@@ -306,5 +307,52 @@ class AdminPlaceServiceTest {
 
         // when & then
         assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.updatePlace(placeId, request));
+    }
+    
+    @Test
+    @DisplayName("장소 삭제 성공")
+    void 장소_삭제_성공() {
+        // given
+        Long placeId = 1L;
+
+        Region region = Region.withId(1L);
+        Scenario scenario = Scenario.withId(1L);
+
+        Place place = Place.testOf(
+                placeId,
+                "google-place-123",
+                "스타벅스 강남점",
+                "인천시 서구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.of(place));
+
+        // when
+        adminPlaceService.deletePlace(placeId);
+
+        // then
+        verify(placeRepository, times(1)).delete(place);
+    }
+    
+    @Test
+    @DisplayName("장소 삭제 실패 존재하지 않는 장소")
+    void 장소_삭제_실패_존재하지_않는_장소() {
+        // given
+        Long placeId = 999L;
+
+        when(placeRepository.findById(placeId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(PlaceNotFoundException.class,
+                () -> adminPlaceService.deletePlace(placeId));
+
+        verify(placeRepository, never()).delete(any());
     }
 }

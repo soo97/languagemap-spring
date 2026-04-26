@@ -53,7 +53,7 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
                 .placeName(place.getPlaceName())
                 .country(region.getCountry())
                 .city(region.getCity())
-                .placeDescription(place.getPlaceDescription())
+                .placeAddress(place.getPlaceAddress())
                 .evaluation(evaluation)
                 .sessionMessages(messageItems)
                 .build();

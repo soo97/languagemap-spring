@@ -50,7 +50,7 @@ public class Place {
 	@JoinColumn(name = "scenario_id", nullable = false)
 	private Scenario scenario;
 	
-	public static Place of(String googlePlaceId,
+	public static Place create (String googlePlaceId,
 						   String placeName,
 						   String placeAddress,
 						   String placeDescription,
@@ -69,6 +69,15 @@ public class Place {
 		place.scenario = scenario;
 		place.region = region;
 		return place;
+	}
+	
+	public void update(String placeName, 
+		  	   String placeDescription, 
+		  	   Scenario scenario) 
+	{
+	this.placeName = placeName;
+	this.placeDescription = placeDescription;
+	this.scenario = scenario;
 	}
 	
 	// 테스트 코드 실행용
@@ -95,13 +104,5 @@ public class Place {
 		return place;
 		
 	}
-
-	public void update(String placeName, 
-			  	   String placeDescription, 
-			  	   Scenario scenario) 
-	{
-		this.placeName = placeName;
-		this.placeDescription = placeDescription;
-		this.scenario = scenario;
-	}
+	
 }
