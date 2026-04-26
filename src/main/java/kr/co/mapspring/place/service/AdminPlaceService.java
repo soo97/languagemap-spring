@@ -36,4 +36,5 @@ public interface AdminPlaceService {
 	 * @param PlaceId 삭제 장소 조회 Id
 	 */
 	void deletePlace(Long PlaceId);
+
 }
