@@ -1,5 +1,9 @@
 package kr.co.mapspring.ranking.service;
 
+import kr.co.mapspring.ranking.dto.RankingDto;
+
+import java.util.List;
+
 public interface RankingService {
 
     /**
