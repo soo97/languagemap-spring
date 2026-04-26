@@ -19,13 +19,14 @@ public class RankingDto {
             this.userId = userId;
             this.totalScore = totalScore;
         }
+
+        public static ResponseRanking from(int rank, Long userId, Long totalScore) {
+            return ResponseRanking.builder()
+                    .rank(rank)
+                    .userId(userId)
+                    .totalScore(totalScore)
+                    .build();
+        }
     }
 
-    public static ResponseRanking from(int rank, Long userId, Long totalScore) {
-        return ResponseRanking.builder()
-                .rank(rank)
-                .userId(userId)
-                .totalScore(totalScore)
-                .build();
-    }
 }
