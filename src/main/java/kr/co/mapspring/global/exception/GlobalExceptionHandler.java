@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
 
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 
@@ -26,6 +27,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ApiResponseDTO.fail(errorCode.getStatus(), e.getMessage()));
+    }
+    
+    // AI 코칭 리소스 없음 예외 처리
+    @ExceptionHandler(LearningSessionNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleLearningSessionNotFoundException(
+            LearningSessionNotFoundException e
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.NOT_FOUND,
+                        e.getMessage()
+                ));
     }
 
     // @Valid 검증 실패
