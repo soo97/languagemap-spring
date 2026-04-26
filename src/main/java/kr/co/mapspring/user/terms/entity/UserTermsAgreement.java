@@ -61,7 +61,7 @@ public class UserTermsAgreement {
         agreement.user = user;
         agreement.term = term;
         agreement.agreed = agreed;
-        agreement.agreedAt = agreed ? LocalDateTime.now() : null;
+        agreement.agreedAt = LocalDateTime.now();
         return agreement;
     }
 }
