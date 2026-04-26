@@ -1,5 +1,8 @@
 package kr.co.mapspring.ranking.service.impl;
 
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+import kr.co.mapspring.global.exception.ranking.RankingNotFoundException;
 import kr.co.mapspring.ranking.dto.RankingDto;
 import kr.co.mapspring.ranking.repository.RankingRepository;
 import kr.co.mapspring.ranking.service.RankingService;
@@ -44,6 +47,6 @@ public class RankingServiceImpl implements RankingService {
         return getRankings().stream()
                 .filter(ranking -> ranking.getUserId().equals(userId))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(RankingNotFoundException::new);
     }
 }

@@ -34,7 +34,10 @@ public enum ErrorCode {
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),
     GOAL_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 선택한 학습 목표입니다."),
     GOAL_SELECTION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "학습 목표는 최대 3개까지만 선택할 수 있습니다."),
-    USER_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자 목표입니다.");
+    USER_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자 목표입니다."),
+
+    // Ranking
+    RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
