@@ -22,6 +22,7 @@ import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
 import kr.co.mapspring.user.service.impl.LoginServiceImpl;
+import kr.co.mapspring.global.jwt.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
@@ -30,6 +31,9 @@ public class LoginServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+    
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
 
     @InjectMocks
     private LoginServiceImpl loginService;
@@ -51,6 +55,10 @@ public class LoginServiceTest {
         // 비밀번호 일치하도록 mock 설정
         given(passwordEncoder.matches("1234", "encodedPassword"))
                 .willReturn(true);
+        
+    	// JWT Access Token 생성 mock 설정
+        given(jwtTokenProvider.createAccessToken(user))
+                .willReturn("mock-access-token");
 
         // when
         LoginDto.ResponseLogin response = loginService.login(request);
@@ -59,6 +67,7 @@ public class LoginServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getEmail()).isEqualTo("test@naver.com");
         assertThat(response.getName()).isEqualTo("홍길동");
+        assertThat(response.getAccessToken()).isEqualTo("mock-access-token");
     }
 
     private User createUser(String passwordHash) {
