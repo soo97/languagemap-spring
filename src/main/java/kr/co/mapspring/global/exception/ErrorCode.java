@@ -36,6 +36,13 @@ public enum ErrorCode {
     FAVORITE_SCENARIO_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 시나리오입니다."),
     FAVORITE_SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 시나리오입니다."),
 
+    // Friendship
+    USER_NOT_FOUND_FOR_SOCIAL(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    SELF_FRIEND_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+    FRIENDSHIP_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 관계를 찾을 수 없습니다."),
+    FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다."),
+  
     // Learning Goal
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),
     GOAL_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 선택한 학습 목표입니다."),
