@@ -38,7 +38,7 @@ public class CoachingMessage {
 	@Enumerated(EnumType.STRING)
 	private CoachingMessageRole role;
 
-	@Column(name = "message", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "message", nullable = true, columnDefinition = "TEXT")
 	private String message;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
@@ -47,5 +47,17 @@ public class CoachingMessage {
 	@PrePersist
 	public void prePersist() {
 		this.createdAt = LocalDateTime.now();
+	}
+	
+	public static CoachingMessage create(
+	        CoachingSession coachingSession,
+	        CoachingMessageRole role,
+	        String message
+	) {
+	    CoachingMessage coachingMessage = new CoachingMessage();
+	    coachingMessage.coachingSession = coachingSession;
+	    coachingMessage.role = role;
+	    coachingMessage.message = message;
+	    return coachingMessage;
 	}
 }
