@@ -51,7 +51,7 @@ public class LearningGoalController implements LearningGoalControllerDocs {
     }
 
     @Override
-    @GetMapping("completed")
+    @GetMapping("/completed")
     public ResponseEntity<ApiResponseDTO<List<LearningGoalDto.ResponseUserGoal>>> getCompletedGoals(@RequestParam("userId") Long userId) {
         List<UserGoal> goals = learningGoalService.getCompletedGoals(userId);
 
