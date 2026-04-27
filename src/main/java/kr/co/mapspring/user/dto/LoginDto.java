@@ -46,8 +46,12 @@ public class LoginDto {
 
         @Schema(description = "사용자 권한", example = "USER")
         private String role;
+        
+        @Schema(description = "JWT Access Token", example = "eyJhbGciOiJIUzI1NiJ9...")
+        private String accessToken;
 
         // Entity -> Response DTO 변환
+        // 기존 테스트나 다른 코드에서 사용 할 수 있으므로 유지
         public static ResponseLogin from(User user) {
             return ResponseLogin.builder()
                     .userId(user.getUserId())
@@ -56,5 +60,17 @@ public class LoginDto {
                     .role(user.getRole().name())
                     .build();
         }
+        
+        // JWT 로그인 응답용 변환 메서드
+        // 로그인 성공 후 accessToken까지 함께 응답할 때 사용
+        public static ResponseLogin from(User user, String accessToken) {
+            return ResponseLogin.builder()
+                    .userId(user.getUserId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .role(user.getRole().name())
+                    .accessToken(accessToken)
+                    .build();
+        }	
     }
 }
