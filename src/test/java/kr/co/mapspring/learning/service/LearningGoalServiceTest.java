@@ -92,18 +92,18 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId))
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
                 .willReturn(false);
 
-        given(userGoalRepository.countByUser_UserId(userId))
+        given(userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
                 .willReturn(2);
 
         learningGoalService.selectGoal(userId, goalMasterId);
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
-        verify(userGoalRepository).countByUser_UserId(userId);
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
 
         ArgumentCaptor<UserGoal> captor = ArgumentCaptor.forClass(UserGoal.class);
         verify(userGoalRepository).save(captor.capture());
@@ -132,8 +132,8 @@ class LearningGoalServiceTest {
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository, never()).existsByUser_UserIdAndGoalMaster_GoalMasterId(any(), any());
-        verify(userGoalRepository, never()).countByUser_UserId(any());
+        verify(userGoalRepository, never()).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(any(), any(), any());
+        verify(userGoalRepository, never()).countByUser_UserIdAndStatus(any(), any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
@@ -146,7 +146,7 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId))
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
                 .willReturn(true);
 
         assertThrows(GoalAlreadySelectedException.class,
@@ -154,8 +154,8 @@ class LearningGoalServiceTest {
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
-        verify(userGoalRepository, never()).countByUser_UserId(any());
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository, never()).countByUser_UserIdAndStatus(any(), any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
@@ -168,10 +168,10 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId))
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
                 .willReturn(false);
 
-        given(userGoalRepository.countByUser_UserId(userId))
+        given(userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
                 .willReturn(3);
 
         assertThrows(GoalSelectionLimitExceededException.class,
@@ -179,8 +179,8 @@ class LearningGoalServiceTest {
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
-        verify(userGoalRepository).countByUser_UserId(userId);
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
 
