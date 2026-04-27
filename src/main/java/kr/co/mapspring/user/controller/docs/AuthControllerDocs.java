@@ -92,10 +92,10 @@ public interface AuthControllerDocs {
             )
             LoginDto.RequestLogin request
     );
-    
+
     @Operation(
             summary = "회원가입",
-            description = "이름, 생년월일, 주소, 전화번호, 이메일, 비밀번호를 입력받아 회원가입을 처리합니다."
+            description = "이름, 생년월일, 주소, 전화번호, 이메일, 비밀번호 및 약관 동의 여부를 입력받아 회원가입을 처리합니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
@@ -110,6 +110,23 @@ public interface AuthControllerDocs {
                                               "success": false,
                                               "status": 409,
                                               "message": "이미 존재하는 이메일입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "이미 존재하는 전화번호",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 409,
+                                              "message": "이미 존재하는 전화번호입니다.",
                                               "data": null
                                             }
                                             """
@@ -132,6 +149,74 @@ public interface AuthControllerDocs {
                                             """
                             )
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "입력값 검증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 400,
+                                              "message": "입력값 검증 실패",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "서비스 이용약관 미동의",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 400,
+                                              "message": "서비스 이용약관 동의는 필수입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "개인정보 수집 및 이용 미동의",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 400,
+                                              "message": "개인정보 수집 및 이용 동의는 필수입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "활성 약관 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 404,
+                                              "message": "활성 약관 정보를 찾을 수 없습니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     ApiResponseDTO<SignUpDto.ResponseSignUp> signUp(
@@ -147,10 +232,13 @@ public interface AuthControllerDocs {
                                               "name": "홍길동",
                                               "birthDate": "2000-01-01",
                                               "address": "서울시 강남구",
-                                              "phoneNumber": "010-1234-5678",
-                                              "email": "test@naver.com",
+                                              "phoneNumber": "010-0000-0001",
+                                              "email": "test@test1.com",
                                               "password": "1234",
-                                              "passwordConfirm": "1234"
+                                              "passwordConfirm": "1234",
+                                              "serviceAgree": true,
+                                              "privacyAgree": true,
+                                              "marketingAgree": false
                                             }
                                             """
                             )
