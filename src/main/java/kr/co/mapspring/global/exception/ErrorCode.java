@@ -1,7 +1,8 @@
 package kr.co.mapspring.global.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
@@ -15,8 +16,19 @@ public enum ErrorCode {
     //User 로그인용
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
-    INACTIVE_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다."),;
+    INACTIVE_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다."),
 	
+	//User 회원가입용
+	EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+	PASSWORD_CONFIRM_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+
+    // Favorite Place
+    FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
+    FAVORITE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 장소입니다."),
+
+    // Favorite Scenario
+    FAVORITE_SCENARIO_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 시나리오입니다."),
+    FAVORITE_SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 시나리오입니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -15,9 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import kr.co.mapspring.ai.enums.CoachingSessionStatus;
-import kr.co.mapspring.place.entity.Place;
-import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.user.entity.User;
+import kr.co.mapspring.place.entity.LearningSession;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,16 +32,8 @@ public class CoachingSession {
 	private Long coachingSessionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "scenario_id", nullable = false)
-	private Scenario scenario;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "place_id", nullable = false)
-	private Place place;
+	@JoinColumn(name = "session_id", nullable = false)
+	private LearningSession learningSession;
 
 	@Column(name = "coaching_session_status", nullable = false, length = 20)
 	@Enumerated(EnumType.STRING)
@@ -58,5 +48,12 @@ public class CoachingSession {
 	@PrePersist
 	public void prePersist() {
 		this.studiedAt = LocalDateTime.now();
+	}
+	
+	public static CoachingSession start(LearningSession learningSession) {
+	    CoachingSession coachingSession = new CoachingSession();
+	    coachingSession.learningSession = learningSession;
+	    coachingSession.coachingSessionStatus = CoachingSessionStatus.RUNNING;
+	    return coachingSession;
 	}
 }

@@ -16,9 +16,7 @@ import lombok.*;
 @Entity
 @Table(name = "place")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
-@Builder
 public class Place {
 	
 	@Id
@@ -35,6 +33,9 @@ public class Place {
 	@Column(name = "place_description", nullable = false, columnDefinition = "TEXT")
 	private String placeDescription;
 	
+	@Column(name = "place_address", nullable = false, length = 255)
+	private String placeAddress;
+	
 	@Column(name = "latitude", nullable = false, precision = 11, scale = 8)
 	private BigDecimal latitude;
 	
@@ -49,22 +50,59 @@ public class Place {
 	@JoinColumn(name = "scenario_id", nullable = false)
 	private Scenario scenario;
 	
-	public static Place of(String googlePlaceId,
+	public static Place create (String googlePlaceId,
 						   String placeName,
+						   String placeAddress,
 						   String placeDescription,
 						   BigDecimal latitude,
 						   BigDecimal longitude,
 						   Scenario scenario,
 						   Region region) {
 
-		return Place.builder()
-				.googlePlaceId(googlePlaceId)
-				.placeName(placeName)
-				.placeDescription(placeDescription)
-				.latitude(latitude)
-				.longitude(longitude)
-				.scenario(scenario)
-				.region(region)
-				.build();
+		Place place = new Place();
+		place.googlePlaceId = googlePlaceId;
+		place.placeName = placeName;
+		place.placeAddress = placeAddress;
+		place.placeDescription = placeDescription;
+		place.latitude = latitude;
+		place.longitude = longitude;
+		place.scenario = scenario;
+		place.region = region;
+		return place;
 	}
+	
+	public void update(String placeName, 
+		  	   String placeDescription, 
+		  	   Scenario scenario) 
+	{
+	this.placeName = placeName;
+	this.placeDescription = placeDescription;
+	this.scenario = scenario;
+	}
+	
+	// 테스트 코드 실행용
+	public static Place testOf (Long placeId,
+							    String googlePlaceId,
+							    String placeName,
+							    String placeAddress,
+							    String placeDescription,
+							    BigDecimal latitude,
+							    BigDecimal longitude,
+							    Region region,
+							    Scenario scenario)
+	{
+		Place place = new Place();
+		place.placeId = placeId;
+		place.googlePlaceId = googlePlaceId;
+		place.placeName = placeName;
+		place.placeAddress = placeAddress;
+		place.placeDescription = placeDescription;
+		place.latitude = latitude;
+		place.longitude = longitude;
+		place.region = region;
+		place.scenario = scenario;
+		return place;
+		
+	}
+	
 }

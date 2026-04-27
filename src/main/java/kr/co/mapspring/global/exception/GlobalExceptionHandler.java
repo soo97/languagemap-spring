@@ -1,14 +1,22 @@
 package kr.co.mapspring.global.exception;
 
-import kr.co.mapspring.global.dto.ApiResponseDTO;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
+import kr.co.mapspring.global.exception.ai.AssistantMessageRequiredException;
+import kr.co.mapspring.global.exception.ai.CoachingMessageRoleRequiredException;
+import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 
-import java.util.HashMap;
-import java.util.Map;
+import kr.co.mapspring.global.dto.ApiResponseDTO;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,6 +30,45 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ApiResponseDTO.fail(errorCode.getStatus(), e.getMessage()));
+    }
+    
+    // AI 코칭 리소스 없음(LearningSession) 예외 처리
+    @ExceptionHandler(LearningSessionNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleLearningSessionNotFoundException(
+            LearningSessionNotFoundException e
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.NOT_FOUND,
+                        e.getMessage()
+                ));
+    }
+    
+    // AI 코칭 코칭 세션(CoachingSession) 없음 예외 처리
+    @ExceptionHandler(CoachingSessionNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleCoachingSessionNotFoundException(
+            CoachingSessionNotFoundException e
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.NOT_FOUND,
+                        e.getMessage()
+                ));
+    }
+
+    // AI 코칭 메시지 요청값 예외 처리
+    @ExceptionHandler({
+            CoachingMessageRoleRequiredException.class,
+            AssistantMessageRequiredException.class
+    })
+    public ResponseEntity<ApiResponseDTO<Object>> handleInvalidCoachingMessageException(
+            RuntimeException e
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.BAD_REQUEST,
+                        e.getMessage()
+                ));
     }
 
     // @Valid 검증 실패
@@ -39,6 +86,15 @@ public class GlobalExceptionHandler {
                         org.springframework.http.HttpStatus.BAD_REQUEST,
                         "입력값 검증 실패",
                         errors
+                ));
+    }
+    
+    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMessageConversionException.class})
+    public ResponseEntity<ApiResponseDTO<Object>> handleRequestBodyParseException(Exception e) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.BAD_REQUEST,
+                        "입력값 검증 실패"
                 ));
     }
 

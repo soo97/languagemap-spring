@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 
-public class SavePlaceDto {
+public class AdminCreatePlaceDto {
 	
 	@Builder
 	@Getter
-	public static class RequestSave {
+	public static class RequestCreate {
 		private String googlePlaceId;
 		private String placeName;
+		private String placeAddress;
 		private BigDecimal latitude;
 		private BigDecimal longitude;
 		private String placeDescription;
