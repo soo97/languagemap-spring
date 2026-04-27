@@ -51,7 +51,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
 
         int selectedCount = userGoalRepository.countByUser_UserId(userId);
 
-        if (selectedCount > MAX_GOAL_COUNT) {
+        if (selectedCount >= MAX_GOAL_COUNT) {
             throw new GoalSelectionLimitExceededException();
         }
 
