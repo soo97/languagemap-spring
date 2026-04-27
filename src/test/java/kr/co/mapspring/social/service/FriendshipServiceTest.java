@@ -48,9 +48,6 @@ public class FriendshipServiceTest {
         User requester = mock(User.class);
         User addressee = mock(User.class);
 
-        given(requester.getUserId()).willReturn(requesterId);
-        given(addressee.getUserId()).willReturn(addresseeId);
-
         given(userRepository.findById(requesterId))
                 .willReturn(Optional.of(requester));
 
@@ -180,10 +177,6 @@ public class FriendshipServiceTest {
         User friend1 = mock(User.class);
         User friend2 = mock(User.class);
 
-        given(user.getUserId()).willReturn(userId);
-        given(friend1.getUserId()).willReturn(2L);
-        given(friend2.getUserId()).willReturn(3L);
-
         Friendship friendship1 = Friendship.of(
                 1L,
                 user,
@@ -207,7 +200,7 @@ public class FriendshipServiceTest {
 
         assertEquals(2, result.size());
         assertEquals(FriendshipStatus.ACCEPTED, result.get(0).getStatus());
-        assertEquals(FriendshipStatus.ACCEPTED, result.get(2).getStatus());
+        assertEquals(FriendshipStatus.ACCEPTED, result.get(1).getStatus());
     }
 
     @Test
@@ -221,7 +214,6 @@ public class FriendshipServiceTest {
         User addressee = mock(User.class);
 
         given(requester.getUserId()).willReturn(userId);
-        given(addressee.getUserId()).willReturn(2L);
 
         Friendship friendship = Friendship.of(
                 friendshipId,
