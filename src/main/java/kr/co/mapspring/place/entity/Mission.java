@@ -35,7 +35,7 @@ public class Mission {
 	
 	@Column(name = "mission_status", nullable = false, length = 50)
 	@Enumerated(EnumType.STRING)
-	private MissionStatus missionStatus;
+	private MissionStatus missionStatus = MissionStatus.READY;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "scenario_id", nullable = false)
@@ -43,13 +43,11 @@ public class Mission {
 
 	public static Mission create(String missionTitle, 
 								 String missionDescription, 
-								 MissionStatus missionStatus,
 								 Scenario scenario) {
 		
 		Mission mission = new Mission();
 		mission.missionTitle = missionTitle;
 		mission.missionDescription = missionDescription;
-		mission.missionStatus = missionStatus;
 		mission.scenario = scenario;
 		
 		return mission;

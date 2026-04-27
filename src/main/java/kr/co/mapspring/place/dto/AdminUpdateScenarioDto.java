@@ -4,11 +4,11 @@ import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.Builder;
 import lombok.Getter;
 
-public class AdminSaveScenarioDto {
+public class AdminUpdateScenarioDto {
 	
 	@Builder
 	@Getter
-	public static class RequestSave {
+	public static class RequestUpdate {
 		private String prompt;
 		private String scenarioDescription;
 		private ScenarioLevel level;
