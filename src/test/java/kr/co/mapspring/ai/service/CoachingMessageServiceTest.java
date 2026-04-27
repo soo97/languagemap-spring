@@ -30,7 +30,8 @@ import kr.co.mapspring.ai.repository.CoachingMessageRepository;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.impl.CoachingMessageServiceImpl;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
-import kr.co.mapspring.global.exception.ai.InvalidCoachingMessageException;
+import kr.co.mapspring.global.exception.ai.AssistantMessageRequiredException;
+import kr.co.mapspring.global.exception.ai.CoachingMessageRoleRequiredException;
 import kr.co.mapspring.place.entity.LearningSession;
 
 @ExtendWith(MockitoExtension.class)
@@ -208,7 +209,7 @@ class CoachingMessageServiceTest {
                         .build();
 
         assertThatThrownBy(() -> coachingMessageService.saveCoachingMessage(request))
-                .isInstanceOf(InvalidCoachingMessageException.class)
+        		.isInstanceOf(AssistantMessageRequiredException.class)
                 .hasMessage("AI 메시지는 비어 있을 수 없습니다.");
 
         verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));
@@ -225,7 +226,7 @@ class CoachingMessageServiceTest {
                         .build();
 
         assertThatThrownBy(() -> coachingMessageService.saveCoachingMessage(request))
-                .isInstanceOf(InvalidCoachingMessageException.class)
+                .isInstanceOf(AssistantMessageRequiredException.class)
                 .hasMessage("AI 메시지는 비어 있을 수 없습니다.");
 
         verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));
@@ -261,7 +262,7 @@ class CoachingMessageServiceTest {
                         .build();
 
         assertThatThrownBy(() -> coachingMessageService.saveCoachingMessage(request))
-                .isInstanceOf(InvalidCoachingMessageException.class)
+                .isInstanceOf(CoachingMessageRoleRequiredException.class)
                 .hasMessage("메시지 역할은 필수입니다.");
 
         verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));

@@ -40,7 +40,7 @@ public class FavoriteScenarioController implements FavoriteScenarioControllerDoc
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<FavoriteScenarioDto.ResponseFavoriteScenario>>> getFavoriteScenarios(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponseDTO<List<FavoriteScenarioDto.ResponseFavoriteScenario>>> getFavoriteScenarios(@RequestParam("userId") Long userId) {
         List<FavoriteScenarioDto.ResponseFavoriteScenario> result =
                 favoriteScenarioService.getFavoriteScenarios(userId)
                         .stream()

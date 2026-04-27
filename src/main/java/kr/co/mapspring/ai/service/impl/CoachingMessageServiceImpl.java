@@ -13,7 +13,8 @@ import kr.co.mapspring.ai.repository.CoachingMessageRepository;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.CoachingMessageService;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
-import kr.co.mapspring.global.exception.ai.InvalidCoachingMessageException;
+import kr.co.mapspring.global.exception.ai.AssistantMessageRequiredException;
+import kr.co.mapspring.global.exception.ai.CoachingMessageRoleRequiredException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,12 +31,12 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
             CoachingMessageDto.RequestSaveCoachingMessage request
     ) {
         if (request.getRole() == null) {
-            throw new InvalidCoachingMessageException("메시지 역할은 필수입니다.");
+            throw new CoachingMessageRoleRequiredException();
         }
 
         if (request.getRole() == CoachingMessageRole.ASSISTANT
                 && (request.getMessage() == null || request.getMessage().isBlank())) {
-            throw new InvalidCoachingMessageException("AI 메시지는 비어 있을 수 없습니다.");
+            throw new AssistantMessageRequiredException();
         }
 
         CoachingSession coachingSession = coachingSessionRepository.findById(request.getCoachingSessionId())

@@ -4,6 +4,7 @@ import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
 import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
+import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.UserGoal;
 import kr.co.mapspring.learning.enums.GoalType;
@@ -11,6 +12,8 @@ import kr.co.mapspring.learning.enums.UserGoalStatus;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.UserGoalRepository;
 import kr.co.mapspring.learning.service.LearningGoalService;
+import kr.co.mapspring.user.entity.User;
+import kr.co.mapspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,21 +31,25 @@ public class LearningGoalServiceImpl implements LearningGoalService {
 
     private final GoalMasterRepository goalMasterRepository;
     private final UserGoalRepository userGoalRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public void selectGoal(Long userId, Long goalMasterId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
         GoalMaster goalMaster = goalMasterRepository.findById(goalMasterId)
                 .orElseThrow(GoalMasterNotFoundException::new);
 
         boolean alreadySelected =
-                userGoalRepository.existsByUserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+                userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
 
         if (alreadySelected) {
             throw new GoalAlreadySelectedException();
         }
 
-        int selectedCount = userGoalRepository.countByUserId(userId);
+        int selectedCount = userGoalRepository.countByUser_UserId(userId);
 
         if (selectedCount > MAX_GOAL_COUNT) {
             throw new GoalSelectionLimitExceededException();
@@ -51,7 +58,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = calculateEndDate(startDate, goalMaster);
 
-        UserGoal userGoal = UserGoal.create(userId, goalMaster, startDate, endDate);
+        UserGoal userGoal = UserGoal.create(user, goalMaster, startDate, endDate);
 
         userGoalRepository.save(userGoal);
     }
@@ -67,7 +74,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
 
     @Override
     public List<UserGoal> getActiveGoals(Long userId) {
-        return userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        return userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
     }
 
     private LocalDate calculateEndDate(LocalDate startDate, GoalMaster goalMaster) {
@@ -82,7 +89,7 @@ public class LearningGoalServiceImpl implements LearningGoalService {
     @Override
     @Transactional
     public void updateGoalProgress(Long userId, GoalType goalType, Integer amount) {
-        List<UserGoal> activeGoals = userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        List<UserGoal> activeGoals = userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
 
         for (UserGoal userGoal : activeGoals) {
             if (userGoal.getGoalMaster().getGoalType() != goalType) {
@@ -100,13 +107,13 @@ public class LearningGoalServiceImpl implements LearningGoalService {
 
     @Override
     public List<UserGoal> getCompletedGoals(Long userId) {
-        return userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.COMPLETED);
+        return userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.COMPLETED);
     }
 
     @Override
     public List<GoalMaster> getAvailableGoals(Long userId) {
         List<GoalMaster> activeGoalMasters = goalMasterRepository.findAllByIsActiveTrue();
-        List<UserGoal> activeUserGoals = userGoalRepository.findAllByUserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        List<UserGoal> activeUserGoals = userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
 
         Set<Long> selectedGoalIds = activeUserGoals.stream()
                 .map(userGoal -> userGoal.getGoalMaster().getGoalMasterId())

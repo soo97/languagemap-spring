@@ -13,8 +13,9 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import kr.co.mapspring.user.terms.enums.TermType;
+import kr.co.mapspring.user.terms.enums.TermsType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "terms")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Term {
+public class Terms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "term_id", nullable = false, updatable = false)
@@ -40,7 +41,7 @@ public class Term {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "term_type", nullable = false, length = 30)
-    private TermType termType;
+    private TermsType termType;
 
     @Column(name = "is_required", nullable = false)
     private boolean required;
@@ -54,6 +55,26 @@ public class Term {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
     
+    // 테스트용 코드
+    @Builder
+    private Terms(
+            Long termId,
+            String title,
+            String content,
+            String version,
+            TermsType type,
+            boolean required,
+            boolean active
+    ) {
+        this.termId = termId;
+        this.title = title;
+        this.content = content;
+        this.version = version;
+        this.termType = type;
+        this.required = required;
+        this.active = active;
+    }
+    
     @PrePersist
     protected void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -64,6 +85,14 @@ public class Term {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+    
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public boolean isRequired() {
+        return this.required;
     }
     
 }

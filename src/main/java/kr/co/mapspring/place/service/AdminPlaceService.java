@@ -7,6 +7,7 @@ import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 
 public interface AdminPlaceService {
 
+
 	/**
 	 * 관리자 장소 생성 기능
 	 * 
