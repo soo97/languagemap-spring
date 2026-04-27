@@ -14,6 +14,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
+import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,11 +33,9 @@ public class UserGoal {
     @Column(name = "user_goal_id", nullable = false, updatable = false)
     private Long userGoalId;
 
-//    TODO: 엔티티 확정 후 매핑 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_master_id", nullable = false)
@@ -75,9 +74,9 @@ public class UserGoal {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static UserGoal create(Long userId, GoalMaster goalMaster, LocalDate startDate, LocalDate endDate) {
+    public static UserGoal create(User user, GoalMaster goalMaster, LocalDate startDate, LocalDate endDate) {
         UserGoal userGoal = new UserGoal();
-        userGoal.userId = userId;
+        userGoal.user = user;
         userGoal.goalMaster = goalMaster;
         userGoal.currentValue = 0;
         userGoal.status = UserGoalStatus.ACTIVE;
@@ -108,10 +107,10 @@ public class UserGoal {
     }
 
     // 테스트 전용 생성 메서드
-    public static UserGoal of(Long userGoalId, Long userId, GoalMaster goalMaster, Integer currentValue, UserGoalStatus status, LocalDate startDate, LocalDate endDate) {
+    public static UserGoal of(Long userGoalId, User user, GoalMaster goalMaster, Integer currentValue, UserGoalStatus status, LocalDate startDate, LocalDate endDate) {
         UserGoal userGoal = new UserGoal();
         userGoal.userGoalId = userGoalId;
-        userGoal.userId = userId;
+        userGoal.user = user;
         userGoal.goalMaster = goalMaster;
         userGoal.currentValue = currentValue;
         userGoal.status = status;
