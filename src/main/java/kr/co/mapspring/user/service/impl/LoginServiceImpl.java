@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
+import kr.co.mapspring.global.jwt.JwtTokenProvider;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.LoginDto.RequestLogin;
 import kr.co.mapspring.user.dto.LoginDto.ResponseLogin;
@@ -16,12 +17,16 @@ import kr.co.mapspring.user.service.LoginService;
 public class LoginServiceImpl implements LoginService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+    public LoginServiceImpl(UserRepository userRepository,
+    						PasswordEncoder passwordEncoder,
+    						JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -36,7 +41,11 @@ public class LoginServiceImpl implements LoginService {
         if (!user.isActive()) {
             throw new CustomException(ErrorCode.INACTIVE_USER);
         }
+        
+        //JWT
+        String accessToken = jwtTokenProvider.createAccessToken(user);
 
-        return LoginDto.ResponseLogin.from(user);
+
+        return LoginDto.ResponseLogin.from(user,accessToken);
     }
 }
