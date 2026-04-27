@@ -28,7 +28,7 @@ class FriendshipController implements FriendshipControllerDocs {
     private final FriendshipService friendshipService;
 
     @Override
-    @PostMapping("requests")
+    @PostMapping("/requests")
     public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequest(@RequestBody FriendshipDto.RequestSendFriendRequest request) {
         friendshipService.sendFriendRequest(
                 request.getRequesterId(),

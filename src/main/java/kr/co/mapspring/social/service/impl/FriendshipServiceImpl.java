@@ -2,6 +2,11 @@ package kr.co.mapspring.social.service.impl;
 
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
+import kr.co.mapspring.global.exception.social.FriendRequestAccessDeniedException;
+import kr.co.mapspring.global.exception.social.FriendshipAlreadyExistsException;
+import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
+import kr.co.mapspring.global.exception.social.SelfFriendRequestNotAllowedException;
+import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
 import kr.co.mapspring.social.entity.Friendship;
 import kr.co.mapspring.social.repository.FriendshipRepository;
 import kr.co.mapspring.social.service.FriendshipService;
@@ -26,17 +31,17 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void sendFriendRequest(Long requesterId, Long addresseeId) {
 
         if (requesterId.equals(addresseeId)) {
-            throw new CustomException(ErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED);
+            throw new SelfFriendRequestNotAllowedException();
         }
 
         User requester = userRepository.findById(requesterId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_FOR_SOCIAL));
+                .orElseThrow(UserNotFoundForSocialException::new);
 
         User addressee = userRepository.findById(addresseeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_FOR_SOCIAL));
+                .orElseThrow(UserNotFoundForSocialException::new);
 
         if (friendshipRepository.existsFriendshipBetween(requesterId, addresseeId)) {
-            throw new CustomException(ErrorCode.FRIENDSHIP_ALREADY_EXISTS);
+            throw new FriendshipAlreadyExistsException();
         }
 
         Friendship friendship = Friendship.create(requester, addressee);
@@ -49,10 +54,10 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void acceptFriendRequest(Long friendshipId, Long addresseeId) {
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FRIENDSHIP_NOT_FOUND));
+                .orElseThrow(FriendshipNotFoundException::new);
 
         if (!friendship.isAddressee(addresseeId)) {
-            throw new CustomException(ErrorCode.FRIEND_REQUEST_ACCESS_DENIED);
+            throw new FriendRequestAccessDeniedException();
         }
 
         friendship.accept();
@@ -63,10 +68,10 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void rejectFriendRequest(Long friendshipId, Long addresseeId) {
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FRIENDSHIP_NOT_FOUND));
+                .orElseThrow(FriendshipNotFoundException::new);
 
         if (!friendship.isAddressee(addresseeId)) {
-            throw new CustomException(ErrorCode.FRIEND_REQUEST_ACCESS_DENIED);
+            throw new FriendRequestAccessDeniedException();
         }
 
         friendship.reject();
@@ -83,10 +88,10 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void deleteFriend(Long friendshipId, Long userId) {
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FRIENDSHIP_NOT_FOUND));
+                .orElseThrow(FriendshipNotFoundException::new);
 
         if (!friendship.isRelatedUser(userId)) {
-            throw new CustomException(ErrorCode.FRIEND_REQUEST_ACCESS_DENIED);
+            throw new FriendRequestAccessDeniedException();
         }
 
         friendshipRepository.delete(friendship);
