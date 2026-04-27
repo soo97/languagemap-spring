@@ -19,13 +19,18 @@ public class JwtTokenProvider {
 
     private final String secret;
     private final long accessTokenExpiration;
+    private final long refreshTokenExpiration;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-expiration}") long accessTokenExpiration
+            @Value("${jwt.access-token-expiration}") long accessTokenExpiration,
+            @Value("${jwt.refresh-token-expiration}") long refreshTokenExpiration
+
     ) {
         this.secret = secret;
         this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = refreshTokenExpiration;
+
     }
 
     public String createAccessToken(User user) {
@@ -42,7 +47,34 @@ public class JwtTokenProvider {
                 .signWith(getSecretKey())
                 .compact();
     }
+    
+    	// Refresh Token 생성
+    public String createRefreshToken(User user) {
+        Date now = new Date();
 
+        // 현재 시간 + Refresh Token 만료 시간
+        Date expiration = new Date(now.getTime() + refreshTokenExpiration);
+
+        return Jwts.builder()
+                // 어떤 사용자의 Refresh Token인지 식별하기 위해 userId를 subject에 저장
+                .subject(String.valueOf(user.getUserId()))
+
+                // Access Token과 구분하기 위한 타입 값
+                .claim("tokenType", "REFRESH")
+
+                // 발급 시간
+                .issuedAt(now)
+
+                // 만료 시간
+                .expiration(expiration)
+
+                // secret key로 서명
+                .signWith(getSecretKey())
+
+                // JWT 문자열 생성
+                .compact();
+    }
+    
     public boolean validateAccessToken(String token) {
         try {
             Claims claims = getClaims(token);
