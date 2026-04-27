@@ -49,13 +49,14 @@ class AuthControllerTest {
     @DisplayName("로그인 요청이 성공하면 공통 성공 응답을 반환한다")
     void loginSuccess() throws Exception {
         // given
-        LoginDto.ResponseLogin response = LoginDto.ResponseLogin.builder()
-                .userId(1L)
-                .email("test@naver.com")
-                .name("홍길동")
-                .role("USER")
-                .accessToken("mock-access-token")
-                .build();
+    	LoginDto.ResponseLogin response = LoginDto.ResponseLogin.builder()
+    	        .userId(1L)
+    	        .email("test@naver.com")
+    	        .name("홍길동")
+    	        .role("USER")
+    	        .accessToken("mock-access-token")
+    	        .refreshToken("mock-refresh-token")
+    	        .build();
 
         given(loginService.login(ArgumentMatchers.any(LoginDto.RequestLogin.class)))
                 .willReturn(response);
@@ -79,7 +80,9 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.email").value("test@naver.com"))
                 .andExpect(jsonPath("$.data.name").value("홍길동"))
                 .andExpect(jsonPath("$.data.role").value("USER"))
-                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"));
+                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"))
+                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"))
+                .andExpect(jsonPath("$.data.refreshToken").value("mock-refresh-token"));
     }
 
     @Test
