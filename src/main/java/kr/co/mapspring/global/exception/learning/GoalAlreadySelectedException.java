@@ -1,7 +1,10 @@
 package kr.co.mapspring.global.exception.learning;
 
-public class GoalAlreadySelectedException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
-    public GoalAlreadySelectedException() {super("이미 선택한 학습 목표입니다.");}
+public class GoalAlreadySelectedException extends CustomException {
+
+    public GoalAlreadySelectedException() {super(ErrorCode.GOAL_ALREADY_SELECTED);}
 
 }

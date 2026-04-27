@@ -43,15 +43,15 @@ public class LearningGoalServiceImpl implements LearningGoalService {
                 .orElseThrow(GoalMasterNotFoundException::new);
 
         boolean alreadySelected =
-                userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterId(userId, goalMasterId);
+                userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
 
         if (alreadySelected) {
             throw new GoalAlreadySelectedException();
         }
 
-        int selectedCount = userGoalRepository.countByUser_UserId(userId);
+        int selectedCount = userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
 
-        if (selectedCount > MAX_GOAL_COUNT) {
+        if (selectedCount >= MAX_GOAL_COUNT) {
             throw new GoalSelectionLimitExceededException();
         }
 

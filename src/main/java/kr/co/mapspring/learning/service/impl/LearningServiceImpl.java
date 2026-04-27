@@ -65,7 +65,7 @@ public class LearningServiceImpl implements LearningService {
 
     @Override
     public List<LearningLogDto.ResponseLog> getStudyLogs(Long userId) {
-        List<StudyScore> studyScores = studyScoreRepository.findAllByStudyLog_UserId(userId);
+        List<StudyScore> studyScores = studyScoreRepository.findAllByStudyLog_User_UserId(userId);
 
         return studyScores.stream()
                 .map(studyScore -> LearningLogDto.ResponseLog.from(
