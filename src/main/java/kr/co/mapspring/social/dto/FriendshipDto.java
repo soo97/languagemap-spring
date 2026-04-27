@@ -23,7 +23,7 @@ public class FriendshipDto {
     @Getter
     @NoArgsConstructor
     @Schema(description = "친구 요청 처리 요청 DTO")
-    public static class RequestHandelFriendRequest {
+    public static class RequestHandleFriendRequest {
 
         @Schema(description = "사용자 ID", example = "2")
         private Long userId;
