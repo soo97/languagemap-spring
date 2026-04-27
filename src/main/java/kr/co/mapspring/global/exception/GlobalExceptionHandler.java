@@ -3,6 +3,10 @@ package kr.co.mapspring.global.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
+import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
+import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
+import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -67,6 +71,41 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponseDTO.fail(
                         HttpStatus.BAD_REQUEST,
+                        e.getMessage()
+                ));
+    }
+
+    // Learning 목표 관련 예외 처리
+    @ExceptionHandler({
+            GoalSelectionLimitExceededException.class
+    })
+    public ResponseEntity<ApiResponseDTO<Object>> handleLearningBadRequestException(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.BAD_REQUEST,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler({
+            GoalMasterNotFoundException.class,
+            UserGoalNotFoundException.class
+    })
+    public ResponseEntity<ApiResponseDTO<Object>> handleLearningNotFoundException(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.NOT_FOUND,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(GoalAlreadySelectedException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleGoalAlreadySelectedException(
+            GoalAlreadySelectedException e
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.CONFLICT,
                         e.getMessage()
                 ));
     }
