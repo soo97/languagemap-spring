@@ -7,6 +7,7 @@ import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 
 public interface AdminPlaceService {
 
+
 	/**
 	 * 관리자 장소 생성 기능
 	 * 
@@ -36,4 +37,5 @@ public interface AdminPlaceService {
 	 * @param PlaceId 삭제 장소 조회 Id
 	 */
 	void deletePlace(Long PlaceId);
+
 }

@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 	)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserTermAgreement {
+public class UserTermsAgreement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class UserTermAgreement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "term_id", nullable = false)
-    private Term term;
+    private Terms term;
 
     @Column(name = "agreed", nullable = false)
     private boolean agreed;
@@ -53,9 +53,15 @@ public class UserTermAgreement {
     
     @PrePersist
     protected void prePersist() {
-        if (this.agreedAt == null) {
-            this.agreedAt = LocalDateTime.now();
-        }
         this.createdAt = LocalDateTime.now();
+    }
+
+    public static UserTermsAgreement create(User user, Terms term, boolean agreed) {
+        UserTermsAgreement agreement = new UserTermsAgreement();
+        agreement.user = user;
+        agreement.term = term;
+        agreement.agreed = agreed;
+        agreement.agreedAt = LocalDateTime.now();
+        return agreement;
     }
 }
