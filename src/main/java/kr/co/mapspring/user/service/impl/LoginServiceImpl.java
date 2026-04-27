@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.jwt.JwtTokenProvider;
+import kr.co.mapspring.global.jwt.RefreshTokenService;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.LoginDto.RequestLogin;
 import kr.co.mapspring.user.dto.LoginDto.ResponseLogin;
@@ -17,16 +18,23 @@ import kr.co.mapspring.user.service.LoginService;
 public class LoginServiceImpl implements LoginService {
 
     private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
+
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final RefreshTokenService refreshTokenService;
 
-    public LoginServiceImpl(UserRepository userRepository,
-    						PasswordEncoder passwordEncoder,
-    						JwtTokenProvider jwtTokenProvider) {
+    public LoginServiceImpl(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtTokenProvider jwtTokenProvider,
+            RefreshTokenService refreshTokenService
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -41,11 +49,13 @@ public class LoginServiceImpl implements LoginService {
         if (!user.isActive()) {
             throw new CustomException(ErrorCode.INACTIVE_USER);
         }
-        
-        //JWT
+
         String accessToken = jwtTokenProvider.createAccessToken(user);
 
+        String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
-        return LoginDto.ResponseLogin.from(user,accessToken);
+        refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
+
+        return LoginDto.ResponseLogin.from(user, accessToken, refreshToken);
     }
 }
