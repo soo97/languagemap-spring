@@ -36,9 +36,9 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
     // JWT 생성/검증을 위한 JJWT 라이브러리
-implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
-runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
-runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 }
 
 tasks.named('test') {
