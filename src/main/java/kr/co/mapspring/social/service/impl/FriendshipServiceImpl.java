@@ -1,7 +1,5 @@
 package kr.co.mapspring.social.service.impl;
 
-import kr.co.mapspring.global.exception.CustomException;
-import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.social.FriendRequestAccessDeniedException;
 import kr.co.mapspring.global.exception.social.FriendshipAlreadyExistsException;
 import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
