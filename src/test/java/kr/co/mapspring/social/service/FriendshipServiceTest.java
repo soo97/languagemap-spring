@@ -3,6 +3,8 @@ package kr.co.mapspring.social.service;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.social.entity.Friendship;
 import kr.co.mapspring.social.enums.FriendshipStatus;
+import kr.co.mapspring.social.repository.FriendshipRepository;
+import kr.co.mapspring.social.service.impl.FriendshipServiceImpl;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
