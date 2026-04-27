@@ -49,6 +49,7 @@ class AuthControllerTest {
                 .email("test@naver.com")
                 .name("홍길동")
                 .role("USER")
+                .accessToken("mock-access-token")
                 .build();
 
         given(loginService.login(ArgumentMatchers.any(LoginDto.RequestLogin.class)))
@@ -72,7 +73,8 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.userId").value(1))
                 .andExpect(jsonPath("$.data.email").value("test@naver.com"))
                 .andExpect(jsonPath("$.data.name").value("홍길동"))
-                .andExpect(jsonPath("$.data.role").value("USER"));
+                .andExpect(jsonPath("$.data.role").value("USER"))
+                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"));
     }
 
     @Test
