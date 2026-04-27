@@ -4,7 +4,6 @@ import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.social.controller.docs.FriendshipControllerDocs;
 import kr.co.mapspring.social.dto.FriendshipDto;
 import kr.co.mapspring.social.service.FriendshipService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,8 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/friends")
-public
-class FriendshipController implements FriendshipControllerDocs {
+public class FriendshipController implements FriendshipControllerDocs {
 
     private final FriendshipService friendshipService;
 

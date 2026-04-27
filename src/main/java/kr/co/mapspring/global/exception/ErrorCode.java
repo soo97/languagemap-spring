@@ -26,7 +26,7 @@ public enum ErrorCode {
 	//User 약관동의용
 	SERVICE_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "서비스 이용약관 동의는 필수입니다."),
 	PRIVACY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "개인정보 수집 및 이용 동의는 필수입니다."),
-	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "활성 약관 정보를 찾을 수 없습니다.");
+	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "활성 약관 정보를 찾을 수 없습니다."),
 
     // Favorite Place
     FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
@@ -41,7 +41,7 @@ public enum ErrorCode {
     SELF_FRIEND_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
     FRIENDSHIP_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 관계를 찾을 수 없습니다."),
-    FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다.");
+    FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다."),
   
     // Learning Goal
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),

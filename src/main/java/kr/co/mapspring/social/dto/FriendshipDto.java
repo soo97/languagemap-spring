@@ -2,6 +2,7 @@ package kr.co.mapspring.social.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.social.entity.Friendship;
+import kr.co.mapspring.social.enums.FriendshipStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,14 +45,14 @@ public class FriendshipDto {
         private Long addresseeId;
 
         @Schema(description = "친구 상태 (PENDING, ACCEPTED, REJECTED)", example = "ACCEPTED")
-        private String status;
+        private FriendshipStatus status;
 
         public static ResponseFriend from(Friendship friendship) {
             return ResponseFriend.builder()
                     .friendshipId(friendship.getFriendshipId())
                     .requesterId(friendship.getRequester().getUserId())
                     .addresseeId(friendship.getAddressee().getUserId())
-                    .status(friendship.getStatus().name())
+                    .status(friendship.getStatus())
                     .build();
         }
     }
