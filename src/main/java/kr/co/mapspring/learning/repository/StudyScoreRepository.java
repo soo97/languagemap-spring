@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface StudyScoreRepository extends JpaRepository<StudyScore, Long> {
 
-    List<StudyScore> findAllByStudyLog_UserId(Long userId);
+    List<StudyScore> findAllByStudyLog_User_UserId(Long userId);
 }
