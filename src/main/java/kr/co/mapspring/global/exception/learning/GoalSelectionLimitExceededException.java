@@ -1,7 +1,10 @@
 package kr.co.mapspring.global.exception.learning;
 
-public class GoalSelectionLimitExceededException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
-    public GoalSelectionLimitExceededException() { super("학습 목표는 최대 3개까지만 선택할 수 있습니다."); }
+public class GoalSelectionLimitExceededException extends CustomException {
+
+    public GoalSelectionLimitExceededException() { super(ErrorCode.GOAL_SELECTION_LIMIT_EXCEEDED); }
 
 }
