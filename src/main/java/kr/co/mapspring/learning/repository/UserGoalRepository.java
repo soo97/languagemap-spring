@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface UserGoalRepository extends JpaRepository<UserGoal, Long> {
 
-    boolean existsByUserIdAndGoalMaster_GoalMasterId(Long userId, Long goalMasterId);
+    boolean existsByUser_UserIdAndGoalMaster_GoalMasterId(Long userId, Long goalMasterId);
 
-    int countByUserId(Long userId);
+    int countByUser_UserId(Long userId);
 
-    List<UserGoal> findAllByUserIdAndStatus(Long userId, UserGoalStatus status);
+    List<UserGoal> findAllByUser_UserIdAndStatus(Long userId, UserGoalStatus status);
 
 }

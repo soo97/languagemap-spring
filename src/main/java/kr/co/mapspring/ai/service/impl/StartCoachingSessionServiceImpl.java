@@ -10,6 +10,7 @@ import kr.co.mapspring.ai.service.StartCoachingSessionService;
 import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
+import kr.co.mapspring.ai.enums.CoachingSessionStatus;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,7 +31,7 @@ public class StartCoachingSessionServiceImpl implements StartCoachingSessionServ
         LearningSession learningSession = learningSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(LearningSessionNotFoundException::new);
 
-        CoachingSession coachingSession = coachingSessionRepository.findByLearningSession_SessionId(sessionId)
+        CoachingSession coachingSession = coachingSessionRepository.findByLearningSession_SessionIdAndCoachingSessionStatus(sessionId,CoachingSessionStatus.RUNNING)
                 .orElseGet(() -> coachingSessionRepository.save(CoachingSession.start(learningSession)));
 
         return StartCoachingSessionDto.ResponseStartCoachingSession.builder()
