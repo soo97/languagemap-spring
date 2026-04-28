@@ -437,4 +437,42 @@ public interface FriendshipControllerDocs {
             @PathVariable("friendshipId") Long friendshipId,
             @RequestBody FriendshipDto.RequestHandleFriendRequest request
     );
+
+    @Operation(
+            summary = "차단 및 거절 이력 조회",
+            description = "사용자와 관련된 친구 관계 중 REJECTED, BLOCKED 상태의 이력을 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": true,
+                                  "status": 200,
+                                  "message": "차단 및 거절 이력 조회 성공",
+                                  "data": [
+                                    {
+                                      "friendshipId": 1,
+                                      "requesterId": 2,
+                                      "addresseeId": 1,
+                                      "status": "REJECTED"
+                                    },
+                                    {
+                                      "friendshipId": 2,
+                                      "requesterId": 1,
+                                      "addresseeId": 3,
+                                      "status": "BLOCKED"
+                                    }
+                                  ]
+                                }
+                                """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriendshipHistory(
+            @RequestParam("userId") Long userId
+    );
 }

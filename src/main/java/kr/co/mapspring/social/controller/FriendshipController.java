@@ -110,4 +110,14 @@ public class FriendshipController implements FriendshipControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구를 차단했습니다.", null));
     }
+
+    @Override
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriendshipHistory(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getFriendshipHistory(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("차단 및 거절 이력 조회 성공", result));
+    }
 }
