@@ -6,10 +6,7 @@ import kr.co.mapspring.learning.dto.LearningLogDto;
 import kr.co.mapspring.learning.service.LearningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,7 +15,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LearningController implements LearningControllerDocs {
 
-    private LearningService learningService;
+    private final LearningService learningService;
+
+    @PostMapping("/logs")
+    public ResponseEntity<ApiResponseDTO<Void>> recordStudyLog(
+            @RequestBody LearningLogDto.RequestCreate request
+    ) {
+        learningService.recordStudyLog(
+                request.getUserId(),
+                request.getSessionId(),
+                request.getStudyType(),
+                request.getEarnedExp(),
+                request.getNaturalnessScore(),
+                request.getFluencyScore(),
+                request.getTotalScore()
+        );
+
+        return ResponseEntity.ok(ApiResponseDTO.success("학습 기록 저장 성공", null));
+    }
 
     @GetMapping("/logs")
     public ResponseEntity<ApiResponseDTO<List<LearningLogDto.ResponseLog>>> getStudyLogs(@RequestParam("userId") Long userId) {
@@ -26,4 +40,5 @@ public class LearningController implements LearningControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("학습 기록 조회 성공", result));
     }
+
 }
