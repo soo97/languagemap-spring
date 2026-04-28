@@ -230,4 +230,42 @@ public class FriendshipServiceTest {
         verify(friendshipRepository).findById(friendshipId);
         verify(friendshipRepository).delete(friendship);
     }
+
+    @Test
+    @DisplayName("사용자가 받은 친구 요청 목록을 조회한다")
+    void 사용자가_받은_친구_요청_목록을_조회한다() {
+
+        Long userId = 2L;
+
+        User requester1 = mock(User.class);
+        User requester2 = mock(User.class);
+        User addressee = mock(User.class);
+
+        Friendship friendship1 = Friendship.of(
+                1L,
+                requester1,
+                addressee,
+                FriendshipStatus.PENDING
+        );
+
+        Friendship friendship2 = Friendship.of(
+                2L,
+                requester2,
+                addressee,
+                FriendshipStatus.PENDING
+        );
+
+        given(friendshipRepository.findReceivedRequestByUserId(userId))
+                .willReturn(List.of(friendship1, friendship2));
+
+        List<Friendship> result = friendshipService.getReceivedRequests(userId);
+
+        verify(friendshipRepository).findReceivedRequestsByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals(FriendshipStatus.PENDING, result.get(0).getStatus());
+        assertEquals(FriendshipStatus.PENDING, result.get(1).getStatus());
+
+
+    }
 }
