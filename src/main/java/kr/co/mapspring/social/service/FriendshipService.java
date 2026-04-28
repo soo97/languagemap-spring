@@ -1,6 +1,7 @@
 package kr.co.mapspring.social.service;
 
 import kr.co.mapspring.social.entity.Friendship;
+import kr.co.mapspring.user.entity.User;
 
 import java.util.List;
 
@@ -158,4 +159,18 @@ public interface FriendshipService {
      */
     List<Friendship> getFriendshipHistory(Long userId);
 
+    /**
+     * 추천 친구 조회
+     *
+     * [설명]
+     * - 친구 관계가 없는 사용자를 랜덤으로 추천한다.
+     * - 자기 자신은 추천 대상에서 제외한다.
+     *
+     * [검증]
+     * - userId는 필수 값이다.
+     *
+     * @param userId 추천 친구를 조회할 사용자 ID
+     * @return 추천 친구 목록
+     */
+    List<User> getRecommendedFriends(Long userId);
 }

@@ -2,8 +2,10 @@ package kr.co.mapspring.social.repository;
 
 import kr.co.mapspring.social.entity.Friendship;
 import kr.co.mapspring.social.enums.FriendshipStatus;
+import kr.co.mapspring.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -61,4 +63,19 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
                             kr.co.mapspring.social.enums.FriendshipStatus.BLOCKED)   
            """)
     List<Friendship> findHistoryByUserId(Long userId);
+
+    @Query(value = """
+        SELECT *
+        FROM user u
+        WHERE u.user_id != :userId
+          AND NOT EXISTS (
+              SELECT 1
+              FROM friendship f
+              WHERE (f.requester_id = :userId AND f.addressee_id = u.user_id)
+                 OR (f.requester_id = u.user_id AND f.addressee_id = :userId)
+          )
+        ORDER BY RAND()
+        LIMIT 5
+        """, nativeQuery = true)
+    List<User> findRandomRecommendedUsers(@Param("userId") Long userId);
 }

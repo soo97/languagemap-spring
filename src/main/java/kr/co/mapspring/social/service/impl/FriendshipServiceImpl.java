@@ -1,14 +1,13 @@
 package kr.co.mapspring.social.service.impl;
 
-import kr.co.mapspring.global.exception.CustomException;
-import kr.co.mapspring.global.exception.ErrorCode;
+import kr.co.mapspring.global.exception.social.EmailUserNotFoundException;
 import kr.co.mapspring.global.exception.social.FriendRequestAccessDeniedException;
 import kr.co.mapspring.global.exception.social.FriendshipAlreadyExistsException;
 import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
+import kr.co.mapspring.global.exception.social.InvalidSocialUserException;
 import kr.co.mapspring.global.exception.social.SelfFriendRequestNotAllowedException;
 import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
 import kr.co.mapspring.social.entity.Friendship;
-import kr.co.mapspring.social.enums.FriendshipStatus;
 import kr.co.mapspring.social.repository.FriendshipRepository;
 import kr.co.mapspring.social.service.FriendshipService;
 import kr.co.mapspring.user.entity.User;
@@ -55,7 +54,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void sendFriendRequestByEmail(Long requesterId, String email) {
 
         User addressee = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다."));
+                .orElseThrow(EmailUserNotFoundException::new);
 
         sendFriendRequest(requesterId, addressee.getUserId());
     }
@@ -90,7 +89,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public List<Friendship> getFriends(Long userId) {
-
         return friendshipRepository.findAcceptedFriendshipsByUserId(userId);
     }
 
@@ -117,7 +115,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     public List<Friendship> getSentRequests(Long userId) {
 
         if (userId == null) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "userId는 필수입니다.");
+            throw new InvalidSocialUserException();
         }
 
         return friendshipRepository.findSentRequestsByUserId(userId);
@@ -128,13 +126,10 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void blockFriend(Long friendshipId, Long userId) {
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "친구 관계를 찾을 수 없습니다."));
+                .orElseThrow(FriendshipNotFoundException::new);
 
-        boolean isRequester = friendship.getRequester().getUserId().equals(userId);
-        boolean isAddressee = friendship.getAddressee().getUserId().equals(userId);
-
-        if (!isRequester && !isAddressee) {
-            throw new CustomException(ErrorCode.FORBIDDEN, "해당 친구 관계를 처리할 권한이 없습니다.");
+        if (!friendship.isRelatedUser(userId)) {
+            throw new FriendRequestAccessDeniedException();
         }
 
         friendship.block();
@@ -144,9 +139,19 @@ public class FriendshipServiceImpl implements FriendshipService {
     public List<Friendship> getFriendshipHistory(Long userId) {
 
         if (userId == null) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "userId는 필수입니다.");
+            throw new InvalidSocialUserException();
         }
 
         return friendshipRepository.findHistoryByUserId(userId);
+    }
+
+    @Override
+    public List<User> getRecommendedFriends(Long userId) {
+
+        if (userId == null) {
+            throw new InvalidSocialUserException();
+        }
+
+        return friendshipRepository.findRandomRecommendedUsers(userId);
     }
 }

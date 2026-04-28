@@ -132,4 +132,16 @@ public class FriendshipController implements FriendshipControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("차단 및 거절 이력 조회 성공", result));
     }
+
+    @Override
+    @GetMapping("/recommend")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseRecommendedFriend>>> getRecommendedFriends(
+            @RequestParam("userId") Long userId
+    ) {
+        List<FriendshipDto.ResponseRecommendedFriend> result = friendshipService.getRecommendedFriends(userId).stream()
+                .map(FriendshipDto.ResponseRecommendedFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("추천 친구 조회 성공", result));
+    }
 }

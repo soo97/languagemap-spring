@@ -529,4 +529,50 @@ public interface FriendshipControllerDocs {
     ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriendshipHistory(
             @RequestParam("userId") Long userId
     );
+
+    @Operation(
+            summary = "추천 친구 조회",
+            description = "친구 관계가 없는 사용자를 랜덤으로 추천합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "추천 친구 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": true,
+                                  "status": 200,
+                                  "message": "추천 친구 조회 성공",
+                                  "data": [
+                                    {
+                                      "userId": 2,
+                                      "name": "유저2",
+                                      "email": "user2@test.com"
+                                    }
+                                  ]
+                                }
+                                """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": false,
+                                  "status": 400,
+                                  "message": "userId는 필수입니다.",
+                                  "data": null
+                                }
+                                """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseRecommendedFriend>>> getRecommendedFriends(
+            @RequestParam("userId") Long userId
+    );
 }

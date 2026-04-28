@@ -393,5 +393,24 @@ public class FriendshipServiceTest {
         assertEquals(FriendshipStatus.BLOCKED, result.get(1).getStatus());
     }
 
+    @Test
+    @DisplayName("랜덤 추천 친구 목록을 조회한다")
+    void 랜덤_추천_친구_목록을_조회한다() {
+
+        Long userId = 1L;
+
+        User recommendedUser1 = mock(User.class);
+        User recommendedUser2 = mock(User.class);
+
+        given(userRepository.findRandomRecommendedUsers(userId))
+                .willReturn(List.of(recommendedUser1, recommendedUser2));
+
+        List<User> result = friendshipService.getRecommendedFriends(userId);
+
+        verify(userRepository).findRandomRecommendedUsers(userId);
+
+        assertEquals(2, result.size());
+    }
+
 
 }
