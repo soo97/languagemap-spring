@@ -59,4 +59,23 @@ public class TokenServiceImpl implements TokenService {
 
         return TokenDto.ResponseReissue.of(newAccessToken, newRefreshToken);
     }
+    
+    
+    @Override
+    public void logout(TokenDto.RequestLogout request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        Long userId = jwtTokenProvider.getUserId(refreshToken);
+
+        if (!refreshTokenService.isRefreshTokenMatched(userId, refreshToken)) {
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        refreshTokenService.deleteRefreshToken(userId);
+    }
+    
 }
