@@ -98,36 +98,23 @@ public interface AuthControllerDocs {
             description = "이름, 생년월일, 주소, 전화번호, 이메일, 비밀번호 및 약관 동의 여부를 입력받아 회원가입을 처리합니다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(
-                    responseCode = "409",
-                    description = "이미 존재하는 이메일",
+                    responseCode = "200",
+                    description = "회원가입 성공",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
+                                    name = "회원가입 성공",
                                     value = """
                                             {
-                                              "success": false,
-                                              "status": 409,
-                                              "message": "이미 존재하는 이메일입니다.",
-                                              "data": null
-                                            }
-                                            """
-                            )
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "409",
-                    description = "이미 존재하는 전화번호",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "success": false,
-                                              "status": 409,
-                                              "message": "이미 존재하는 전화번호입니다.",
-                                              "data": null
+                                              "success": true,
+                                              "status": 200,
+                                              "message": "회원가입 성공",
+                                              "data": {
+                                                "userId": 1,
+                                                "email": "test@naver.com",
+                                                "name": "홍길동"
+                                              }
                                             }
                                             """
                             )
@@ -135,70 +122,59 @@ public interface AuthControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "비밀번호 확인 불일치",
+                    description = "회원가입 요청값 오류",
                     content = @Content(
                             mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "success": false,
-                                              "status": 400,
-                                              "message": "비밀번호와 비밀번호 확인이 일치하지 않습니다.",
-                                              "data": null
-                                            }
-                                            """
-                            )
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "입력값 검증 실패",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "success": false,
-                                              "status": 400,
-                                              "message": "입력값 검증 실패",
-                                              "data": null
-                                            }
-                                            """
-                            )
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "서비스 이용약관 미동의",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "success": false,
-                                              "status": 400,
-                                              "message": "서비스 이용약관 동의는 필수입니다.",
-                                              "data": null
-                                            }
-                                            """
-                            )
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "개인정보 수집 및 이용 미동의",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "success": false,
-                                              "status": 400,
-                                              "message": "개인정보 수집 및 이용 동의는 필수입니다.",
-                                              "data": null
-                                            }
-                                            """
-                            )
+                            examples = {
+                                    @ExampleObject(
+                                            name = "비밀번호 확인 불일치",
+                                            summary = "password와 passwordConfirm이 일치하지 않는 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 400,
+                                                      "message": "비밀번호와 비밀번호 확인이 일치하지 않습니다.",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "입력값 검증 실패",
+                                            summary = "생년월일 형식 오류 등 요청값 검증에 실패한 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 400,
+                                                      "message": "입력값 검증 실패",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "서비스 이용약관 미동의",
+                                            summary = "serviceAgree가 false인 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 400,
+                                                      "message": "서비스 이용약관 동의는 필수입니다.",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "개인정보 수집 및 이용 미동의",
+                                            summary = "privacyAgree가 false인 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 400,
+                                                      "message": "개인정보 수집 및 이용 동의는 필수입니다.",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    )
+                            }
                     )
             ),
             @ApiResponse(
@@ -207,6 +183,7 @@ public interface AuthControllerDocs {
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
+                                    name = "활성 약관 정보 없음",
                                     value = """
                                             {
                                               "success": false,
@@ -216,6 +193,39 @@ public interface AuthControllerDocs {
                                             }
                                             """
                             )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "회원가입 중복 리소스",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "이미 존재하는 이메일",
+                                            summary = "email이 이미 존재하는 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 409,
+                                                      "message": "이미 존재하는 이메일입니다.",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "이미 존재하는 전화번호",
+                                            summary = "phoneNumber가 이미 존재하는 경우",
+                                            value = """
+                                                    {
+                                                      "success": false,
+                                                      "status": 409,
+                                                      "message": "이미 존재하는 전화번호입니다.",
+                                                      "data": null
+                                                    }
+                                                    """
+                                    )
+                            }
                     )
             )
     })
