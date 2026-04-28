@@ -111,6 +111,30 @@ public class FriendshipServiceTest {
     }
 
     @Test
+    @DisplayName("이메일로 친구 요청을 보낸다")
+    void 이메일로_친구_요청을_보낸다() {
+
+        Long requesterId = 1L;
+        String email = "test@test.com";
+
+        User requester = mock(User.class);
+        User addressee = mock(User.class);
+
+        given(userRepository.findById(requesterId))
+                .willReturn(Optional.of(requester));
+
+        given(userRepository.findByEmail(email))
+                .willReturn(Optional.of(addressee));
+
+        given(friendshipRepository.existsFriendshipBetween(requesterId, addressee.getUserId()))
+                .willReturn(false);
+
+        friendshipService.sendFriendRequestByEmail(requesterId, email);
+
+        verify(friendshipRepository).save(any(Friendship.class));
+    }
+
+    @Test
     @DisplayName("친구 요청을 정상적으로 수락한다")
     void 친구_요청을_정상적으로_수락한다() {
 

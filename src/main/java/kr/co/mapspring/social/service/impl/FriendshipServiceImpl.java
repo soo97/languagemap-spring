@@ -52,6 +52,16 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     @Transactional
+    public void sendFriendRequestByEmail(Long requesterId, String email) {
+
+        User addressee = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다."));
+
+        sendFriendRequest(requesterId, addressee.getUserId());
+    }
+
+    @Override
+    @Transactional
     public void acceptFriendRequest(Long friendshipId, Long addresseeId) {
 
         Friendship friendship = friendshipRepository.findById(friendshipId)

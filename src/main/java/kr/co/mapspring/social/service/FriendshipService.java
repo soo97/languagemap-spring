@@ -22,6 +22,24 @@ public interface FriendshipService {
     void sendFriendRequest(Long requesterId, Long addresseeId);
 
     /**
+     * 이메일로 친구 요청
+     *
+     * [설명]
+     * - 이메일을 통해 특정 사용자에게 친구 요청을 보낸다.
+     * - 이메일로 사용자를 찾은 뒤 기존 친구 요청 로직을 수행한다.
+     *
+     * [검증]
+     * - 요청 보내는 사용자가 존재해야 한다.
+     * - 이메일에 해당하는 사용자가 존재해야 한다.
+     * - 자기 자신에게 요청할 수 없다.
+     * - 이미 친구 관계가 존재하면 요청할 수 없다.
+     *
+     * @param requesterId 요청 보내는 사용자 ID
+     * @param email 요청 받는 사용자 이메일
+     */
+    void sendFriendRequestByEmail(Long requesterId, String email);
+
+    /**
      * 친구 요청 수락
      *
      * [설명]
@@ -139,4 +157,5 @@ public interface FriendshipService {
      * @return 차단 및 거절 이력 목록
      */
     List<Friendship> getFriendshipHistory(Long userId);
+
 }

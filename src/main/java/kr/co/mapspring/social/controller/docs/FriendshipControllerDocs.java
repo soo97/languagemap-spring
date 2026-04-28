@@ -89,6 +89,60 @@ public interface FriendshipControllerDocs {
     );
 
     @Operation(
+            summary = "이메일로 친구 요청 보내기",
+            description = "이메일을 통해 특정 사용자에게 친구 요청을 보냅니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "친구 요청 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": true,
+                                  "status": 200,
+                                  "message": "이메일로 친구 요청을 보냈습니다.",
+                                  "data": null
+                                }
+                                """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": false,
+                                  "status": 404,
+                                  "message": "해당 이메일의 사용자를 찾을 수 없습니다.",
+                                  "data": null
+                                }
+                                """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<Void>> sendFriendRequestByEmail(
+            @RequestBody(
+                    description = "이메일 친구 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = FriendshipDto.RequestSendFriendRequestByEmail.class),
+                            examples = @ExampleObject(value = """
+                                {
+                                  "requesterId": 1,
+                                  "email": "user2@test.com"
+                                }
+                                """)
+                    )
+            )
+            FriendshipDto.RequestSendFriendRequestByEmail request
+    );
+
+    @Operation(
             summary = "친구 요청 수락",
             description = "받은 친구 요청을 수락합니다."
     )

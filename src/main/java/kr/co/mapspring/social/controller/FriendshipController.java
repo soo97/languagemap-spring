@@ -37,6 +37,18 @@ public class FriendshipController implements FriendshipControllerDocs {
     }
 
     @Override
+    @PostMapping("/requests/email")
+    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequestByEmail(@RequestBody FriendshipDto.RequestSendFriendRequestByEmail request) {
+
+        friendshipService.sendFriendRequestByEmail(
+                request.getRequesterId(),
+                request.getEmail()
+        );
+
+        return ResponseEntity.ok(ApiResponseDTO.success("이메일로 친구 요청을 보냈습니다.", null));
+    }
+
+    @Override
     @PatchMapping("/requests/{friendshipId}/accept")
     public ResponseEntity<ApiResponseDTO<Void>> acceptFriendRequest(@PathVariable("friendshipId") Long friendshipId,
                                                                     @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
