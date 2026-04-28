@@ -91,4 +91,14 @@ public class FriendshipController implements FriendshipControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("받은 친구 요청 조회 성공", result));
     }
+
+    @Override
+    @GetMapping("/requests/sent")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getSentRequests(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getSentRequests(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("보낸 친구 요청 조회 성공", result));
+    }
 }

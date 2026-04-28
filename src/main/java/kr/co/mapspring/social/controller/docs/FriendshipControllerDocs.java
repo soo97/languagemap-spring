@@ -369,4 +369,49 @@ public interface FriendshipControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getReceivedRequests(@RequestParam("userId") Long userId);
+
+    @Operation(
+            summary = "보낸 친구 요청 목록 조회",
+            description = "사용자가 보낸 친구 요청(PENDING 상태)을 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": true,
+                                  "status": 200,
+                                  "message": "보낸 친구 요청 조회 성공",
+                                  "data": [
+                                    {
+                                      "friendshipId": 1,
+                                      "requesterId": 1,
+                                      "addresseeId": 2,
+                                      "status": "PENDING"
+                                    }
+                                  ]
+                                }
+                                """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": false,
+                                  "status": 400,
+                                  "message": "userId는 필수입니다.",
+                                  "data": null
+                                }
+                                """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getSentRequests(@RequestParam("userId") Long userId);
 }

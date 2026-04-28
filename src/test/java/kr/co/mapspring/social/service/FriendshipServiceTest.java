@@ -294,7 +294,7 @@ public class FriendshipServiceTest {
         given(friendshipRepository.findSentRequestsByUserId(userId))
                 .willReturn(List.of(friendship1, friendship2));
 
-        List<Friendship> result = FriendshipService.getSentRequests(userId);
+        List<Friendship> result = friendshipService.getSentRequests(userId);
 
         verify(friendshipRepository).findSentRequestsByUserId(userId);
 
