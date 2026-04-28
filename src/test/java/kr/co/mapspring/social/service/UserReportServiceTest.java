@@ -3,6 +3,8 @@ package kr.co.mapspring.social.service;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.social.entity.UserReport;
 import kr.co.mapspring.social.enums.ReportStatus;
+import kr.co.mapspring.social.repository.UserReportRepository;
+import kr.co.mapspring.social.service.impl.UserReportServiceImpl;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -90,7 +91,7 @@ public class UserReportServiceTest {
         assertThrows(CustomException.class,
                 () -> userReportService.createReport(reporterId, reportedUserId, " "));
 
-        verify(userRepository, never().findById(any(Long.class)));
+        verify(userRepository, never()).findById(any(Long.class));
         verify(userReportRepository, never()).save(any(UserReport.class));
     }
 }
