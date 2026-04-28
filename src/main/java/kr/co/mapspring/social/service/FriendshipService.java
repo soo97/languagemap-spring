@@ -95,4 +95,19 @@ public interface FriendshipService {
      * @return 받은 친구 요청 목록 (PENDING 상태)
      */
     List<Friendship> getReceivedRequests(Long userId);
+
+    /**
+     * 보낸 친구 요청 목록 조회
+     *
+     * [설명]
+     * - 특정 사용자가 보낸 친구 요청 목록을 조회한다.
+     * - 아직 처리되지 않은 요청(PENDING 상태)만 조회한다.
+     *
+     * [검증]
+     * - userId는 필수 값이다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @return 보낸 친구 요청 목록 (PENDING 상태)
+     */
+    List<Friendship> getSentRequests(Long userId);
 }

@@ -1,5 +1,7 @@
 package kr.co.mapspring.social.service.impl;
 
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.social.FriendRequestAccessDeniedException;
 import kr.co.mapspring.global.exception.social.FriendshipAlreadyExistsException;
 import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
@@ -98,5 +100,15 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     public List<Friendship> getReceivedRequests(Long userId) {
         return friendshipRepository.findReceivedRequestsByUserId(userId);
+    }
+
+    @Override
+    public List<Friendship> getSentRequests(Long userId) {
+
+        if (userId == null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "userId는 필수입니다.");
+        }
+
+        return friendshipRepository.findSentRequestsByUserId(userId);
     }
 }
