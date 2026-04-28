@@ -90,7 +90,7 @@ public interface FriendshipService {
      *
      * [검증]
      * - userId는 필수 값이다.
-     * 
+     *
      * @param userId 조회할 사용자 ID
      * @return 받은 친구 요청 목록 (PENDING 상태)
      */

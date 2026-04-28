@@ -81,4 +81,14 @@ public class FriendshipController implements FriendshipControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구를 삭제했습니다.", null));
     }
+
+    @Override
+    @GetMapping("/requests/received")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getReceivedRequests(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getReceivedRequests(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("받은 친구 요청 조회 성공", result));
+    }
 }

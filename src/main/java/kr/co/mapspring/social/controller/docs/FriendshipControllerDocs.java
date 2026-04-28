@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.social.dto.FriendshipDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -138,7 +140,7 @@ public interface FriendshipControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<Void>> acceptFriendRequest(
-            Long friendshipId,
+            @PathVariable("friendshipId") Long friendshipId,
             @RequestBody(
                     description = "요청 처리 사용자 정보",
                     required = true,
@@ -207,7 +209,7 @@ public interface FriendshipControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<Void>> rejectFriendRequest(
-            Long friendshipId,
+            @PathVariable("friendshipId") Long friendshipId,
             @RequestBody(
                     description = "요청 처리 사용자 정보",
                     required = true,
@@ -252,7 +254,7 @@ public interface FriendshipControllerDocs {
                     )
             )
     })
-    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriends(Long userId);
+    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriends(@RequestParam("userId") Long userId);
 
     @Operation(
             summary = "친구 삭제",
@@ -306,7 +308,7 @@ public interface FriendshipControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<Void>> deleteFriend(
-            Long friendshipId,
+            @PathVariable("friendshipId") Long friendshipId,
             @RequestBody(
                     description = "삭제 요청 사용자 정보",
                     required = true,
@@ -322,4 +324,49 @@ public interface FriendshipControllerDocs {
             )
             FriendshipDto.RequestHandleFriendRequest request
     );
+
+    @Operation(
+            summary = "받은 친구 요청 목록 조회",
+            description = "사용자가 받은 친구 요청(PENDING 상태)을 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": true,
+                                  "status": 200,
+                                  "message": "받은 친구 요청 조회 성공",
+                                  "data": [
+                                    {
+                                      "friendshipId": 1,
+                                      "requesterId": 2,
+                                      "addresseeId": 1,
+                                      "status": "PENDING"
+                                    }
+                                  ]
+                                }
+                                """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                {
+                                  "success": false,
+                                  "status": 400,
+                                  "message": "userId는 필수입니다.",
+                                  "data": null
+                                }
+                                """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getReceivedRequests(@RequestParam("userId") Long userId);
 }
