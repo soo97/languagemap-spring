@@ -230,4 +230,20 @@ public class TokenServiceTest {
         verify(refreshTokenService).deleteRefreshToken(1L);
     }
     
+    @Test
+    @DisplayName("로그아웃 시 Refresh Token 자체가 유효하지 않으면 예외가 발생한다")
+    void logoutFailWhenRefreshTokenInvalid() {
+        // given
+        String refreshToken = "invalid-refresh-token";
+        TokenDto.RequestLogout request = new TokenDto.RequestLogout(refreshToken);
+
+        given(jwtTokenProvider.validateRefreshToken(refreshToken))
+                .willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> tokenService.logout(request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
+    }
+    
 }
