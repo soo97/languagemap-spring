@@ -331,4 +331,40 @@ public class FriendshipServiceTest {
 
         assertEquals(FriendshipStatus.BLOCKED, friendship.getStatus());
     }
+
+    @Test
+    @DisplayName("사용자의 차단 및 거절 이력을 조회한다")
+    void 사용자의_차단_및_거절_이력을_조회한다() {
+
+        Long userId = 1L;
+
+        User user = mock(User.class);
+        User otherUser1 = mock(User.class);
+        User otherUser2 = mock(User.class);
+
+        Friendship rejectedFriendship = Friendship.of(
+                1L,
+                otherUser1,
+                user,
+                FriendshipStatus.REJECTED
+        );
+
+        Friendship blockedFriendship = Friendship.of(
+                2L,
+                user,
+                otherUser2,
+                FriendshipStatus.BLOCKED
+        );
+
+        given(friendshipRepository.findHistoryByUserId(userId))
+                .willReturn(List.of(rejectedFriendship, blockedFriendship));
+
+        List<Friendship> result = friendshipService.getFriendshipHistory(userId);
+
+        verify(friendshipRepository).findHistoryByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals(FriendshipStatus.REJECTED, result.get(0).getStatus());
+        assertEquals(FriendshipStatus.BLOCKED, result.get(1).getStatus());
+    }
 }
