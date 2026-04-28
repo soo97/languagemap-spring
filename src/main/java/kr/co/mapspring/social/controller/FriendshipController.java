@@ -37,6 +37,18 @@ public class FriendshipController implements FriendshipControllerDocs {
     }
 
     @Override
+    @PostMapping("/requests/email")
+    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequestByEmail(@RequestBody FriendshipDto.RequestSendFriendRequestByEmail request) {
+
+        friendshipService.sendFriendRequestByEmail(
+                request.getRequesterId(),
+                request.getEmail()
+        );
+
+        return ResponseEntity.ok(ApiResponseDTO.success("이메일로 친구 요청을 보냈습니다.", null));
+    }
+
+    @Override
     @PatchMapping("/requests/{friendshipId}/accept")
     public ResponseEntity<ApiResponseDTO<Void>> acceptFriendRequest(@PathVariable("friendshipId") Long friendshipId,
                                                                     @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
@@ -80,5 +92,56 @@ public class FriendshipController implements FriendshipControllerDocs {
         );
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구를 삭제했습니다.", null));
+    }
+
+    @Override
+    @GetMapping("/requests/received")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getReceivedRequests(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getReceivedRequests(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("받은 친구 요청 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/requests/sent")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getSentRequests(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getSentRequests(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("보낸 친구 요청 조회 성공", result));
+    }
+
+    @Override
+    @PatchMapping("/{friendshipId}/block")
+    public ResponseEntity<ApiResponseDTO<Void>> blockFriend(@PathVariable("friendshipId") Long friendshipId,
+                                                            @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
+        friendshipService.blockFriend(friendshipId, request.getUserId());
+
+        return ResponseEntity.ok(ApiResponseDTO.success("친구를 차단했습니다.", null));
+    }
+
+    @Override
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getFriendshipHistory(@RequestParam("userId") Long userId) {
+        List<FriendshipDto.ResponseFriend> result = friendshipService.getFriendshipHistory(userId).stream()
+                .map(FriendshipDto.ResponseFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("차단 및 거절 이력 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/recommend")
+    public ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseRecommendedFriend>>> getRecommendedFriends(
+            @RequestParam("userId") Long userId
+    ) {
+        List<FriendshipDto.ResponseRecommendedFriend> result = friendshipService.getRecommendedFriends(userId).stream()
+                .map(FriendshipDto.ResponseRecommendedFriend::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("추천 친구 조회 성공", result));
     }
 }
