@@ -101,4 +101,13 @@ public class FriendshipController implements FriendshipControllerDocs {
 
         return ResponseEntity.ok(ApiResponseDTO.success("보낸 친구 요청 조회 성공", result));
     }
+
+    @Override
+    @PatchMapping("/{friendshipId}/block")
+    public ResponseEntity<ApiResponseDTO<Void>> blockFriend(@PathVariable("friendshipId") Long friendshipId,
+                                                            @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
+        friendshipService.blockFriend(friendshipId, request.getUserId());
+
+        return ResponseEntity.ok(ApiResponseDTO.success("친구를 차단했습니다.", null));
+    }
 }

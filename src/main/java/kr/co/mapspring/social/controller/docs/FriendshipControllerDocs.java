@@ -414,4 +414,27 @@ public interface FriendshipControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<List<FriendshipDto.ResponseFriend>>> getSentRequests(@RequestParam("userId") Long userId);
+
+    @Operation(
+            summary = "친구 차단",
+            description = "특정 친구 관계를 차단 상태로 변경합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "차단 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "친구 관계 없음"
+            )
+    })
+    ResponseEntity<ApiResponseDTO<Void>> blockFriend(
+            @PathVariable("friendshipId") Long friendshipId,
+            @RequestBody FriendshipDto.RequestHandleFriendRequest request
+    );
 }
