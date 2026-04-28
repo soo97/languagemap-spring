@@ -129,4 +129,14 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         friendship.block();
     }
+
+    @Override
+    public List<Friendship> getFriendshipHistory(Long userId) {
+
+        if (userId == null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "userId는 필수입니다.");
+        }
+
+        return friendshipRepository.findHistoryByUserId(userId);
+    }
 }

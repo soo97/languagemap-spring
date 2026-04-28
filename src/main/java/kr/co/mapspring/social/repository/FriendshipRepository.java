@@ -46,10 +46,19 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
            FROM Friendship f
            WHERE f.requester.userId = :userId
            AND f.status = :status
-       """)
+           """)
     List<Friendship> findSentRequestsByUserIdAndStatus(Long userId, FriendshipStatus status);
 
     default List<Friendship> findSentRequestsByUserId(Long userId) {
         return findSentRequestsByUserIdAndStatus(userId, FriendshipStatus.PENDING);
     }
+
+    @Query("""
+           SELECT f
+           FROM Friendship f
+           WHERE (f.requester.userId = :userId OR f.addressee.userId = :userId)
+           AND f.status IN (kr.co.mapspring.social.enums.FriendshipStatus.REJECTED,
+                            kr.co.mapspring.social.enums.FriendshipStatus.BLOCKED)   
+           """)
+    List<Friendship> findHistoryByUserId(Long userId);
 }

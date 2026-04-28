@@ -125,4 +125,18 @@ public interface FriendshipService {
      * @param userId 요청 사용자 ID
      */
     void blockFriend(Long friendshipId, Long userId);
+
+    /**
+     * 차단 및 거절 이력 조회
+     *
+     * [설명]
+     * - 특정 사용자와 관련된 친구 관계 중 거절(REJECTED), 차단(BLOCKED) 상태의 이력을 조회한다.
+     *
+     * [검증]
+     * - userId는 필수 값이다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @return 차단 및 거절 이력 목록
+     */
+    List<Friendship> getFriendshipHistory(Long userId);
 }
