@@ -302,4 +302,33 @@ public class FriendshipServiceTest {
         assertEquals(FriendshipStatus.PENDING, result.get(0).getStatus());
         assertEquals(FriendshipStatus.PENDING, result.get(1).getStatus());
     }
+
+    @Test
+    @DisplayName("친구를 정상적으로 차단한다")
+    void 친구를_정상적으로_차단한다() {
+
+        Long friendshipId = 1L;
+        Long userId = 1L;
+
+        User requester = mock(User.class);
+        User addressee = mock(User.class);
+
+        given(requester.getUserId()).willReturn(userId);
+
+        Friendship friendship = Friendship.of(
+                friendshipId,
+                requester,
+                addressee,
+                FriendshipStatus.ACCEPTED
+        );
+
+        given(friendshipRepository.findById(friendshipId))
+                .willReturn(Optional.of(friendship));
+
+        friendshipService.blockFriend(friendshipId, userId);
+
+        verify(friendshipRepository).findById(friendshipId);
+
+        assertEquals(FriendshipStatus.BLOCKED, friendship.getStatus());
+    }
 }
