@@ -23,6 +23,7 @@ import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.SignUpDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
+import kr.co.mapspring.global.jwt.JwtAuthenticationFilter;
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -39,17 +40,23 @@ class AuthControllerTest {
     // 회원가입 서비스 mock
     @MockitoBean
     private SignUpService signUpService;
+    
+    // JWT 필터는 이 컨트롤러 테스트의 검증 대상이 아니므로 mock 처리한다.
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     @DisplayName("로그인 요청이 성공하면 공통 성공 응답을 반환한다")
     void loginSuccess() throws Exception {
         // given
-        LoginDto.ResponseLogin response = LoginDto.ResponseLogin.builder()
-                .userId(1L)
-                .email("test@naver.com")
-                .name("홍길동")
-                .role("USER")
-                .build();
+    	LoginDto.ResponseLogin response = LoginDto.ResponseLogin.builder()
+    	        .userId(1L)
+    	        .email("test@naver.com")
+    	        .name("홍길동")
+    	        .role("USER")
+    	        .accessToken("mock-access-token")
+    	        .refreshToken("mock-refresh-token")
+    	        .build();
 
         given(loginService.login(ArgumentMatchers.any(LoginDto.RequestLogin.class)))
                 .willReturn(response);
@@ -72,7 +79,10 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.userId").value(1))
                 .andExpect(jsonPath("$.data.email").value("test@naver.com"))
                 .andExpect(jsonPath("$.data.name").value("홍길동"))
-                .andExpect(jsonPath("$.data.role").value("USER"));
+                .andExpect(jsonPath("$.data.role").value("USER"))
+                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"))
+                .andExpect(jsonPath("$.data.accessToken").value("mock-access-token"))
+                .andExpect(jsonPath("$.data.refreshToken").value("mock-refresh-token"));
     }
 
     @Test
