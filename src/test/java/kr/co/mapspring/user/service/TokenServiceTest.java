@@ -202,4 +202,32 @@ public class TokenServiceTest {
 
         return user;
     }
+    
+    @Test
+    @DisplayName("유효한 Refresh Token이면 로그아웃에 성공하고 Redis에서 Refresh Token을 삭제한다")
+    void logoutSuccess() {
+        // given
+        String refreshToken = "valid-refresh-token";
+        TokenDto.RequestLogout request = new TokenDto.RequestLogout(refreshToken);
+
+        // Refresh Token 자체가 유효하다고 가정한다.
+        given(jwtTokenProvider.validateRefreshToken(refreshToken))
+                .willReturn(true);
+
+        // Refresh Token에서 userId를 꺼낸다고 가정한다.
+        given(jwtTokenProvider.getUserId(refreshToken))
+                .willReturn(1L);
+
+        // Redis에 저장된 Refresh Token과 요청 Refresh Token이 같다고 가정한다.
+        given(refreshTokenService.isRefreshTokenMatched(1L, refreshToken))
+                .willReturn(true);
+
+        // when
+        tokenService.logout(request);
+
+        // then
+        // Redis에서 refresh:1이 삭제되는지 확인한다.
+        verify(refreshTokenService).deleteRefreshToken(1L);
+    }
+    
 }
