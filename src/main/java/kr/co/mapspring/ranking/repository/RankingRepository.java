@@ -9,9 +9,9 @@ import java.util.List;
 public interface RankingRepository extends JpaRepository<StudyScore, Long> {
 
     @Query("""
-           SELECT ss.studyLog.user.userId, SUM(ss.totalScore)
+           SELECT ss.studyLog.userId, SUM(ss.totalScore)
            FROM StudyScore ss
-           GROUP BY ss.studyLog.user.userId
+           GROUP BY ss.studyLog.userId
            ORDER BY SUM(ss.totalScore) DESC    
            """)
     List<Object[]> findRanking();
