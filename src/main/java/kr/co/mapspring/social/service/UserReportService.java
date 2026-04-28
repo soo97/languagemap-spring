@@ -1,5 +1,9 @@
 package kr.co.mapspring.social.service;
 
+import kr.co.mapspring.social.entity.UserReport;
+
+import java.util.List;
+
 public interface UserReportService {
 
     /**
@@ -19,4 +23,18 @@ public interface UserReportService {
      * @param reason 신고 사유
      */
     void createReport(Long reporterId, Long reportedUserId, String reason);
+
+    /**
+     * 신고 이력 조회
+     *
+     * [설명]
+     * - 특정 사용자가 신고한 이력을 조회한다.
+     *
+     * [검증]
+     * - userId는 필수 값이다.
+     *
+     * @param userId 신고 이력을 조회할 사용자 ID
+     * @return 사용자가 신고한 이력 목록
+     */
+    List<UserReport> getReportHistory(Long userId);
 }

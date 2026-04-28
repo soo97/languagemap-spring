@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,5 +94,44 @@ public class UserReportServiceTest {
 
         verify(userRepository, never()).findById(any(Long.class));
         verify(userReportRepository, never()).save(any(UserReport.class));
+    }
+
+    @Test
+    @DisplayName("사용자의 신고 이력을 조회한다")
+    void 사용자의_신고_이력을_조회한다() {
+
+        Long userId = 1L;
+
+        User reporter = mock(User.class);
+        User reportedUser1 = mock(User.class);
+        User reportedUser2 = mock(User.class);
+
+        UserReport report1 = UserReport.of(
+                1L,
+                reporter,
+                reportedUser1,
+                "욕설",
+                ReportStatus.PENDING
+        );
+
+        UserReport report2 = UserReport.of(
+                2L,
+                reporter,
+                reportedUser2,
+                "부적절한 행동",
+                ReportStatus.RESOLVED
+        );
+
+        given(userReportRepository.findByReporter_UserId(userId))
+                .willReturn(List.of(report1, report2));
+
+        List<UserReport> result = userReportService.getReportHistory(userId);
+
+        verify(userReportRepository).findByReporter_UserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals("욕설", result.get(0).getReason());
+        assertEquals(ReportStatus.PENDING, result.get(0).getStatus());
+        assertEquals(ReportStatus.RESOLVED, result.get(1).getStatus());
     }
 }

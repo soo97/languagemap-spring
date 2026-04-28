@@ -1,7 +1,9 @@
 package kr.co.mapspring.social.service.impl;
 
-import kr.co.mapspring.global.exception.CustomException;
-import kr.co.mapspring.global.exception.ErrorCode;
+import kr.co.mapspring.global.exception.social.InvalidReportReasonException;
+import kr.co.mapspring.global.exception.social.InvalidReportUserException;
+import kr.co.mapspring.global.exception.social.SelfReportNotAllowedException;
+import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
 import kr.co.mapspring.social.entity.UserReport;
 import kr.co.mapspring.social.repository.UserReportRepository;
 import kr.co.mapspring.social.service.UserReportService;
@@ -10,6 +12,8 @@ import kr.co.mapspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +28,22 @@ public class UserReportServiceImpl implements UserReportService {
     public void createReport(Long reporterId, Long reportedUserId, String reason) {
 
         if (reporterId == null || reportedUserId == null) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "사용자 ID는 필수입니다.");
+            throw new InvalidReportUserException();
         }
 
         if (reporterId.equals(reportedUserId)) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "자기 자신을 신고할 수 없습니다.");
+            throw new SelfReportNotAllowedException();
         }
 
         if (reason == null || reason.isBlank()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "신고 사유는 필수입니다.");
+            throw new InvalidReportReasonException();
         }
 
         User reporter = userRepository.findById(reporterId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "신고자를 찾을 수 없습니다."));
+                .orElseThrow(UserNotFoundForSocialException::new);
 
         User reportedUser = userRepository.findById(reportedUserId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "신고 대상 사용자를 찾을 수 없습니다."));
+                .orElseThrow(UserNotFoundForSocialException::new);
 
         UserReport userReport = UserReport.create(
                 reporter,
@@ -48,5 +52,15 @@ public class UserReportServiceImpl implements UserReportService {
         );
 
         userReportRepository.save(userReport);
+    }
+
+    @Override
+    public List<UserReport> getReportHistory(Long userId) {
+
+        if (userId == null) {
+            throw new InvalidReportUserException();
+        }
+
+        return userReportRepository.findByReporter_UserId(userId);
     }
 }

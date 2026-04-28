@@ -6,10 +6,14 @@ import kr.co.mapspring.social.dto.UserReportDto;
 import kr.co.mapspring.social.service.UserReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +33,16 @@ public class UserReportController implements UserReportControllerDocs {
         );
 
         return ResponseEntity.ok(ApiResponseDTO.success("신고가 접수되었습니다.", null));
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<ApiResponseDTO<List<UserReportDto.ResponseReportHistory>>> getReportHistory(@RequestParam("userId") Long userId) {
+
+        List<UserReportDto.ResponseReportHistory> result = userReportService.getReportHistory(userId).stream()
+                .map(UserReportDto.ResponseReportHistory::from)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("신고 이력 조회 성공", result));
     }
 }
