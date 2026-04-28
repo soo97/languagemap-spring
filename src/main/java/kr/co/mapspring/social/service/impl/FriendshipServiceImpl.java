@@ -8,6 +8,7 @@ import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
 import kr.co.mapspring.global.exception.social.SelfFriendRequestNotAllowedException;
 import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
 import kr.co.mapspring.social.entity.Friendship;
+import kr.co.mapspring.social.enums.FriendshipStatus;
 import kr.co.mapspring.social.repository.FriendshipRepository;
 import kr.co.mapspring.social.service.FriendshipService;
 import kr.co.mapspring.user.entity.User;
@@ -110,5 +111,22 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
 
         return friendshipRepository.findSentRequestsByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public void blockFriend(Long friendshipId, Long userId) {
+
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "친구 관계를 찾을 수 없습니다."));
+
+        boolean isRequester = friendship.getRequester().getUserId().equals(userId);
+        boolean isAddressee = friendship.getAddressee().getUserId().equals(userId);
+
+        if (!isRequester && !isAddressee) {
+            throw new CustomException(ErrorCode.FORBIDDEN, "해당 친구 관계를 처리할 권한이 없습니다.");
+        }
+
+        friendship.block();
     }
 }

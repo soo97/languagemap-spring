@@ -110,4 +110,19 @@ public interface FriendshipService {
      * @return 보낸 친구 요청 목록 (PENDING 상태)
      */
     List<Friendship> getSentRequests(Long userId);
+
+    /**
+     * 친구 차단
+     *
+     * [설명]
+     * - 특정 친구 관계를 차단 상태로 변경한다.
+     *
+     * [검증]
+     * - 해당 친구 관계가 존재해야 한다.
+     * - userId가 해당 친구 관계의 당사자여야 한다.
+     *
+     * @param friendshipId 친구 관계 ID
+     * @param userId 요청 사용자 ID
+     */
+    void blockFriend(Long friendshipId, Long userId);
 }
