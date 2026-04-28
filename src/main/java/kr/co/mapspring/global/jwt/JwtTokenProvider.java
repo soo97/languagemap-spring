@@ -86,6 +86,22 @@ public class JwtTokenProvider {
             return false;
         }
     }
+    
+ // Refresh Token 유효성 검증
+    public boolean validateRefreshToken(String token) {
+        try {
+            Claims claims = getClaims(token);
+
+            // tokenType이 REFRESH인 토큰만 Refresh Token으로 인정한다.
+            return "REFRESH".equals(claims.get("tokenType", String.class));
+
+        } catch (JwtException | IllegalArgumentException e) {
+            // 만료, 서명 오류, 토큰 형식 오류 등은 false 처리한다.
+            return false;
+        }
+    }
+    
+    
 
     // JWT subject에서 userId를 꺼낸다.
     public Long getUserId(String token) {

@@ -34,4 +34,20 @@ public class RefreshTokenService {
         stringRedisTemplate.opsForValue()
                 .set(key, refreshToken, Duration.ofMillis(refreshTokenExpiration));
     }
+    
+ // Redis에 저장된 Refresh Token을 조회한다.
+    public String getRefreshToken(Long userId) {
+        String key = REFRESH_TOKEN_PREFIX + userId;
+
+        return stringRedisTemplate.opsForValue().get(key);
+    }
+
+    // 요청으로 들어온 Refresh Token과 Redis에 저장된 Refresh Token이 같은지 확인한다.
+    public boolean isRefreshTokenMatched(Long userId, String refreshToken) {
+        String savedRefreshToken = getRefreshToken(userId);
+
+        return refreshToken != null && refreshToken.equals(savedRefreshToken);
+    }
+    
+    
 }
