@@ -33,4 +33,45 @@ public class RankingController implements RankingControllerDocs {
         RankingDto.ResponseRanking result = rankingService.getMyRanking(userId);
         return ResponseEntity.ok(ApiResponseDTO.success("내 랭킹 조회 성공", result));
     }
+
+    @Override
+    @GetMapping("/friends")
+    public ResponseEntity<ApiResponseDTO<List<RankingDto.ResponseRanking>>> getFriendRankings(
+            @RequestParam("userId") Long userId
+    ) {
+        List<RankingDto.ResponseRanking> result = rankingService.getFriendRankings(userId);
+        return ResponseEntity.ok(ApiResponseDTO.success("친구 랭킹 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/friends/best-score")
+    public ResponseEntity<ApiResponseDTO<Long>> getFriendBestScore(
+            @RequestParam("userId") Long userId
+    ) {
+        Long result = rankingService.getFriendBestScore(userId);
+        return ResponseEntity.ok(ApiResponseDTO.success("친구 최고 점수 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/friends/average-score")
+    public ResponseEntity<ApiResponseDTO<Double>> getFriendAverageScore(
+            @RequestParam("userId") Long userId
+    ) {
+        Double result = rankingService.getFriendAverageScore(userId);
+        return ResponseEntity.ok(ApiResponseDTO.success("친구 평균 점수 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/weekly")
+    public ResponseEntity<ApiResponseDTO<List<RankingDto.ResponseRanking>>> getWeeklyRankings() {
+        List<RankingDto.ResponseRanking> result = rankingService.getWeeklyRankings();
+        return ResponseEntity.ok(ApiResponseDTO.success("주간 랭킹 조회 성공", result));
+    }
+
+    @Override
+    @GetMapping("/users/count")
+    public ResponseEntity<ApiResponseDTO<Long>> getTotalUserCount() {
+        Long result = rankingService.getTotalUserCount();
+        return ResponseEntity.ok(ApiResponseDTO.success("전체 사용자 수 조회 성공", result));
+    }
 }
