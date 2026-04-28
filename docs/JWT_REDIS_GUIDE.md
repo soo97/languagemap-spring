@@ -7,6 +7,7 @@ Name = JWT_SECRET
 Value = my-test-secret-key-must-be-at-least-32-characters
 
 
+
 현재는 팀원 작업 보호를 위해 permitAll 상태이며,
 추후 authenticated 방식으로 전환 예정
 
