@@ -28,4 +28,16 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     default List<Friendship> findAcceptedFriendshipsByUserId(Long userId) {
         return findFriendshipsByUserIdAndStatus(userId, FriendshipStatus.ACCEPTED);
     }
+
+    @Query("""
+           SELECT f
+           FROM Friendship f
+           WHERE f.addressee.userId = :userId
+           AND f.status = :status
+           """)
+    List<Friendship> findReceivedRequestsByUserIdAndStatus(Long userId, FriendshipStatus status);
+
+    default List<Friendship> findReceivedRequestsByUserId(Long userId) {
+        return findReceivedRequestsByUserIdAndStatus(userId, FriendshipStatus.PENDING);
+    }
 }

@@ -94,4 +94,9 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         friendshipRepository.delete(friendship);
     }
+
+    @Override
+    public List<Friendship> getReceivedRequests(Long userId) {
+        return friendshipRepository.findReceivedRequestsByUserId(userId);
+    }
 }
