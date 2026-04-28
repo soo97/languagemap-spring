@@ -5,6 +5,8 @@ import kr.co.mapspring.place.enums.MissionStatus;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Optional;
+
 public class AdminReadMissionDto {
 
 	@Getter
@@ -20,7 +22,9 @@ public class AdminReadMissionDto {
 					.missionTitle(mission.getMissionTitle())
 					.missionDescription(mission.getMissionDescription())
 					.missionStatus(mission.getMissionStatus())
-					.scenarioId(mission.getScenario().getScenarioId())
+					.scenarioId(Optional.ofNullable(mission.getScenario())
+							.map(scenario -> scenario.getScenarioId())
+							.orElse(null))
 					.build();
 		}
 	}

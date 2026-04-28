@@ -59,7 +59,9 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 
 		List<AdminMissionListDto.ResponseList> responseList;
 
-		if(keyword == null || keyword.isBlank()) {
+		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
+
+		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
 			List<Mission> mission = missionRepository.findAll();
 
 			responseList = mission.stream()
@@ -67,7 +69,7 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 					.collect(Collectors.toList());
 		} else {
 
-			List<Mission> mission = missionRepository.findByMissionTitleContaining(keyword);
+			List<Mission> mission = missionRepository.findByMissionTitleContaining(normalizedKeyword);
 
 			responseList = mission.stream()
 					.map(AdminMissionListDto.ResponseList::from)
@@ -85,7 +87,7 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 		Mission mission = missionRepository.findById(missionId)
 				.orElseThrow(MissionNotFoundException::new);
 
-		Long scenarioId = request.getScenarioId();;
+		Long scenarioId = request.getScenarioId();
 
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 						.orElseThrow(ScenarioNotFoundException::new);

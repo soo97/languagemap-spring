@@ -5,12 +5,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import kr.co.mapspring.social.enums.FriendshipStatus;
+import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +31,13 @@ public class Friendship {
     @Column(name = "friendship_id", nullable = false, updatable = false)
     private Long friendshipId;
 
-    @Column(name = "requester_id", nullable = false)
-    private Long requesterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requester_id", nullable = false)
+    private User requester;
 
-    @Column(name = "addressee_id", nullable = false)
-    private Long addresseeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "addressee_id", nullable = false)
+    private User addressee;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
@@ -48,10 +54,10 @@ public class Friendship {
         this.requestedAt = LocalDateTime.now();
     }
 
-    public static Friendship create(Long requesterId, Long addresseeId) {
+    public static Friendship create(User requester, User addressee) {
         Friendship friendship = new Friendship();
-        friendship.requesterId = requesterId;
-        friendship.addresseeId = addresseeId;
+        friendship.requester = requester;
+        friendship.addressee = addressee;
         friendship.status = FriendshipStatus.PENDING;
         return friendship;
     }
@@ -71,25 +77,25 @@ public class Friendship {
         this.respondedAt = LocalDateTime.now();
     }
 
-    public boolean isAddreess(Long userId) {
-        return this.addresseeId.equals(userId);
+    public boolean isAddressee(Long userId) {
+        return this.addressee.getUserId().equals(userId);
     }
 
     public boolean isRelatedUser(Long userId) {
-        return this.requesterId.equals(userId) || this.addresseeId.equals(userId);
+        return this.requester.getUserId().equals(userId) || this.addressee.getUserId().equals(userId);
     }
 
     // 테스트 전용 메서드
     public static Friendship of(
-            Long frienshipId,
-            Long requesterId,
-            Long addresseeId,
+            Long friendshipId,
+            User requester,
+            User addressee,
             FriendshipStatus status
     ) {
         Friendship friendship = new Friendship();
-        friendship.friendshipId = frienshipId;
-        friendship.requesterId = requesterId;
-        friendship.addresseeId = addresseeId;
+        friendship.friendshipId = friendshipId;
+        friendship.requester = requester;
+        friendship.addressee = addressee;
         friendship.status = status;
         friendship.requestedAt = LocalDateTime.now();
         return friendship;

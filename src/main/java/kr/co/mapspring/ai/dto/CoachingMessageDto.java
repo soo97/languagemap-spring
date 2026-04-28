@@ -7,24 +7,55 @@ import kr.co.mapspring.ai.entity.CoachingMessage;
 import kr.co.mapspring.ai.enums.CoachingMessageRole;
 import lombok.Builder;
 import lombok.Getter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.NoArgsConstructor;
 
 public class CoachingMessageDto {
 
-    @Getter
-    @Builder
+	@Getter
+    @NoArgsConstructor
+    @Schema(description = "AI 코칭 메시지 저장 요청 DTO")
     public static class RequestSaveCoachingMessage {
+
+        @Schema(description = "AI 코칭 세션 ID", example = "1")
         private Long coachingSessionId;
+
+        @Schema(description = "메시지 역할", example = "USER")
         private CoachingMessageRole role;
+
+        @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+
+        @Builder
+        public RequestSaveCoachingMessage(
+                Long coachingSessionId,
+                CoachingMessageRole role,
+                String message
+        ) {
+            this.coachingSessionId = coachingSessionId;
+            this.role = role;
+            this.message = message;
+        }
     }
 
     @Getter
     @Builder
+    @Schema(description = "AI 코칭 메시지 응답 DTO")
     public static class ResponseCoachingMessage {
+
+        @Schema(description = "AI 코칭 메시지 ID", example = "1")
         private Long coachingMessageId;
+
+        @Schema(description = "AI 코칭 세션 ID", example = "1")
         private Long coachingSessionId;
+
+        @Schema(description = "메시지 역할", example = "USER")
         private CoachingMessageRole role;
+
+        @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+
+        @Schema(description = "메시지 생성 시각", example = "2026-04-26T17:40:00")
         private LocalDateTime createdAt;
 
         public static ResponseCoachingMessage from(CoachingMessage coachingMessage) {
@@ -40,8 +71,13 @@ public class CoachingMessageDto {
 
     @Getter
     @Builder
+    @Schema(description = "AI 코칭 메시지 목록 응답 DTO")
     public static class ResponseGetCoachingMessages {
+
+        @Schema(description = "AI 코칭 세션 ID", example = "1")
         private Long coachingSessionId;
+
+        @Schema(description = "AI 코칭 메시지 목록")
         private List<ResponseCoachingMessage> messages;
     }
 }
