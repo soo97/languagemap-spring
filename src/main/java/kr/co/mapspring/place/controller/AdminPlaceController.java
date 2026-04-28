@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.mapspring.global.dto.ApiResponseDTO;
+import kr.co.mapspring.place.controller.Docs.AdminPlaceControllerDocs;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
 import kr.co.mapspring.place.dto.AdminPlaceListDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
@@ -22,38 +23,43 @@ import kr.co.mapspring.place.service.AdminPlaceService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/content")
+@RequestMapping("/api/admin/content/places")
 @RequiredArgsConstructor
-public class AdminPlaceController {
+public class AdminPlaceController implements AdminPlaceControllerDocs {
 	
 	private final AdminPlaceService adminPlaceService;
 	
+	@Override
 	@PostMapping
 	public ResponseEntity<ApiResponseDTO<Void>> createPlace(@RequestBody AdminCreatePlaceDto.RequestCreate request) {
 		adminPlaceService.savePlace(request);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 생성 완료"));
 	}
 	
-	@GetMapping("/detail")
-	public ResponseEntity<ApiResponseDTO<AdminReadPlaceDto.ResponseRead>> readPlaceDetail(@PathVariable Long placeId) {
+	@Override
+	@GetMapping("/{placeId}")
+	public ResponseEntity<ApiResponseDTO<AdminReadPlaceDto.ResponseRead>> readPlaceDetail(@PathVariable("placeId") Long placeId) {
 		AdminReadPlaceDto.ResponseRead placeDetail = adminPlaceService.readPlace(placeId);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 조회 완료", placeDetail));
 	}
 	
+	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam String keyword) {
+	public ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam(name = "PlaceName", required = false) String keyword) {
 		List<AdminPlaceListDto.ResponseList> placeList = adminPlaceService.placeList(keyword);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 리스트 조회 완료", placeList));
 	}
 	
-	@PatchMapping
-	public ResponseEntity<ApiResponseDTO<Void>> updatePlace(@PathVariable Long placeId, @RequestBody AdminUpdatePlaceDto.RequestUpdate request) {
+	@Override
+	@PatchMapping("/{placeId}")
+	public ResponseEntity<ApiResponseDTO<Void>> updatePlace(@PathVariable("placeId") Long placeId, @RequestBody AdminUpdatePlaceDto.RequestUpdate request) {
 		adminPlaceService.updatePlace(placeId, request);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 수정 완료"));
 	}
 	
-	@DeleteMapping
-	public ResponseEntity<ApiResponseDTO<Void>> deletePlace(@PathVariable Long placeId) {
+	@Override
+	@DeleteMapping("/{placeId}")
+	public ResponseEntity<ApiResponseDTO<Void>> deletePlace(@PathVariable("placeId") Long placeId) {
 		adminPlaceService.deletePlace(placeId);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 삭제 완료"));
 	}

@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.place.ScenarioInUseException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateScenarioDto;
 import kr.co.mapspring.place.dto.AdminReadScenarioDto;
 import kr.co.mapspring.place.dto.AdminScenarioListDto;
 import kr.co.mapspring.place.dto.AdminUpdateScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
+import kr.co.mapspring.place.repository.MissionRepository;
+import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
 import kr.co.mapspring.place.service.AdminScenarioService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminScenarioServiceImpl implements AdminScenarioService{
 	
 	private final ScenarioRepository scenarioRepository;
+	private final MissionRepository missionRepository;
+	private final PlaceRepository placeRepository;
 	
 	// 시나리오 생성
 	@Override
@@ -54,14 +59,16 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		
 		List<AdminScenarioListDto.ResponseList> responseList;
 		
-		if(keyword == null || keyword.isBlank()) {
+		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
+		
+		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
 			List<Scenario> scenario = scenarioRepository.findAll();
 			
 			responseList = scenario.stream()
 					.map(AdminScenarioListDto.ResponseList::from)
 					.collect(Collectors.toList());
 		} else {
-			List<Scenario> scenario = scenarioRepository.findByCategoryContaining(keyword);
+			List<Scenario> scenario = scenarioRepository.findByCategoryContaining(normalizedKeyword);
 			
 			responseList = scenario.stream()
 					.map(AdminScenarioListDto.ResponseList::from)
@@ -93,6 +100,14 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);
+		
+		if (missionRepository.existsByScenario_ScenarioId(scenarioId)) {
+	        throw new ScenarioInUseException();
+	    }
+
+	    if (placeRepository.existsByScenario_ScenarioId(scenarioId)) {
+	        throw new ScenarioInUseException();
+	    }
 		
 		scenarioRepository.delete(scenario);
 	}

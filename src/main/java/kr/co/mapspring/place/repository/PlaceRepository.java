@@ -11,4 +11,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long>{
 	boolean existsByGooglePlaceId(String googlePlaceId);
 	
 	List<Place> findByPlaceNameContaining(String keyword);
+	
+	boolean existsByScenario_ScenarioId(Long scenarioId);
 }
