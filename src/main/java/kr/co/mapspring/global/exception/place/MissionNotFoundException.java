@@ -1,7 +1,10 @@
 package kr.co.mapspring.global.exception.place;
 
-public class MissionNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class MissionNotFoundException extends CustomException {
 	public MissionNotFoundException() {
-		super("존재하지 않는 미션입니다.");
+		super(ErrorCode.MISSION_NOT_FOUND);
 	}
 }
