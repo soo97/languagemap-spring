@@ -1,13 +1,8 @@
 package kr.co.mapspring.favorite.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import kr.co.mapspring.place.entity.Scenario;
+import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,39 +24,36 @@ public class FavoriteScenario {
     @Column(name = "favorite_scenario_id", nullable = false, updatable = false)
     private Long favoriteScenarioId;
 
-//    TODO: 추후 엔티티 확정 시 연관관계로 매핑 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
 
-//    TODO: 추후 엔티티 확정 시 연관관계로 매핑 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "scenario_id", nullable = false)
-    @Column(name = "scenario_id", nullable = false)
-    private Long scenarioId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scenario_id", nullable = false)
+    private Scenario scenario;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public static FavoriteScenario create(Long userId, Long scenarioId) {
+    public static FavoriteScenario create(User user, Scenario scenario) {
         FavoriteScenario favoriteScenario = new FavoriteScenario();
-        favoriteScenario.userId = userId;
-        favoriteScenario.scenarioId = scenarioId;
+        favoriteScenario.user = user;
+        favoriteScenario.scenario = scenario;
         return favoriteScenario;
     }
 
     @PrePersist
-    protected void perPersist() {
+    protected void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
     // 테스트 전용 메서드
-    public static FavoriteScenario of(Long favoriteScenarioId, Long userId, Long scenarioId) {
+    public static FavoriteScenario of(Long favoriteScenarioId, User user, Scenario scenario) {
         FavoriteScenario favoriteScenario = new FavoriteScenario();
         favoriteScenario.favoriteScenarioId = favoriteScenarioId;
-        favoriteScenario.userId = userId;
-        favoriteScenario.scenarioId = scenarioId;
+        favoriteScenario.user = user;
+        favoriteScenario.scenario = scenario;
         favoriteScenario.createdAt = LocalDateTime.now();
         return favoriteScenario;
     }
