@@ -246,4 +246,26 @@ public class TokenServiceTest {
                 .hasMessage(ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
     }
     
+    @Test
+    @DisplayName("로그아웃 시 Redis에 저장된 Refresh Token과 일치하지 않으면 예외가 발생한다")
+    void logoutFailWhenRefreshTokenDoesNotMatchRedisValue() {
+        // given
+        String refreshToken = "valid-but-not-matched-refresh-token";
+        TokenDto.RequestLogout request = new TokenDto.RequestLogout(refreshToken);
+
+        given(jwtTokenProvider.validateRefreshToken(refreshToken))
+                .willReturn(true);
+
+        given(jwtTokenProvider.getUserId(refreshToken))
+                .willReturn(1L);
+
+        given(refreshTokenService.isRefreshTokenMatched(1L, refreshToken))
+                .willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> tokenService.logout(request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
+    }
+    
 }
