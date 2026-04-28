@@ -9,12 +9,6 @@ public class AdminReadScenarioDto {
 	
 	@Getter
 	@Builder
-	public static class RequestRead {
-		private Long scenarioId;
-	}
-	
-	@Getter
-	@Builder
 	public static class ResponseRead {
 		private String prompt;
 		private String scenarioDescription;

@@ -15,7 +15,7 @@ public class AdminReadMissionDto {
 		private MissionStatus missionStatus;
 		private Long scenarioId;
 
-		public static AdminReadMissionDto.ResponseRead from (Mission mission) {
+		public static AdminReadMissionDto.ResponseRead from(Mission mission) {
 			return AdminReadMissionDto.ResponseRead.builder()
 					.missionTitle(mission.getMissionTitle())
 					.missionDescription(mission.getMissionDescription())

@@ -34,14 +34,12 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 											request.getCategory());	
 		
 		scenarioRepository.save(scenario);
-	}
+	} 
 	
 	// 시나리오 상세 조회
 	@Override
 	@Transactional(readOnly = true)
-	public AdminReadScenarioDto.ResponseRead readScenario(AdminReadScenarioDto.RequestRead request) {
-		
-		Long scenarioId = request.getScenarioId();
+	public AdminReadScenarioDto.ResponseRead readScenario(Long scenarioId) {
 		
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);

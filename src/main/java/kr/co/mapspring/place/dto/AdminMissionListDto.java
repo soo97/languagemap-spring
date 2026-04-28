@@ -12,7 +12,7 @@ public class AdminMissionListDto {
 		private String missionTitle;
 		private String missionDescription;
 
-		public static AdminMissionListDto.ResponseList from (Mission mission) {
+		public static AdminMissionListDto.ResponseList from(Mission mission) {
 			return ResponseList.builder()
 					.missionTitle(mission.getMissionTitle())
 					.missionDescription(mission.getMissionDescription())

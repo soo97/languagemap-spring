@@ -10,12 +10,6 @@ public class AdminReadPlaceDto {
 	
 	@Builder
 	@Getter
-	public static class RequestRead {
-		private Long placeId;
-	}
-	
-	@Builder
-	@Getter
 	public static class ResponseRead {
 		private String placeName;
 		private String placeDescription;
