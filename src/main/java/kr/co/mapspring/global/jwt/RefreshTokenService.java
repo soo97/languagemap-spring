@@ -49,5 +49,10 @@ public class RefreshTokenService {
         return refreshToken != null && refreshToken.equals(savedRefreshToken);
     }
     
-    
+    // Redis에 저장된 Refresh Token을 삭제한다.
+    public void deleteRefreshToken(Long userId) {
+        String key = REFRESH_TOKEN_PREFIX + userId;
+
+        stringRedisTemplate.delete(key);
+    }
 }
