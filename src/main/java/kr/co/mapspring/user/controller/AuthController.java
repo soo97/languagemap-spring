@@ -65,6 +65,16 @@ public class AuthController implements AuthControllerDocs {
         // 공통 성공 응답 반환
         return ApiResponseDTO.success("토큰 재발급 성공", response);
     }
-    
+    @Override
+    @PostMapping("/logout")
+    public ApiResponseDTO<Void> logout(
+            @Valid @RequestBody TokenDto.RequestLogout request
+    ) {
+        // Refresh Token 검증 후 Redis에서 삭제
+        tokenService.logout(request);
+
+        // 공통 성공 응답 반환
+        return ApiResponseDTO.success("로그아웃 성공");
+    }
     
 }

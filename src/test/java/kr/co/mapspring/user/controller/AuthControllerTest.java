@@ -26,6 +26,7 @@ import kr.co.mapspring.user.dto.TokenDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
 import kr.co.mapspring.user.service.TokenService;
+import static org.mockito.BDDMockito.willThrow;
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -438,6 +439,50 @@ class AuthControllerTest {
 
         // when & then
         mockMvc.perform(post("/api/auth/tokens")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Refresh Token이 유효하지 않습니다."));
+    }
+    
+    @Test
+    @DisplayName("Refresh Token이 유효하면 로그아웃 성공 응답을 반환한다")
+    void logoutSuccess() throws Exception {
+        // given
+        String requestBody = """
+                {
+                  "refreshToken": "valid-refresh-token"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/logout")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("로그아웃 성공"));
+    }
+    
+    @Test
+    @DisplayName("로그아웃 시 Refresh Token이 유효하지 않으면 401 실패 응답을 반환한다")
+    void logoutFailWhenRefreshTokenInvalid() throws Exception {
+        // given
+        willThrow(new CustomException(ErrorCode.INVALID_REFRESH_TOKEN))
+                .given(tokenService)
+                .logout(ArgumentMatchers.any(TokenDto.RequestLogout.class));
+
+        String requestBody = """
+                {
+                  "refreshToken": "invalid-refresh-token"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/logout")
                         .contentType(APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized())
