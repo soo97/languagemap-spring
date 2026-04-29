@@ -3,13 +3,12 @@ package kr.co.mapspring.learning.service;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.StudyLog;
-import kr.co.mapspring.learning.entity.StudyScore;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
 import kr.co.mapspring.learning.enums.GoalType;
 import kr.co.mapspring.learning.enums.StudyType;
 import kr.co.mapspring.learning.repository.GoalMasterRepository;
 import kr.co.mapspring.learning.repository.StudyLogRepository;
-import kr.co.mapspring.learning.repository.StudyScoreRepository;
+import kr.co.mapspring.learning.service.impl.AdminLearningServiceImpl;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
@@ -37,9 +36,6 @@ public class AdminLearningServiceTest {
     private StudyLogRepository studyLogRepository;
 
     @Mock
-    private StudyScoreRepository studyScoreRepository;
-
-    @Mock
     private GoalMasterRepository goalMasterRepository;
 
     @InjectMocks
@@ -48,10 +44,7 @@ public class AdminLearningServiceTest {
     @Test
     @DisplayName("관리자는 전체 학습 기록을 조회한다")
     void 관리자는_전체_학습_기록을_조회한다() {
-
         User user = mock(User.class);
-        given(user.getUserId()).willReturn(1L);
-
         LearningSession session = mock(LearningSession.class);
 
         StudyLog studyLog = StudyLog.of(
@@ -62,43 +55,25 @@ public class AdminLearningServiceTest {
                 20
         );
 
-        StudyScore studyScore = StudyScore.of(
-                1L,
-                studyLog,
-                80,
-                70,
-                75
-        );
-
         given(studyLogRepository.findAll())
                 .willReturn(List.of(studyLog));
 
-        given(studyScoreRepository.findByStudyLog_StudyLogId(1L))
-                .willReturn(Optional.of(studyScore));
-
-        List<AdminLearningDto.ResponseStudyLog> result =
-                adminLearningService.getStudyLogs();
+        List<StudyLog> result = adminLearningService.getStudyLogs();
 
         verify(studyLogRepository).findAll();
-        verify(studyScoreRepository).findByStudyLog_StudyLogId(1L);
 
         assertEquals(1, result.size());
         assertEquals(1L, result.get(0).getStudyLogId());
-        assertEquals(1L, result.get(0).getUserId());
         assertEquals(StudyType.SCENARIO, result.get(0).getStudyType());
         assertEquals(20, result.get(0).getEarnedExp());
-        assertEquals(75, result.get(0).getTotalScore());
     }
 
     @Test
     @DisplayName("관리자는 특정 사용자의 학습 기록을 조회한다")
     void 관리자는_특정_사용자의_학습_기록을_조회한다() {
-
         Long userId = 1L;
 
         User user = mock(User.class);
-        given(user.getUserId()).willReturn(userId);
-
         LearningSession session = mock(LearningSession.class);
 
         StudyLog studyLog = StudyLog.of(
@@ -109,36 +84,21 @@ public class AdminLearningServiceTest {
                 30
         );
 
-        StudyScore studyScore = StudyScore.of(
-                1L,
-                studyLog,
-                90,
-                80,
-                85
-        );
-
         given(studyLogRepository.findAllByUser_UserId(userId))
                 .willReturn(List.of(studyLog));
 
-        given(studyScoreRepository.findByStudyLog_StudyLogId(1L))
-                .willReturn(Optional.of(studyScore));
-
-        List<AdminLearningDto.ResponseStudyLog> result =
-                adminLearningService.getStudyLogsByUserId(userId);
+        List<StudyLog> result = adminLearningService.getStudyLogsByUserId(userId);
 
         verify(studyLogRepository).findAllByUser_UserId(userId);
-        verify(studyScoreRepository).findByStudyLog_StudyLogId(1L);
 
         assertEquals(1, result.size());
-        assertEquals(userId, result.get(0).getUserId());
         assertEquals(StudyType.SPEAKING, result.get(0).getStudyType());
-        assertEquals(85, result.get(0).getTotalScore());
+        assertEquals(30, result.get(0).getEarnedExp());
     }
 
     @Test
     @DisplayName("관리자는 학습 목표 목록을 조회한다")
     void 관리자는_학습_목표_목록을_조회한다() {
-
         GoalMaster goal1 = GoalMaster.of(
                 1L,
                 "하루 학습 3회",
@@ -158,8 +118,7 @@ public class AdminLearningServiceTest {
         given(goalMasterRepository.findAll())
                 .willReturn(List.of(goal1, goal2));
 
-        List<AdminLearningDto.ResponseGoalMaster> result =
-                adminLearningService.getGoalMasters();
+        List<GoalMaster> result = adminLearningService.getGoalMasters();
 
         verify(goalMasterRepository).findAll();
 
@@ -173,7 +132,6 @@ public class AdminLearningServiceTest {
     @Test
     @DisplayName("관리자는 목표를 활성화한다")
     void 관리자는_목표를_활성화한다() {
-
         Long goalMasterId = 1L;
 
         GoalMaster goalMaster = GoalMaster.of(
@@ -186,13 +144,10 @@ public class AdminLearningServiceTest {
 
         goalMaster.updateActive(false);
 
-        AdminLearningDto.RequestUpdateGoalActive request =
-                new AdminLearningDto.RequestUpdateGoalActive(true);
-
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        adminLearningService.updateGoalActive(goalMasterId, request);
+        adminLearningService.updateGoalActive(goalMasterId, true);
 
         verify(goalMasterRepository).findById(goalMasterId);
 
@@ -202,7 +157,6 @@ public class AdminLearningServiceTest {
     @Test
     @DisplayName("관리자는 목표를 비활성화한다")
     void 관리자는_목표를_비활성화한다() {
-
         Long goalMasterId = 1L;
 
         GoalMaster goalMaster = GoalMaster.of(
@@ -213,13 +167,10 @@ public class AdminLearningServiceTest {
                 3
         );
 
-        AdminLearningDto.RequestUpdateGoalActive request =
-                new AdminLearningDto.RequestUpdateGoalActive(false);
-
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        adminLearningService.updateGoalActive(goalMasterId, request);
+        adminLearningService.updateGoalActive(goalMasterId, false);
 
         verify(goalMasterRepository).findById(goalMasterId);
 
@@ -229,19 +180,14 @@ public class AdminLearningServiceTest {
     @Test
     @DisplayName("존재하지 않는 목표 상태 변경 시 예외가 발생한다")
     void 존재하지_않는_목표_상태_변경시_예외가_발생한다() {
-
         Long goalMasterId = 999L;
-
-        AdminLearningDto.RequestUpdateGoalActive request =
-                new AdminLearningDto.RequestUpdateGoalActive(false);
 
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.empty());
 
         assertThrows(GoalMasterNotFoundException.class,
-                () -> adminLearningService.updateGoalActive(goalMasterId, request));
+                () -> adminLearningService.updateGoalActive(goalMasterId, false));
 
         verify(goalMasterRepository).findById(goalMasterId);
-    }
     }
 }
