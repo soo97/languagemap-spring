@@ -14,7 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
-import kr.co.mapspring.place.dto.*;
+import kr.co.mapspring.place.dto.AdminCreateRegionDto;
+import kr.co.mapspring.place.dto.AdminReadRegionDto;
+import kr.co.mapspring.place.dto.AdminRegionListDto;
+import kr.co.mapspring.place.dto.AdminUpdateRegionDto;
 
 @Tag(name = "Admin Region", description = "관리자 지역 CRUD API")
 public interface AdminRegionControllerDocs {
