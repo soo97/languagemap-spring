@@ -24,7 +24,6 @@ import kr.co.mapspring.place.dto.AdminReadScenarioDto;
 import kr.co.mapspring.place.dto.AdminScenarioListDto;
 import kr.co.mapspring.place.dto.AdminUpdateScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import kr.co.mapspring.place.repository.ScenarioRepository;
 import kr.co.mapspring.place.service.impl.AdminScenarioServiceImpl;
 
@@ -45,7 +44,6 @@ class AdminScenarioServiceTest {
                 .prompt("당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.")
                 .scenarioDescription("카페에서 음료를 주문하는 상황")
                 .completeExp(50)
-                .level(ScenarioLevel.BEGINNER)
                 .category("CAFE")
                 .build();
 
@@ -64,7 +62,6 @@ class AdminScenarioServiceTest {
                 .prompt("당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.")
                 .scenarioDescription("카페에서 음료를 주문하는 상황")
                 .completeExp(50)
-                .level(ScenarioLevel.BEGINNER)
                 .category("CAFE")
                 .build();
 
@@ -87,7 +84,6 @@ class AdminScenarioServiceTest {
                 "당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.",
                 "카페에서 음료를 주문하는 상황",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 
@@ -102,7 +98,6 @@ class AdminScenarioServiceTest {
         assertEquals("당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.", response.getPrompt());
         assertEquals("카페에서 음료를 주문하는 상황", response.getScenarioDescription());
         assertEquals(50, response.getCompleteExp());
-        assertEquals(ScenarioLevel.BEGINNER, response.getLevel());
         assertEquals("CAFE", response.getCategory());
 
         verify(scenarioRepository, times(1)).findById(scenarioId);
@@ -134,7 +129,6 @@ class AdminScenarioServiceTest {
                 .prompt("수정된 프롬프트입니다.")
                 .scenarioDescription("수정된 시나리오 설명입니다.")
                 .completeExp(100)
-                .level(ScenarioLevel.INTERMEDIATE)
                 .category("RESTAURANT")
                 .build();
 
@@ -143,7 +137,6 @@ class AdminScenarioServiceTest {
                 "기존 프롬프트",
                 "기존 설명",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 
@@ -167,7 +160,6 @@ class AdminScenarioServiceTest {
                 .prompt("수정된 프롬프트입니다.")
                 .scenarioDescription("수정된 시나리오 설명입니다.")
                 .completeExp(100)
-                .level(ScenarioLevel.INTERMEDIATE)
                 .category("RESTAURANT")
                 .build();
 
@@ -190,7 +182,6 @@ class AdminScenarioServiceTest {
                 "프롬프트",
                 "시나리오 설명",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 
@@ -229,7 +220,6 @@ class AdminScenarioServiceTest {
                 "카페 프롬프트",
                 "카페에서 주문하는 상황",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 
@@ -238,7 +228,6 @@ class AdminScenarioServiceTest {
                 "식당 프롬프트",
                 "식당에서 주문하는 상황",
                 70,
-                ScenarioLevel.INTERMEDIATE,
                 "RESTAURANT"
         );
 
@@ -267,7 +256,6 @@ class AdminScenarioServiceTest {
                 "카페 프롬프트",
                 "카페에서 주문하는 상황",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 
@@ -297,7 +285,6 @@ class AdminScenarioServiceTest {
                 "카페 프롬프트",
                 "카페에서 주문하는 상황",
                 50,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 

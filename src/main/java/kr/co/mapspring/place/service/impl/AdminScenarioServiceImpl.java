@@ -35,7 +35,6 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		Scenario scenario = Scenario.create(request.getPrompt(),
 											request.getScenarioDescription(),
 											request.getCompleteExp(),
-											request.getLevel(),
 											request.getCategory());	
 		
 		scenarioRepository.save(scenario);
@@ -87,7 +86,6 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		
 		scenario.update(request.getPrompt(),
 					request.getScenarioDescription(),
-					request.getLevel(),
 					request.getCategory(),
 					request.getCompleteExp());
 	}

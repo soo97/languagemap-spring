@@ -1,7 +1,6 @@
 package kr.co.mapspring.place.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -23,12 +22,6 @@ public class AdminUpdateScenarioDto {
                 example = "카페에서 커피를 주문하는 상황"
         )
         private String scenarioDescription;
-
-        @Schema(
-                description = "수정할 난이도 (BEGINNER, INTERMEDIATE, ADVANCED)",
-                example = "INTERMEDIATE"
-        )
-        private ScenarioLevel level;
 
         @Schema(
                 description = "수정할 카테고리",
