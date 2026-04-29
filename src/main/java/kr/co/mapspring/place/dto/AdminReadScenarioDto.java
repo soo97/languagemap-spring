@@ -10,7 +10,7 @@ public class AdminReadScenarioDto {
 
     @Getter
     @Builder
-    @Schema(description = "시나리오 상세 조회 응답 DTO")
+    @Schema(name = "AdminReadScenarioResponse", description = "시나리오 상세 조회 응답 DTO")
     public static class ResponseRead {
 
         @Schema(

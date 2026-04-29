@@ -8,7 +8,7 @@ public class AdminUpdateMissionDto {
 
     @Getter
     @Builder
-    @Schema(description = "미션 수정 요청 DTO")
+    @Schema(name = "AdminUpdateMissionRequest", description = "미션 수정 요청 DTO")
     public static class RequestUpdate {
 
         @Schema(
