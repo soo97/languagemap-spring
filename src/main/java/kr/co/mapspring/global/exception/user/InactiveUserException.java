@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.user;
 
-public class InactiveUserException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class InactiveUserException extends CustomException {
 
     public InactiveUserException() {
-        super("비활성 사용자입니다.");
+        super(ErrorCode.INACTIVE_USER);
     }
 }
