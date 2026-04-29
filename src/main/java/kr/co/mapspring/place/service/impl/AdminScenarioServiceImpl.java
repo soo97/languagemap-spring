@@ -56,8 +56,7 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<AdminScenarioListDto.ResponseList> scenarioList(String keyword) {
-		
-		List<AdminScenarioListDto.ResponseList> responseList;
+	
 		List<Scenario> scenarioList;
 		
 		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
@@ -72,7 +71,7 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 			
 			}
 		
-		responseList = scenarioList.stream()
+		List<AdminScenarioListDto.ResponseList> responseList = scenarioList.stream()
 				.map(AdminScenarioListDto.ResponseList::from)
 				.collect(Collectors.toList());
 		

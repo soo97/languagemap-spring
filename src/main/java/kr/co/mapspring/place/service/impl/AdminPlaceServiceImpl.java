@@ -84,20 +84,20 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<AdminPlaceListDto.ResponseList> placeList(String keyword) {
-		
-		List<AdminPlaceListDto.ResponseList> responseList;
+
 		List<Place> placeList;
 		
 		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 
 		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
+			
 			placeList = placeRepository.findAll();
 		} else {
 
 			placeList = placeRepository.findByPlaceNameContaining(normalizedKeyword);
 		}
 		
-		responseList = placeList.stream()
+		List<AdminPlaceListDto.ResponseList> responseList = placeList.stream()
 				.map(AdminPlaceListDto.ResponseList::from)
 				.collect(Collectors.toList());
 
