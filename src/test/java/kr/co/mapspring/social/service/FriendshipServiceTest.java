@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -107,6 +108,40 @@ public class FriendshipServiceTest {
 
         assertThrows(CustomException.class,
                 () -> friendshipService.sendFriendRequest(requesterId, addresseeId));
+    }
+
+    @Test
+    @DisplayName("이메일로 친구 요청을 보낸다")
+    void 이메일로_친구_요청을_보낸다() {
+
+        Long requesterId = 1L;
+        Long addresseeId = 2L;
+        String email = "test@test.com";
+
+        User requester = mock(User.class);
+        User addressee = mock(User.class);
+
+        given(addressee.getUserId()).willReturn(addresseeId);
+
+        given(userRepository.findByEmail(email))
+                .willReturn(Optional.of(addressee));
+
+        given(userRepository.findById(requesterId))
+                .willReturn(Optional.of(requester));
+
+        given(userRepository.findById(addresseeId))
+                .willReturn(Optional.of(addressee));
+
+        given(friendshipRepository.existsFriendshipBetween(requesterId, addresseeId))
+                .willReturn(false);
+
+        friendshipService.sendFriendRequestByEmail(requesterId, email);
+
+        verify(userRepository).findByEmail(email);
+        verify(userRepository).findById(requesterId);
+        verify(userRepository).findById(addresseeId);
+        verify(friendshipRepository).existsFriendshipBetween(requesterId, addresseeId);
+        verify(friendshipRepository).save(any(Friendship.class));
     }
 
     @Test
@@ -230,4 +265,162 @@ public class FriendshipServiceTest {
         verify(friendshipRepository).findById(friendshipId);
         verify(friendshipRepository).delete(friendship);
     }
+
+    @Test
+    @DisplayName("사용자가 받은 친구 요청 목록을 조회한다")
+    void 사용자가_받은_친구_요청_목록을_조회한다() {
+
+        Long userId = 2L;
+
+        User requester1 = mock(User.class);
+        User requester2 = mock(User.class);
+        User addressee = mock(User.class);
+
+        Friendship friendship1 = Friendship.of(
+                1L,
+                requester1,
+                addressee,
+                FriendshipStatus.PENDING
+        );
+
+        Friendship friendship2 = Friendship.of(
+                2L,
+                requester2,
+                addressee,
+                FriendshipStatus.PENDING
+        );
+
+        given(friendshipRepository.findReceivedRequestsByUserId(userId))
+                .willReturn(List.of(friendship1, friendship2));
+
+        List<Friendship> result = friendshipService.getReceivedRequests(userId);
+
+        verify(friendshipRepository).findReceivedRequestsByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals(FriendshipStatus.PENDING, result.get(0).getStatus());
+        assertEquals(FriendshipStatus.PENDING, result.get(1).getStatus());
+    }
+
+    @Test
+    @DisplayName("사용자가 보낸 친구 요청 목록을 조회한다")
+    void 사용자가_보낸_친구_요청_목록을_조회한다() {
+
+        Long userId = 1L;
+
+        User requester = mock(User.class);
+        User addressee1 = mock(User.class);
+        User addressee2 = mock(User.class);
+
+        Friendship friendship1 = Friendship.of(
+                1L,
+                requester,
+                addressee1,
+                FriendshipStatus.PENDING
+        );
+
+        Friendship friendship2 = Friendship.of(
+                2L,
+                requester,
+                addressee2,
+                FriendshipStatus.PENDING
+        );
+
+        given(friendshipRepository.findSentRequestsByUserId(userId))
+                .willReturn(List.of(friendship1, friendship2));
+
+        List<Friendship> result = friendshipService.getSentRequests(userId);
+
+        verify(friendshipRepository).findSentRequestsByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals(FriendshipStatus.PENDING, result.get(0).getStatus());
+        assertEquals(FriendshipStatus.PENDING, result.get(1).getStatus());
+    }
+
+    @Test
+    @DisplayName("친구를 정상적으로 차단한다")
+    void 친구를_정상적으로_차단한다() {
+
+        Long friendshipId = 1L;
+        Long userId = 1L;
+
+        User requester = mock(User.class);
+        User addressee = mock(User.class);
+
+        given(requester.getUserId()).willReturn(userId);
+
+        Friendship friendship = Friendship.of(
+                friendshipId,
+                requester,
+                addressee,
+                FriendshipStatus.ACCEPTED
+        );
+
+        given(friendshipRepository.findById(friendshipId))
+                .willReturn(Optional.of(friendship));
+
+        friendshipService.blockFriend(friendshipId, userId);
+
+        verify(friendshipRepository).findById(friendshipId);
+
+        assertEquals(FriendshipStatus.BLOCKED, friendship.getStatus());
+    }
+
+    @Test
+    @DisplayName("사용자의 차단 및 거절 이력을 조회한다")
+    void 사용자의_차단_및_거절_이력을_조회한다() {
+
+        Long userId = 1L;
+
+        User user = mock(User.class);
+        User otherUser1 = mock(User.class);
+        User otherUser2 = mock(User.class);
+
+        Friendship rejectedFriendship = Friendship.of(
+                1L,
+                otherUser1,
+                user,
+                FriendshipStatus.REJECTED
+        );
+
+        Friendship blockedFriendship = Friendship.of(
+                2L,
+                user,
+                otherUser2,
+                FriendshipStatus.BLOCKED
+        );
+
+        given(friendshipRepository.findHistoryByUserId(userId))
+                .willReturn(List.of(rejectedFriendship, blockedFriendship));
+
+        List<Friendship> result = friendshipService.getFriendshipHistory(userId);
+
+        verify(friendshipRepository).findHistoryByUserId(userId);
+
+        assertEquals(2, result.size());
+        assertEquals(FriendshipStatus.REJECTED, result.get(0).getStatus());
+        assertEquals(FriendshipStatus.BLOCKED, result.get(1).getStatus());
+    }
+
+    @Test
+    @DisplayName("랜덤 추천 친구 목록을 조회한다")
+    void 랜덤_추천_친구_목록을_조회한다() {
+
+        Long userId = 1L;
+
+        User recommendedUser1 = mock(User.class);
+        User recommendedUser2 = mock(User.class);
+
+        given(friendshipRepository.findRandomRecommendedUsers(userId))
+                .willReturn(List.of(recommendedUser1, recommendedUser2));
+
+        List<User> result = friendshipService.getRecommendedFriends(userId);
+
+        verify(friendshipRepository).findRandomRecommendedUsers(userId);
+
+        assertEquals(2, result.size());
+    }
+
+
 }

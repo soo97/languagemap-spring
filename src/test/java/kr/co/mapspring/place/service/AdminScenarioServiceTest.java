@@ -82,10 +82,6 @@ class AdminScenarioServiceTest {
         // given
         Long scenarioId = 1L;
 
-        AdminReadScenarioDto.RequestRead request = AdminReadScenarioDto.RequestRead.builder()
-                .scenarioId(scenarioId)
-                .build();
-
         Scenario scenario = Scenario.testOf(
                 scenarioId,
                 "당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.",
@@ -95,11 +91,12 @@ class AdminScenarioServiceTest {
                 "CAFE"
         );
 
-        when(scenarioRepository.findById(request.getScenarioId()))
+        when(scenarioRepository.findById(scenarioId))
                 .thenReturn(Optional.of(scenario));
 
         // when
-        AdminReadScenarioDto.ResponseRead response = adminScenarioService.readScenario(request);
+        AdminReadScenarioDto.ResponseRead response =
+                adminScenarioService.readScenario(scenarioId);
 
         // then
         assertEquals("당신은 카페 직원입니다. 학습자와 영어 대화를 시작하세요.", response.getPrompt());
@@ -107,6 +104,8 @@ class AdminScenarioServiceTest {
         assertEquals(50, response.getCompleteExp());
         assertEquals(ScenarioLevel.BEGINNER, response.getLevel());
         assertEquals("CAFE", response.getCategory());
+
+        verify(scenarioRepository, times(1)).findById(scenarioId);
     }
 
     @Test
@@ -114,16 +113,15 @@ class AdminScenarioServiceTest {
     void 시나리오_상세_조회_실패_존재하지_않는_시나리오() {
         // given
         Long scenarioId = 999L;
-        
-        AdminReadScenarioDto.RequestRead request = AdminReadScenarioDto.RequestRead.builder()
-                .scenarioId(scenarioId)
-                .build();
 
-        when(scenarioRepository.findById(request.getScenarioId()))
+        when(scenarioRepository.findById(scenarioId))
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(ScenarioNotFoundException.class, () -> adminScenarioService.readScenario(request));
+        assertThrows(ScenarioNotFoundException.class,
+                () -> adminScenarioService.readScenario(scenarioId));
+
+        verify(scenarioRepository, times(1)).findById(scenarioId);
     }
     
     @Test
