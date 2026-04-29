@@ -19,11 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.GlobalExceptionHandler;
+import kr.co.mapspring.global.jwt.JwtAuthenticationFilter;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.SignUpDto;
+import kr.co.mapspring.user.dto.TokenDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
-import kr.co.mapspring.global.jwt.JwtAuthenticationFilter;
+import kr.co.mapspring.user.service.TokenService;
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -44,6 +46,10 @@ class AuthControllerTest {
     // JWT 필터는 이 컨트롤러 테스트의 검증 대상이 아니므로 mock 처리한다.
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    // 토큰 서비스 mock
+    @MockitoBean
+    private TokenService tokenService;
 
     @Test
     @DisplayName("로그인 요청이 성공하면 공통 성공 응답을 반환한다")
@@ -386,4 +392,58 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("개인정보 수집 및 이용 동의는 필수입니다."));
     }
+    
+    @Test
+    @DisplayName("Refresh Token이 유효하면 Access Token과 Refresh Token 재발급 성공 응답을 반환한다")
+    void reissueTokenSuccess() throws Exception {
+        // given
+        TokenDto.ResponseReissue response = TokenDto.ResponseReissue.builder()
+                .accessToken("new-access-token")
+                .refreshToken("new-refresh-token")
+                .build();
+
+        given(tokenService.reissue(ArgumentMatchers.any(TokenDto.RequestReissue.class)))
+                .willReturn(response);
+
+        String requestBody = """
+                {
+                  "refreshToken": "valid-refresh-token"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/tokens")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("토큰 재발급 성공"))
+                .andExpect(jsonPath("$.data.accessToken").value("new-access-token"))
+                .andExpect(jsonPath("$.data.refreshToken").value("new-refresh-token"));
+    }
+    
+    @Test
+    @DisplayName("Refresh Token이 유효하지 않으면 401 실패 응답을 반환한다")
+    void reissueTokenFailWhenRefreshTokenInvalid() throws Exception {
+        // given
+        given(tokenService.reissue(ArgumentMatchers.any(TokenDto.RequestReissue.class)))
+                .willThrow(new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        String requestBody = """
+                {
+                  "refreshToken": "invalid-refresh-token"
+                }
+                """;
+
+        // when & then
+        mockMvc.perform(post("/api/auth/tokens")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Refresh Token이 유효하지 않습니다."));
+    }
+    
 }

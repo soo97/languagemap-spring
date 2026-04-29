@@ -3,6 +3,7 @@ package kr.co.mapspring.social.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.social.entity.Friendship;
 import kr.co.mapspring.social.enums.FriendshipStatus;
+import kr.co.mapspring.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,18 @@ public class FriendshipDto {
 
         @Schema(description = "요청 받는 사용자 ID", example = "2")
         private Long addresseeId;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @Schema(description = "이메일 친구 요청 DTO")
+    public static class RequestSendFriendRequestByEmail {
+
+        @Schema(description = "요청 보내는 사용자 ID", example = "1")
+        private Long requesterId;
+
+        @Schema(description = "요청 받는 사용자 이메일", example = "user2@test.com")
+        private String email;
     }
 
     @Getter
@@ -56,4 +69,28 @@ public class FriendshipDto {
                     .build();
         }
     }
+
+    @Getter
+    @Builder
+    @Schema(description = "추천 친구 응답 DTO")
+    public static class ResponseRecommendedFriend {
+
+        @Schema(description = "사용자 ID", example = "2")
+        private Long userId;
+
+        @Schema(description = "사용자 이름", example = "유저2")
+        private String name;
+
+        @Schema(description = "이메일", example = "user2@test.com")
+        private String email;
+
+        public static ResponseRecommendedFriend from(User user) {
+            return ResponseRecommendedFriend.builder()
+                    .userId(user.getUserId())
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .build();
+        }
+    }
+
 }
