@@ -1,4 +1,4 @@
-package kr.co.mapspring.support.entity;
+package kr.co.mapspring.support.enums;
 
 public enum CounselKind {
 	LOGIN_SIGNUP,   // 로그인/회원가입 문의

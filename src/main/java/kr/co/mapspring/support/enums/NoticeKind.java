@@ -1,4 +1,4 @@
-package kr.co.mapspring.support.entity;
+package kr.co.mapspring.support.enums;
 
 public enum NoticeKind {
 	UPDATE,   // 업데이트

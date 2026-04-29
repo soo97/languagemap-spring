@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.support.entity.Notice;
 import kr.co.mapspring.support.entity.NoticeImg;
-import kr.co.mapspring.support.entity.NoticeKind;
 import kr.co.mapspring.support.entity.NoticeUrl;
+import kr.co.mapspring.support.enums.NoticeKind;
 import kr.co.mapspring.user.entity.User;
 
 @DataJpaTest(

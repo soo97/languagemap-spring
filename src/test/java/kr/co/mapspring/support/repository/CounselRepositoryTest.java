@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.mapspring.support.entity.Counsel;
 import kr.co.mapspring.support.entity.CounselAnswer;
 import kr.co.mapspring.support.entity.CounselImg;
-import kr.co.mapspring.support.entity.CounselKind;
+import kr.co.mapspring.support.enums.CounselKind;
 import kr.co.mapspring.user.entity.User;
 
 @DataJpaTest(

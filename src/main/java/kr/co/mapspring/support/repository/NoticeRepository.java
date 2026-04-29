@@ -1,7 +1,8 @@
 package kr.co.mapspring.support.repository;
 
 import kr.co.mapspring.support.entity.Notice;
-import kr.co.mapspring.support.entity.NoticeKind;
+import kr.co.mapspring.support.enums.NoticeKind;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import kr.co.mapspring.support.enums.NoticeKind;
 import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;

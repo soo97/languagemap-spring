@@ -15,6 +15,7 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
+import kr.co.mapspring.support.enums.NoticeKind;
 import kr.co.mapspring.user.entity.User;
 
 @DataJpaTest(

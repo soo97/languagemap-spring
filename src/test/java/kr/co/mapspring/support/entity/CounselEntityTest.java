@@ -3,6 +3,8 @@ package kr.co.mapspring.support.entity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
+import kr.co.mapspring.support.enums.CounselKind;
 import kr.co.mapspring.user.entity.User;
 
 @DataJpaTest(
@@ -30,11 +33,21 @@ class CounselEntityTest {
 
     private User user;
     private Counsel counsel;
-
+ 
     @BeforeEach
     void setUp() {
-        user = em.find(User.class, 1L); // 실제 DB에 있는 유저 ID 사용
-
+        String unique = String.valueOf(System.currentTimeMillis());
+ 
+        user = User.create(
+                "test" + unique + "@test.com",
+                "홍길동",
+                LocalDate.of(1990, 1, 1),
+                "서울시 강남구",
+                "010-" + unique.substring(unique.length() - 8),
+                "hashedPassword"
+        );
+        em.persist(user);
+ 
         counsel = Counsel.builder()
                 .user(user)
                 .counselName("로그인 후 홈 이동 여부")

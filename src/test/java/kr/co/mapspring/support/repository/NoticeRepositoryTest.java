@@ -17,7 +17,7 @@ import org.springframework.context.annotation.FilterType;
 
 import jakarta.transaction.Transactional;
 import kr.co.mapspring.support.entity.Notice;
-import kr.co.mapspring.support.entity.NoticeKind;
+import kr.co.mapspring.support.enums.NoticeKind;
 import kr.co.mapspring.user.entity.User;
 
 @DataJpaTest(
