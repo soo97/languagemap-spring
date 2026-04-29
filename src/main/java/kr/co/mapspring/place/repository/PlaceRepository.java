@@ -13,4 +13,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long>{
 	List<Place> findByPlaceNameContaining(String keyword);
 	
 	boolean existsByScenario_ScenarioId(Long scenarioId);
+	
+	boolean existsByRegion_RegionId(Long regionId);
 }

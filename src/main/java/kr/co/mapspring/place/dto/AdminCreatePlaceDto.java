@@ -14,7 +14,7 @@ public class AdminCreatePlaceDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-    @Schema(description = "장소 생성 요청 DTO")
+    @Schema(name = "AdminCreatePlaceRequest", description = "장소 생성 요청 DTO")
     public static class RequestCreate {
 
         @Schema(
