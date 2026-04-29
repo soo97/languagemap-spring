@@ -55,24 +55,25 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<AdminScenarioListDto.ResponseList> scenarioList(String keyword) {
-		
-		List<AdminScenarioListDto.ResponseList> responseList;
+	
+		List<Scenario> scenarioList;
 		
 		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 		
 		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
-			List<Scenario> scenario = scenarioRepository.findAll();
 			
-			responseList = scenario.stream()
-					.map(AdminScenarioListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			scenarioList = scenarioRepository.findAll();
+			
 		} else {
-			List<Scenario> scenario = scenarioRepository.findByCategoryContaining(normalizedKeyword);
 			
-			responseList = scenario.stream()
-					.map(AdminScenarioListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			scenarioList = scenarioRepository.findByCategoryContaining(normalizedKeyword);
+			
 			}
+		
+		List<AdminScenarioListDto.ResponseList> responseList = scenarioList.stream()
+				.map(AdminScenarioListDto.ResponseList::from)
+				.collect(Collectors.toList());
+		
 		return responseList;
 	}
 	

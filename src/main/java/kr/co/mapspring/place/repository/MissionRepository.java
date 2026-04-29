@@ -11,5 +11,7 @@ public interface MissionRepository extends JpaRepository<Mission, Long>{
 	List<Mission> findByMissionTitleContaining(String keyword);
 	
 	boolean existsByScenario_ScenarioId(Long scenarioId);
+	
+	List<Mission> findByScenarioId(Long ScenarioId);
 
 }
