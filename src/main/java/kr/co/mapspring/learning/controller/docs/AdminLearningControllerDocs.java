@@ -146,21 +146,6 @@ public interface AdminLearningControllerDocs {
                                     }
                                     """)
                     )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "목표 마스터를 찾을 수 없음",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "success": false,
-                                      "status": 404,
-                                      "message": "존재하지 않는 학습 목표입니다.",
-                                      "data": null
-                                    }
-                                    """)
-                    )
             )
     })
     ResponseEntity<ApiResponseDTO<Void>> updateGoalActive(
@@ -181,5 +166,153 @@ public interface AdminLearningControllerDocs {
                     )
             )
             AdminLearningDto.RequestUpdateGoalActive request
+    );
+
+    @Operation(
+            summary = "학습 목표 생성",
+            description = "관리자가 새로운 학습 목표를 생성합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "학습 목표 생성 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponseDTO.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "status": 200,
+                                      "message": "학습 목표 생성 성공",
+                                      "data": null
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<Void>> createGoal(
+            @RequestBody(
+                    description = "학습 목표 생성 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AdminLearningDto.RequestCreateGoal.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "badgeId": 1,
+                                      "goalType": "STUDY_COUNT",
+                                      "goalTitle": "하루 학습 3회",
+                                      "goalDescription": "하루에 학습을 3회 완료합니다.",
+                                      "targetValue": 3,
+                                      "periodType": "DAILY"
+                                    }
+                                    """)
+                    )
+            )
+            AdminLearningDto.RequestCreateGoal request
+    );
+
+    @Operation(
+            summary = "학습 목표 수정",
+            description = "관리자가 기존 학습 목표 정보를 수정합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "학습 목표 수정 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponseDTO.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "status": 200,
+                                      "message": "학습 목표 수정 성공",
+                                      "data": null
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "목표 마스터를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": false,
+                                      "status": 404,
+                                      "message": "존재하지 않는 학습 목표입니다.",
+                                      "data": null
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<Void>> updateGoal(
+            @Parameter(description = "목표 마스터 ID", example = "1")
+            @PathVariable("goalMasterId") Long goalMasterId,
+
+            @RequestBody(
+                    description = "학습 목표 수정 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AdminLearningDto.RequestUpdateGoal.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "badgeId": 1,
+                                      "goalType": "STUDY_TIME",
+                                      "goalTitle": "하루 학습 30분",
+                                      "goalDescription": "하루에 30분 이상 학습합니다.",
+                                      "targetValue": 30,
+                                      "periodType": "DAILY"
+                                    }
+                                    """)
+                    )
+            )
+            AdminLearningDto.RequestUpdateGoal request
+    );
+
+    @Operation(
+            summary = "학습 목표 삭제",
+            description = "관리자가 학습 목표를 삭제합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "학습 목표 삭제 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponseDTO.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "status": 200,
+                                      "message": "학습 목표 삭제 성공",
+                                      "data": null
+                                    }
+                                    """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "목표 마스터를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": false,
+                                      "status": 404,
+                                      "message": "존재하지 않는 학습 목표입니다.",
+                                      "data": null
+                                    }
+                                    """)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<Void>> deleteGoal(
+            @Parameter(description = "목표 마스터 ID", example = "1")
+            @PathVariable("goalMasterId") Long goalMasterId
     );
 }

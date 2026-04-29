@@ -71,6 +71,31 @@ public class AdminLearningController implements AdminLearningControllerDocs {
         return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 활성 상태 변경 성공", null));
     }
 
+    @Override
+    @PostMapping("/goals")
+    public ResponseEntity<ApiResponseDTO<Void>> createGoal(@RequestBody AdminLearningDto.RequestCreateGoal request) {
+        adminLearningService.createGoal(request);
+
+        return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 생성 성공", null));
+    }
+
+    @Override
+    @PatchMapping("/goals/{goalMasterId}")
+    public ResponseEntity<ApiResponseDTO<Void>> updateGoal(@PathVariable("goalMasterId") Long goalMasterId,
+                                                           @RequestBody AdminLearningDto.RequestUpdateGoal request) {
+        adminLearningService.updateGoal(goalMasterId, request);
+
+        return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 수정 성공", null));
+    }
+
+    @Override
+    @DeleteMapping("/goals/{goalMasterId}")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteGoal(@PathVariable("goalMasterId") Long goalMasterId) {
+        adminLearningService.deleteGoal(goalMasterId);
+
+        return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 삭제 성공", null));
+    }
+
     private AdminLearningDto.ResponseStudyLog toResponseStudyLog(StudyLog studyLog) {
         StudyScore studyScore = studyScoreRepository
                 .findByStudyLog_StudyLogId(studyLog.getStudyLogId())
