@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface FavoritePlaceRepository extends JpaRepository<FavoritePlace, Long> {
 
-    boolean existsByUserIdAndPlaceId(Long userId, Long placeId);
+    boolean existsByUser_UserIdAndPlace_PlaceId(Long userId, Long placeId);
 
-    Optional<FavoritePlace> findByUserIdAndPlaceId(Long userId, Long placeId);
+    Optional<FavoritePlace> findByUser_UserIdAndPlace_PlaceId(Long userId, Long placeId);
 
-    List<FavoritePlace> findAllByUserId(Long userId);
+    List<FavoritePlace> findAllByUser_UserId(Long userId);
 
 }

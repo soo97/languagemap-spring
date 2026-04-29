@@ -55,8 +55,8 @@ public class FavoritePlaceDto {
         public static ResponseFavoritePlace from(FavoritePlace favoritePlace) {
             return ResponseFavoritePlace.builder()
                     .favoritePlaceId(favoritePlace.getFavoritePlaceId())
-                    .userId(favoritePlace.getUserId())
-                    .placeId(favoritePlace.getPlaceId())
+                    .userId(favoritePlace.getUser().getUserId())
+                    .placeId(favoritePlace.getPlace().getPlaceId())
                     .createdAt(favoritePlace.getCreatedAt())
                     .build();
         }

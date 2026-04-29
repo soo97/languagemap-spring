@@ -1,5 +1,6 @@
 package kr.co.mapspring.learning.service.impl;
 
+import kr.co.mapspring.global.exception.learning.LearningSessionNotFoundException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.learning.dto.LearningLogDto;
 import kr.co.mapspring.learning.entity.StudyLog;
@@ -40,7 +41,7 @@ public class LearningServiceImpl implements LearningService {
 
 //      TODO: 추후 공통 예외처리 예정
         LearningSession session = learningSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("세션 없음"));
+                .orElseThrow(LearningSessionNotFoundException::new);
 
         StudyLog studyLog = StudyLog.create(
                 user,
