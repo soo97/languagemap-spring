@@ -30,6 +30,9 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public void sendFriendRequest(Long requesterId, Long addresseeId) {
 
+        validateSocialUserId(requesterId);
+        validateSocialUserId(addresseeId);
+
         if (requesterId.equals(addresseeId)) {
             throw new SelfFriendRequestNotAllowedException();
         }
@@ -53,6 +56,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public void sendFriendRequestByEmail(Long requesterId, String email) {
 
+        validateSocialUserId(requesterId);
+
         User addressee = userRepository.findByEmail(email)
                 .orElseThrow(EmailUserNotFoundException::new);
 
@@ -62,6 +67,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     @Transactional
     public void acceptFriendRequest(Long friendshipId, Long addresseeId) {
+
+        validateSocialUserId(addresseeId);
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
@@ -77,6 +84,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public void rejectFriendRequest(Long friendshipId, Long addresseeId) {
 
+        validateSocialUserId(addresseeId);
+
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
 
@@ -89,12 +98,17 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public List<Friendship> getFriends(Long userId) {
+
+        validateSocialUserId(userId);
+
         return friendshipRepository.findAcceptedFriendshipsByUserId(userId);
     }
 
     @Override
     @Transactional
     public void deleteFriend(Long friendshipId, Long userId) {
+
+        validateSocialUserId(userId);
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
@@ -108,15 +122,16 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public List<Friendship> getReceivedRequests(Long userId) {
+
+        validateSocialUserId(userId);
+
         return friendshipRepository.findReceivedRequestsByUserId(userId);
     }
 
     @Override
     public List<Friendship> getSentRequests(Long userId) {
 
-        if (userId == null) {
-            throw new InvalidSocialUserException();
-        }
+        validateSocialUserId(userId);
 
         return friendshipRepository.findSentRequestsByUserId(userId);
     }
@@ -124,6 +139,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     @Transactional
     public void blockFriend(Long friendshipId, Long userId) {
+
+        validateSocialUserId(userId);
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
@@ -138,9 +155,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     public List<Friendship> getFriendshipHistory(Long userId) {
 
-        if (userId == null) {
-            throw new InvalidSocialUserException();
-        }
+        validateSocialUserId(userId);
 
         return friendshipRepository.findHistoryByUserId(userId);
     }
@@ -148,10 +163,15 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     public List<User> getRecommendedFriends(Long userId) {
 
+        validateSocialUserId(userId);
+
+        return friendshipRepository.findRandomRecommendedUsers(userId);
+    }
+
+    private void validateSocialUserId(Long userId) {
+
         if (userId == null) {
             throw new InvalidSocialUserException();
         }
-
-        return friendshipRepository.findRandomRecommendedUsers(userId);
     }
 }
