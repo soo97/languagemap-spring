@@ -366,4 +366,65 @@ public interface AuthControllerDocs {
             )
             TokenDto.RequestReissue request
     );
+
+    @Operation(
+            summary = "로그아웃",
+            description = "Refresh Token을 검증한 뒤 Redis에 저장된 Refresh Token을 삭제합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "로그아웃 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "로그아웃 성공",
+                                    value = """
+                                            {
+                                              "success": true,
+                                              "status": 200,
+                                              "message": "로그아웃 성공",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "유효하지 않은 Refresh Token",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "유효하지 않은 Refresh Token",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 401,
+                                              "message": "Refresh Token이 유효하지 않습니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ApiResponseDTO<Void> logout(
+            @RequestBody(
+                    description = "로그아웃 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TokenDto.RequestLogout.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "refreshToken": "<REFRESH_TOKEN>"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            TokenDto.RequestLogout request
+    );
 }
