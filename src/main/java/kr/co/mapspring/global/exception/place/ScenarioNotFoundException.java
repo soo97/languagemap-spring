@@ -1,9 +1,12 @@
 package kr.co.mapspring.global.exception.place;
 
-public class ScenarioNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class ScenarioNotFoundException extends CustomException {
 	
 	public ScenarioNotFoundException() {
-		super("존재하지 않는 시나리오입니다.");
+		super(ErrorCode.SCENARIO_NOT_FOUND);
 	}
 
 }
