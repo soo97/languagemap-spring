@@ -40,4 +40,15 @@ public class TokenDto {
                     .build();
         }
     }
+    
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Schema(description = "로그아웃 요청 DTO")
+    public static class RequestLogout {
+
+        @NotBlank(message = "Refresh Token은 필수 입력 값입니다.")
+        @Schema(description = "JWT Refresh Token", example = "eyJhbGciOiJIUzI1NiJ9...")
+        private String refreshToken;
+    }
 }

@@ -115,22 +115,32 @@ public class FriendshipServiceTest {
     void 이메일로_친구_요청을_보낸다() {
 
         Long requesterId = 1L;
+        Long addresseeId = 2L;
         String email = "test@test.com";
 
         User requester = mock(User.class);
         User addressee = mock(User.class);
 
-        given(userRepository.findById(requesterId))
-                .willReturn(Optional.of(requester));
+        given(addressee.getUserId()).willReturn(addresseeId);
 
         given(userRepository.findByEmail(email))
                 .willReturn(Optional.of(addressee));
 
-        given(friendshipRepository.existsFriendshipBetween(requesterId, addressee.getUserId()))
+        given(userRepository.findById(requesterId))
+                .willReturn(Optional.of(requester));
+
+        given(userRepository.findById(addresseeId))
+                .willReturn(Optional.of(addressee));
+
+        given(friendshipRepository.existsFriendshipBetween(requesterId, addresseeId))
                 .willReturn(false);
 
         friendshipService.sendFriendRequestByEmail(requesterId, email);
 
+        verify(userRepository).findByEmail(email);
+        verify(userRepository).findById(requesterId);
+        verify(userRepository).findById(addresseeId);
+        verify(friendshipRepository).existsFriendshipBetween(requesterId, addresseeId);
         verify(friendshipRepository).save(any(Friendship.class));
     }
 
@@ -402,12 +412,12 @@ public class FriendshipServiceTest {
         User recommendedUser1 = mock(User.class);
         User recommendedUser2 = mock(User.class);
 
-        given(userRepository.findRandomRecommendedUsers(userId))
+        given(friendshipRepository.findRandomRecommendedUsers(userId))
                 .willReturn(List.of(recommendedUser1, recommendedUser2));
 
         List<User> result = friendshipService.getRecommendedFriends(userId);
 
-        verify(userRepository).findRandomRecommendedUsers(userId);
+        verify(friendshipRepository).findRandomRecommendedUsers(userId);
 
         assertEquals(2, result.size());
     }

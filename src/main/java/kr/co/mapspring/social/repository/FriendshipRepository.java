@@ -15,17 +15,23 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
            SELECT COUNT(f) > 0
            FROM Friendship f
            WHERE (f.requester.userId = :requesterId AND f.addressee.userId = :addresseeId)
-              OR (f.requester.userId = :addresseeId AND f.addressee.userId = :requesterId)            
+              OR (f.requester.userId = :addresseeId AND f.addressee.userId = :requesterId)
            """)
-    boolean existsFriendshipBetween(Long requesterId, Long addresseeId);
+    boolean existsFriendshipBetween(
+            @Param("requesterId") Long requesterId,
+            @Param("addresseeId") Long addresseeId
+    );
 
     @Query("""
            SELECT f
            FROM Friendship f
            WHERE (f.requester.userId = :userId OR f.addressee.userId = :userId)
-             AND f.status = :status           
+             AND f.status = :status
            """)
-    List<Friendship> findFriendshipsByUserIdAndStatus(Long userId, FriendshipStatus status);
+    List<Friendship> findFriendshipsByUserIdAndStatus(
+            @Param("userId") Long userId,
+            @Param("status") FriendshipStatus status
+    );
 
     default List<Friendship> findAcceptedFriendshipsByUserId(Long userId) {
         return findFriendshipsByUserIdAndStatus(userId, FriendshipStatus.ACCEPTED);
@@ -35,9 +41,12 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
            SELECT f
            FROM Friendship f
            WHERE f.addressee.userId = :userId
-           AND f.status = :status
+             AND f.status = :status
            """)
-    List<Friendship> findReceivedRequestsByUserIdAndStatus(Long userId, FriendshipStatus status);
+    List<Friendship> findReceivedRequestsByUserIdAndStatus(
+            @Param("userId") Long userId,
+            @Param("status") FriendshipStatus status
+    );
 
     default List<Friendship> findReceivedRequestsByUserId(Long userId) {
         return findReceivedRequestsByUserIdAndStatus(userId, FriendshipStatus.PENDING);
@@ -47,9 +56,12 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
            SELECT f
            FROM Friendship f
            WHERE f.requester.userId = :userId
-           AND f.status = :status
+             AND f.status = :status
            """)
-    List<Friendship> findSentRequestsByUserIdAndStatus(Long userId, FriendshipStatus status);
+    List<Friendship> findSentRequestsByUserIdAndStatus(
+            @Param("userId") Long userId,
+            @Param("status") FriendshipStatus status
+    );
 
     default List<Friendship> findSentRequestsByUserId(Long userId) {
         return findSentRequestsByUserIdAndStatus(userId, FriendshipStatus.PENDING);
@@ -59,14 +71,16 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
            SELECT f
            FROM Friendship f
            WHERE (f.requester.userId = :userId OR f.addressee.userId = :userId)
-           AND f.status IN (kr.co.mapspring.social.enums.FriendshipStatus.REJECTED,
-                            kr.co.mapspring.social.enums.FriendshipStatus.BLOCKED)   
+             AND f.status IN (kr.co.mapspring.social.enums.FriendshipStatus.REJECTED,
+                              kr.co.mapspring.social.enums.FriendshipStatus.BLOCKED)
            """)
-    List<Friendship> findHistoryByUserId(Long userId);
+    List<Friendship> findHistoryByUserId(
+            @Param("userId") Long userId
+    );
 
     @Query(value = """
         SELECT *
-        FROM user u
+        FROM `user` u
         WHERE u.user_id != :userId
           AND NOT EXISTS (
               SELECT 1
@@ -81,3 +95,4 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     List<Friendship> findAllByStatusOrderByRespondedAtDesc(FriendshipStatus status);
 }
+

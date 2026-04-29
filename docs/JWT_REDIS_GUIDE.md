@@ -1,21 +1,43 @@
 # JWT + Redis Refresh Token 사용 가이드
 
-
-Spring Boot 실행 전 환경변수 설정 필수적으로 하셔야 서버 실행이 가능합니다
-
-Name = JWT_SECRET
-Value = my-test-secret-key-must-be-at-least-32-characters
-
-
-
 현재는 팀원 작업 보호를 위해 permitAll 상태이며,
 추후 authenticated 방식으로 전환 예정
 
+*** 반드시 Refresh Token 테스트를 하려면 Redis가 켜져 있어야 합니다 ***
+실행 방법은 ##3의 적어두었습니다.
+
+
 ## 1. 현재 구현 상태
 
-현재 로그인 성공 시 서버는 JWT 기반 토큰을 발급합니다.
+JWT 일반 로그인 흐름은 1차 마무리했습니다.
 
-발급되는 토큰은 두 가지입니다.
+현재 구현된 내용은 다음과 같습니다.
+
+1. 로그인 시 Access Token과 Refresh Token 발급
+2. Refresh Token은 Redis에 `refresh:{userId}` 형태로 저장
+3. Access Token은 Swagger Authorize 버튼으로 등록해서 테스트 가능
+4. Refresh Token 재발급 API 추가
+   - `/api/auth/tokens`
+   - Refresh Token 검증 후 Access Token과 Refresh Token을 새로 발급
+   - 기존 Refresh Token은 Redis에서 새 값으로 교체되는 Rotation 방식
+5. 로그아웃 API 추가
+   - `/api/auth/logout`
+   - Redis에 저장된 Refresh Token 삭제
+
+현재 JWT 인증 필터는 적용되어 있지만, 팀원분들 API 개발에 영향이 가지 않도록 전체 API 접근은 임시로 허용해둔 상태입니다.
+
+앞으로 API를 만들 때는 경로 성격에 따라 SecurityConfig에 추가하면 됩니다.
+
+- 로그인 없이 접근 가능하면 `PUBLIC_URLS`
+- 로그인한 사용자/관리자만 접근 가능하면 `USER_URLS`
+- 관리자만 접근 가능하면 `ADMIN_URLS`
+
+관리자 기능은 가능하면 `/api/admin/**` 경로로 만들어주시면 나중에 권한 관리가 쉬울 것 같습니다.
+
+추후 API 개발이 어느 정도 정리되면 마지막 설정을 `permitAll()`에서 `authenticated()`로 변경해서 로그인/회원가입/토큰 관련 API를 제외한 나머지 API에 JWT 인증을 강제할 예정입니다.
+:::
+
+
 
 - Access Token
 - Refresh Token
@@ -165,3 +187,4 @@ ttl refresh:1
 Authorization: Bearer <ACCESS_TOKEN>
 
 추후 JWT 인증 강제 적용 시에는 로그인/회원가입/Swagger를 제외한 API 요청에 이 Header가 필요합니다.
+
