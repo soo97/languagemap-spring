@@ -12,7 +12,7 @@ public class AdminReadPlaceDto {
 
     @Getter
     @Builder
-    @Schema(description = "장소 상세 조회 응답 DTO")
+    @Schema(name = "AdminReadPlaceResponse", description = "장소 상세 조회 응답 DTO")
     public static class ResponseRead {
 
         @Schema(

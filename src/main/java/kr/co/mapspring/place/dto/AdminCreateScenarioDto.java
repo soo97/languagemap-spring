@@ -13,7 +13,7 @@ public class AdminCreateScenarioDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-    @Schema(description = "시나리오 생성 요청 DTO")
+    @Schema(name = "AdminCreateScenarioRequest", description = "시나리오 생성 요청 DTO")
     public static class RequestCreate {
 
         @Schema(

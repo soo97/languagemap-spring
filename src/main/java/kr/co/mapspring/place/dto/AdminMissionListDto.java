@@ -9,7 +9,7 @@ public class AdminMissionListDto {
 
     @Getter
     @Builder
-    @Schema(description = "미션 리스트 응답 DTO")
+    @Schema(name = "AdminMissionListResponse", description = "미션 리스트 응답 DTO")
     public static class ResponseList {
 
         @Schema(
