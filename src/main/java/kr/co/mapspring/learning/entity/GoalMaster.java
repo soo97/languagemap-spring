@@ -85,6 +85,10 @@ public class GoalMaster {
         return goalMaster;
     }
 
+    public void updateActive(boolean active) {
+        this.isActive = active;
+    }
+
     // 테스트 전용 메서드
     public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType periodType, GoalType goalType, Integer targetValue) {
         GoalMaster goalMaster = new GoalMaster();
