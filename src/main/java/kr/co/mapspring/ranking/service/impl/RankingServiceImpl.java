@@ -1,5 +1,7 @@
 package kr.co.mapspring.ranking.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import kr.co.mapspring.global.exception.ranking.RankingNotFoundException;
 import kr.co.mapspring.ranking.dto.RankingDto;
 import kr.co.mapspring.ranking.repository.RankingRepository;
