@@ -1,5 +1,9 @@
 package kr.co.mapspring.social.service;
 
+import kr.co.mapspring.social.dto.AdminSocialDto;
+
+import java.util.List;
+
 public interface AdminSocialService {
 
     /**
@@ -63,4 +67,4 @@ public interface AdminSocialService {
     List<AdminSocialDto.ResponseFriendshipHistory> getRejectedFriendships();
 }
 
-}
+

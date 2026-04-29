@@ -1,11 +1,14 @@
-package kr.co.mapspring.social.service;
+package kr.co.mapspring.social.service.impl;
 
+import kr.co.mapspring.global.exception.social.UserReportNotFoundException;
+import kr.co.mapspring.social.dto.AdminSocialDto;
 import kr.co.mapspring.social.entity.Friendship;
 import kr.co.mapspring.social.entity.UserReport;
 import kr.co.mapspring.social.enums.FriendshipStatus;
 import kr.co.mapspring.social.enums.ReportStatus;
 import kr.co.mapspring.social.repository.FriendshipRepository;
 import kr.co.mapspring.social.repository.UserReportRepository;
+import kr.co.mapspring.social.service.AdminSocialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
