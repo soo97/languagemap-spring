@@ -37,7 +37,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 		Place placeDetail = placeRepository.findById(placeId)
 				.orElseThrow(PlaceNotFoundException::new);
 		
-		List<Mission> missionList = missionRepository.findByScenarioId(placeDetail.getScenario().getScenarioId());
+		List<Mission> missionList = missionRepository.findByScenario_ScenarioId(placeDetail.getScenario().getScenarioId());
 		
 		return UserReadPlaceDto.ResponseRead.from(placeDetail, missionList);
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.Place;
 import lombok.Builder;
@@ -13,6 +14,7 @@ public class UserReadPlaceDto {
 	
 	@Builder
 	@Getter
+	@Schema(name = "UserReadPlaceResponse", description = "마커 상세 조회 DTO")
 	public static class ResponseRead {
 		private String placeName;
 		private String placeDescription;

@@ -1,5 +1,6 @@
 package kr.co.mapspring.place.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.enums.LearningSessionLevel;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
@@ -14,6 +15,7 @@ public class UserCreateLearningSessionDto {
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "UserCreateLearningSessionRequest", description = "학습 세선 생성 DTO")
 	public static class RequestCreate {
 		private Long userId;
 		private LearningSessionLevel level;
@@ -21,6 +23,7 @@ public class UserCreateLearningSessionDto {
 	
 	@Getter
 	@Builder
+	@Schema(name = "AdminCreateLearningSessionResponse", description = "학습 세선 응답 DTO")
 	public static class ResponseCreate {
 		private Long learningSessionId;
 		private LearningSessionStatus learningSessionStatus;
