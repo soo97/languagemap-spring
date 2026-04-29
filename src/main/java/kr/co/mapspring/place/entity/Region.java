@@ -35,6 +35,8 @@ public class Region {
 	@Column(name = "longitude", nullable = false, precision = 11, scale = 8)
 	private BigDecimal longitude;
 	
+	
+	
 	public static Region create(String country,
 								String city,
 								BigDecimal latitude,

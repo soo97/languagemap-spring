@@ -21,7 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateRegionDto;
-import kr.co.mapspring.place.dto.AdminRegionDto;
+import kr.co.mapspring.place.dto.AdminReadRegionDto;
+import kr.co.mapspring.place.dto.AdminRegionListDto;
+import kr.co.mapspring.place.dto.AdminUpdateRegionDto;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.service.impl.AdminRegionServiceImpl;
@@ -35,22 +37,21 @@ class AdminRegionServiceTest {
     @Mock
     private RegionRepository regionRepository;
 
-    // ===== 생성 =====
     @Test
     @DisplayName("지역 생성 성공")
     void 지역_생성_성공() {
-        AdminCreateRegionDto.RequestCreate request = new AdminCreateRegionDto.RequestCreate();
-//        request.setCountry("Korea");
-//        request.setCity("Seoul");
-//        request.setLatitude(new BigDecimal("37.12345678"));
-//        request.setLongitude(new BigDecimal("127.12345678"));
+    	AdminCreateRegionDto.RequestCreate request = AdminCreateRegionDto.RequestCreate.builder()
+    			.country("korea")
+    			.city("Seoul")
+    			.latitude(new BigDecimal("37.12345678"))
+    			.longitude(new BigDecimal("127.12345678"))
+    			.build();
 
         adminRegionService.createRegion(request);
 
         verify(regionRepository, times(1)).save(any(Region.class));
     }
 
-    // ===== 조회 =====
     @Test
     @DisplayName("지역 상세 조회 성공")
     void 지역_조회_성공() {
@@ -64,7 +65,7 @@ class AdminRegionServiceTest {
         when(regionRepository.findById(1L))
                 .thenReturn(Optional.of(region));
 
-        AdminRegionDto.ResponseRead result =
+        AdminReadRegionDto.ResponseRead result =
                 adminRegionService.readRegion(1L);
 
         assertEquals("Korea", result.getCountry());
@@ -93,7 +94,7 @@ class AdminRegionServiceTest {
         when(regionRepository.findAll())
                 .thenReturn(List.of(r1, r2));
 
-        List<AdminRegionDto.ResponseList> result =
+        List<AdminRegionListDto.ResponseList> result =
                 adminRegionService.regionList(null);
 
         assertEquals(2, result.size());
@@ -111,7 +112,7 @@ class AdminRegionServiceTest {
         when(regionRepository.findByCityContaining("Seoul"))
                 .thenReturn(List.of(region));
 
-        List<AdminRegionDto.ResponseList> result =
+        List<AdminRegionListDto.ResponseList> result =
                 adminRegionService.regionList("Seoul");
 
         assertEquals(1, result.size());
@@ -120,18 +121,18 @@ class AdminRegionServiceTest {
         verify(regionRepository, never()).findAll();
     }
 
-    // ===== 수정 =====
     @Test
     @DisplayName("지역 수정 성공")
     void 지역_수정() {
         Region region = Region.create("Korea", "Seoul",
                 new BigDecimal("1"), new BigDecimal("1"));
-
-        AdminRegionDto.RequestUpdate request = new AdminRegionDto.RequestUpdate();
-        request.setCountry("USA");
-        request.setCity("NewYork");
-        request.setLatitude(new BigDecimal("10"));
-        request.setLongitude(new BigDecimal("20"));
+        
+        AdminUpdateRegionDto.RequestUpdate request = AdminUpdateRegionDto.RequestUpdate.builder()
+    			.country("USA")
+    			.city("NewYork")
+    			.latitude(new BigDecimal("10"))
+    			.longitude(new BigDecimal("20"))
+    			.build();
 
         when(regionRepository.findById(1L))
                 .thenReturn(Optional.of(region));
@@ -148,13 +149,12 @@ class AdminRegionServiceTest {
         when(regionRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
-        AdminRegionDto.RequestUpdate request = new AdminRegionDto.RequestUpdate();
+        AdminUpdateRegionDto.RequestUpdate request = new AdminUpdateRegionDto.RequestUpdate();
 
         assertThrows(RegionNotFoundException.class,
                 () -> adminRegionService.updateRegion(1L, request));
     }
 
-    // ===== 삭제 =====
     @Test
     @DisplayName("지역 삭제 성공")
     void 지역_삭제() {
