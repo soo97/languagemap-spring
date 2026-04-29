@@ -23,7 +23,7 @@ import kr.co.mapspring.place.service.AdminPlaceService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/content/places")
+@RequestMapping("/api/admin/places")
 @RequiredArgsConstructor
 public class AdminPlaceController implements AdminPlaceControllerDocs {
 	
