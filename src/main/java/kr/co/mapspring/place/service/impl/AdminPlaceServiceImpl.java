@@ -86,23 +86,20 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 	public List<AdminPlaceListDto.ResponseList> placeList(String keyword) {
 		
 		List<AdminPlaceListDto.ResponseList> responseList;
+		List<Place> placeList;
 		
 		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 
 		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
-			List<Place> place = placeRepository.findAll();
-
-			responseList = place.stream()
-					.map(AdminPlaceListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			placeList = placeRepository.findAll();
 		} else {
 
-			List<Place> place = placeRepository.findByPlaceNameContaining(normalizedKeyword);
-
-			responseList = place.stream()
-					.map(AdminPlaceListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			placeList = placeRepository.findByPlaceNameContaining(normalizedKeyword);
 		}
+		
+		responseList = placeList.stream()
+				.map(AdminPlaceListDto.ResponseList::from)
+				.collect(Collectors.toList());
 
 		return responseList;
 	}
