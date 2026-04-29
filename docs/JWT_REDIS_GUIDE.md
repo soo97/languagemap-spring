@@ -1,5 +1,13 @@
 # JWT + Redis Refresh Token 사용 가이드
 
+
+Spring Boot 실행 전 환경변수 설정 필수적으로 하셔야 서버 실행이 가능합니다
+
+Name = JWT_SECRET
+Value = my-test-secret-key-must-be-at-least-32-characters
+
+
+
 현재는 팀원 작업 보호를 위해 permitAll 상태이며,
 추후 authenticated 방식으로 전환 예정
 

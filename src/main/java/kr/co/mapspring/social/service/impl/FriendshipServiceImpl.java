@@ -1,8 +1,10 @@
 package kr.co.mapspring.social.service.impl;
 
+import kr.co.mapspring.global.exception.social.EmailUserNotFoundException;
 import kr.co.mapspring.global.exception.social.FriendRequestAccessDeniedException;
 import kr.co.mapspring.global.exception.social.FriendshipAlreadyExistsException;
 import kr.co.mapspring.global.exception.social.FriendshipNotFoundException;
+import kr.co.mapspring.global.exception.social.InvalidSocialUserException;
 import kr.co.mapspring.global.exception.social.SelfFriendRequestNotAllowedException;
 import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
 import kr.co.mapspring.social.entity.Friendship;
@@ -28,6 +30,9 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public void sendFriendRequest(Long requesterId, Long addresseeId) {
 
+        validateSocialUserId(requesterId);
+        validateSocialUserId(addresseeId);
+
         if (requesterId.equals(addresseeId)) {
             throw new SelfFriendRequestNotAllowedException();
         }
@@ -49,7 +54,21 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     @Transactional
+    public void sendFriendRequestByEmail(Long requesterId, String email) {
+
+        validateSocialUserId(requesterId);
+
+        User addressee = userRepository.findByEmail(email)
+                .orElseThrow(EmailUserNotFoundException::new);
+
+        sendFriendRequest(requesterId, addressee.getUserId());
+    }
+
+    @Override
+    @Transactional
     public void acceptFriendRequest(Long friendshipId, Long addresseeId) {
+
+        validateSocialUserId(addresseeId);
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
@@ -65,6 +84,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public void rejectFriendRequest(Long friendshipId, Long addresseeId) {
 
+        validateSocialUserId(addresseeId);
+
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
 
@@ -78,12 +99,16 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     public List<Friendship> getFriends(Long userId) {
 
+        validateSocialUserId(userId);
+
         return friendshipRepository.findAcceptedFriendshipsByUserId(userId);
     }
 
     @Override
     @Transactional
     public void deleteFriend(Long friendshipId, Long userId) {
+
+        validateSocialUserId(userId);
 
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(FriendshipNotFoundException::new);
@@ -93,5 +118,60 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
 
         friendshipRepository.delete(friendship);
+    }
+
+    @Override
+    public List<Friendship> getReceivedRequests(Long userId) {
+
+        validateSocialUserId(userId);
+
+        return friendshipRepository.findReceivedRequestsByUserId(userId);
+    }
+
+    @Override
+    public List<Friendship> getSentRequests(Long userId) {
+
+        validateSocialUserId(userId);
+
+        return friendshipRepository.findSentRequestsByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public void blockFriend(Long friendshipId, Long userId) {
+
+        validateSocialUserId(userId);
+
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(FriendshipNotFoundException::new);
+
+        if (!friendship.isRelatedUser(userId)) {
+            throw new FriendRequestAccessDeniedException();
+        }
+
+        friendship.block();
+    }
+
+    @Override
+    public List<Friendship> getFriendshipHistory(Long userId) {
+
+        validateSocialUserId(userId);
+
+        return friendshipRepository.findHistoryByUserId(userId);
+    }
+
+    @Override
+    public List<User> getRecommendedFriends(Long userId) {
+
+        validateSocialUserId(userId);
+
+        return friendshipRepository.findRandomRecommendedUsers(userId);
+    }
+
+    private void validateSocialUserId(Long userId) {
+
+        if (userId == null) {
+            throw new InvalidSocialUserException();
+        }
     }
 }
