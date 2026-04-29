@@ -93,7 +93,7 @@ public class AdminLearningController implements AdminLearningControllerDocs {
     public ResponseEntity<ApiResponseDTO<Void>> deleteGoal(@PathVariable("goalMasterId") Long goalMasterId) {
         adminLearningService.deleteGoal(goalMasterId);
 
-        return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 삭제 성공", null));
+        return ResponseEntity.ok(ApiResponseDTO.success("학습 목표 삭제 처리 성공", null));
     }
 
     private AdminLearningDto.ResponseStudyLog toResponseStudyLog(StudyLog studyLog) {
