@@ -38,7 +38,7 @@ public class AdminScenarioController implements AdminScenarioControllerDocs {
 	
 	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<AdminScenarioListDto.ResponseList>>> readScenarioList(@RequestParam(name = "scenarioCategory", required = false) String keyword) {
+	public ResponseEntity<ApiResponseDTO<List<AdminScenarioListDto.ResponseList>>> readScenarioList(@RequestParam(name = "keyword", required = false) String keyword) {
 		List<AdminScenarioListDto.ResponseList> scenarioList = adminScenarioService.scenarioList(keyword);
 		return ResponseEntity.ok(ApiResponseDTO.success("시나리오 리스트 조회 완료", scenarioList));
 	}

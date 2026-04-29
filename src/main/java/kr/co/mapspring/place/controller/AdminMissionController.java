@@ -38,14 +38,15 @@ public class AdminMissionController implements AdminMissionControllerDocs {
 	
 	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<AdminMissionListDto.ResponseList>>> readMissionList(@RequestParam(name = "missionTitle", required = false) String keyword) {
+	public ResponseEntity<ApiResponseDTO<List<AdminMissionListDto.ResponseList>>> readMissionList(@RequestParam(name = "keyword", required = false) String keyword) {
 		List<AdminMissionListDto.ResponseList> missionList = adminMissionService.missionList(keyword);
 		return ResponseEntity.ok(ApiResponseDTO.success("미션 리스트 조회 완료", missionList));
 	}
 	
 	@Override
 	@PatchMapping("/{missionId}")
-	public ResponseEntity<ApiResponseDTO<Void>> updateMission(@PathVariable("missionId") Long missionId, AdminUpdateMissionDto.RequestUpdate request) {
+	public ResponseEntity<ApiResponseDTO<Void>> updateMission(@PathVariable("missionId") Long missionId, 
+															  @RequestBody AdminUpdateMissionDto.RequestUpdate request) {
 		adminMissionService.updateMission(missionId, request);
 		return ResponseEntity.ok(ApiResponseDTO.success("미션 수정 완료"));
 	}
