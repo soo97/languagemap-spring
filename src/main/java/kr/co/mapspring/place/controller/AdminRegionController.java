@@ -48,7 +48,7 @@ public class AdminRegionController implements AdminRegionControllerDocs {
     // 지역 리스트 조회
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<AdminRegionListDto.ResponseList>>> readRegionList(@RequestParam(name = "city", required = false) String keyword) {
+    public ResponseEntity<ApiResponseDTO<List<AdminRegionListDto.ResponseList>>> readRegionList(@RequestParam(name = "keyword", required = false) String keyword) {
         List<AdminRegionListDto.ResponseList> result =adminRegionService.regionList(keyword);
         return ResponseEntity.ok(ApiResponseDTO.success("지역 리스트 조회 완료", result));
     }
