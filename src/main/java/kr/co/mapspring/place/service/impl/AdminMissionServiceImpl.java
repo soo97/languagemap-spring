@@ -56,26 +56,24 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<AdminMissionListDto.ResponseList> missionList(String keyword) {
-
-		List<AdminMissionListDto.ResponseList> responseList;
+		
+		List<Mission> missionList;
 
 		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 
 		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
-			List<Mission> mission = missionRepository.findAll();
-
-			responseList = mission.stream()
-					.map(AdminMissionListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			
+			missionList = missionRepository.findAll();
+			
 		} else {
 
-			List<Mission> mission = missionRepository.findByMissionTitleContaining(normalizedKeyword);
-
-			responseList = mission.stream()
-					.map(AdminMissionListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			missionList = missionRepository.findByMissionTitleContaining(normalizedKeyword);
 		}
 
+		List<AdminMissionListDto.ResponseList> responseList = missionList.stream()
+				.map(AdminMissionListDto.ResponseList::from)
+				.collect(Collectors.toList());
+		
 		return responseList;
 	}
 
