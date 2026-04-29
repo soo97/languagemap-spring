@@ -54,8 +54,8 @@ public class FavoriteScenarioDto {
         public static FavoriteScenarioDto.ResponseFavoriteScenario from(FavoriteScenario favoriteScenario) {
             return FavoriteScenarioDto.ResponseFavoriteScenario.builder()
                     .favoriteScenarioId(favoriteScenario.getFavoriteScenarioId())
-                    .userId(favoriteScenario.getUserId())
-                    .scenarioId(favoriteScenario.getScenarioId())
+                    .userId(favoriteScenario.getUser().getUserId())
+                    .scenarioId(favoriteScenario.getScenario().getScenarioId())
                     .createdAt(favoriteScenario.getCreatedAt())
                     .build();
         }

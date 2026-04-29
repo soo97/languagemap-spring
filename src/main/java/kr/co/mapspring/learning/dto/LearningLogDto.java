@@ -4,12 +4,41 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.learning.entity.StudyLog;
 import kr.co.mapspring.learning.entity.StudyScore;
 import kr.co.mapspring.learning.enums.StudyType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class LearningLogDto {
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(description = "학습 기록 저장 요청 DTO")
+    public static class RequestCreate {
+
+        @Schema(description = "회원 ID", example = "1")
+        private Long userId;
+
+        @Schema(description = "학습 세션 ID", example = "1")
+        private Long sessionId;
+
+        @Schema(description = "학습 유형", example = "PLACE")
+        private StudyType studyType;
+
+        @Schema(description = "획득 경험치", example = "10")
+        private Integer earnedExp;
+
+        @Schema(description = "자연스러움 점수", example = "80")
+        private Integer naturalnessScore;
+
+        @Schema(description = "유창성 점수", example = "85")
+        private Integer fluencyScore;
+
+        @Schema(description = "종합 점수", example = "82")
+        private Integer totalScore;
+    }
 
     @Getter
     @Builder
@@ -48,4 +77,6 @@ public class LearningLogDto {
                     .build();
         }
     }
+
+
 }
