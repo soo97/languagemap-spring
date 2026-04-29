@@ -3,6 +3,8 @@ package kr.co.mapspring.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -14,10 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import kr.co.mapspring.global.exception.CustomException;
-import kr.co.mapspring.global.exception.user.InactiveUserException;
-import kr.co.mapspring.global.exception.user.InvalidPasswordException;
+import kr.co.mapspring.global.jwt.JwtTokenProvider;
+import kr.co.mapspring.global.jwt.RefreshTokenService;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
@@ -30,6 +33,12 @@ public class LoginServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+    
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
+    
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private LoginServiceImpl loginService;
@@ -51,6 +60,13 @@ public class LoginServiceTest {
         // 비밀번호 일치하도록 mock 설정
         given(passwordEncoder.matches("1234", "encodedPassword"))
                 .willReturn(true);
+        
+    	// JWT Access Token 생성 mock 설정
+        given(jwtTokenProvider.createAccessToken(user))
+                .willReturn("mock-access-token");
+        
+        given(jwtTokenProvider.createRefreshToken(user))
+        .willReturn("mock-refresh-token");
 
         // when
         LoginDto.ResponseLogin response = loginService.login(request);
@@ -59,11 +75,13 @@ public class LoginServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getEmail()).isEqualTo("test@naver.com");
         assertThat(response.getName()).isEqualTo("홍길동");
+        assertThat(response.getAccessToken()).isEqualTo("mock-access-token");
+        assertThat(response.getRefreshToken()).isEqualTo("mock-refresh-token");
+        verify(refreshTokenService).saveRefreshToken(1L, "mock-refresh-token");
     }
 
     private User createUser(String passwordHash) {
-        // 엔티티 내부 생성 규칙을 사용해서 테스트 사용자 생성
-        return User.create(
+        User user = User.create(
                 "test@naver.com",
                 "홍길동",
                 LocalDate.of(2000, 1, 1),
@@ -71,6 +89,12 @@ public class LoginServiceTest {
                 "010-1234-5678",
                 passwordHash
         );
+
+        // 테스트에서는 DB 저장이 없으므로 userId가 자동 생성되지 않는다.
+        // Refresh Token 저장 검증을 위해 테스트용 userId를 넣어준다.
+        ReflectionTestUtils.setField(user, "userId", 1L);
+
+        return user;
     }
     
     

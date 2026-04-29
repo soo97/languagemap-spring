@@ -53,4 +53,13 @@ public class Mission {
 		return mission;
 	}
 
+	public void update(String missionTitle,
+								 String missionDescription,
+								 Scenario scenario)
+	{
+		this.missionTitle = missionTitle;
+		this.missionDescription = missionDescription;
+		this.scenario = scenario;
+	}
+
 }
