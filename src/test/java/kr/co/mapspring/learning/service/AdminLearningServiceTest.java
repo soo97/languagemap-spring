@@ -1,6 +1,7 @@
 package kr.co.mapspring.learning.service;
 
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
+import kr.co.mapspring.learning.dto.AdminLearningDto;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.StudyLog;
 import kr.co.mapspring.learning.enums.GoalPeriodType;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -187,6 +189,125 @@ public class AdminLearningServiceTest {
 
         assertThrows(GoalMasterNotFoundException.class,
                 () -> adminLearningService.updateGoalActive(goalMasterId, false));
+
+        verify(goalMasterRepository).findById(goalMasterId);
+    }
+
+    @Test
+    @DisplayName("관리자는 학습 목표를 생성한다")
+    void 관리자는_학습_목표를_생성한다() {
+
+        AdminLearningDto.RequestCreateGoal request =
+                new AdminLearningDto.RequestCreateGoal(
+                        1L,
+                        GoalType.STUDY_COUNT,
+                        "하루 학습 3회",
+                        "하루에 학습을 3회 완료합니다.",
+                        3,
+                        GoalPeriodType.DAILY
+                );
+
+        adminLearningService.createGoal(request);
+
+        verify(goalMasterRepository).save(any(GoalMaster.class));
+    }
+
+    @Test
+    @DisplayName("관리자는 학습 목표를 수정한다")
+    void 관리자는_학습_목표를_수정한다() {
+
+        Long goalMasterId = 1L;
+
+        GoalMaster goalMaster = GoalMaster.of(
+                goalMasterId,
+                "하루 학습 3회",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                3
+        );
+
+        AdminLearningDto.RequestUpdateGoal request =
+                new AdminLearningDto.RequestUpdateGoal(
+                        2L,
+                        GoalType.STUDY_TIME,
+                        "하루 학습 30분",
+                        "하루에 30분 이상 학습합니다.",
+                        30,
+                        GoalPeriodType.DAILY
+                );
+
+        given(goalMasterRepository.findById(goalMasterId))
+                .willReturn(Optional.of(goalMaster));
+
+        adminLearningService.updateGoal(goalMasterId, request);
+
+        verify(goalMasterRepository).findById(goalMasterId);
+
+        assertEquals("하루 학습 30분", goalMaster.getGoalTitle());
+        assertEquals(GoalType.STUDY_TIME, goalMaster.getGoalType());
+        assertEquals(30, goalMaster.getTargetValue());
+        assertEquals(GoalPeriodType.DAILY, goalMaster.getPeriodType());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 목표 수정 시 예외가 발생한다")
+    void 존재하지_않는_목표_수정시_예외가_발생한다() {
+
+        Long goalMasterId = 999L;
+
+        AdminLearningDto.RequestUpdateGoal request =
+                new AdminLearningDto.RequestUpdateGoal(
+                        1L,
+                        GoalType.STUDY_TIME,
+                        "하루 학습 30분",
+                        "하루에 30분 이상 학습합니다.",
+                        30,
+                        GoalPeriodType.DAILY
+                );
+
+        given(goalMasterRepository.findById(goalMasterId))
+                .willReturn(Optional.empty());
+
+        assertThrows(GoalMasterNotFoundException.class,
+                () -> adminLearningService.updateGoal(goalMasterId, request));
+
+        verify(goalMasterRepository).findById(goalMasterId);
+    }
+
+    @Test
+    @DisplayName("관리자는 학습 목표를 삭제한다")
+    void 관리자는_학습_목표를_삭제한다() {
+
+        Long goalMasterId = 1L;
+
+        GoalMaster goalMaster = GoalMaster.of(
+                goalMasterId,
+                "하루 학습 3회",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                3
+        );
+
+        given(goalMasterRepository.findById(goalMasterId))
+                .willReturn(Optional.of(goalMaster));
+
+        adminLearningService.deleteGoal(goalMasterId);
+
+        verify(goalMasterRepository).findById(goalMasterId);
+        verify(goalMasterRepository).delete(goalMaster);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 목표 삭제 시 예외가 발생한다")
+    void 존재하지_않는_목표_삭제시_예외가_발생한다() {
+
+        Long goalMasterId = 999L;
+
+        given(goalMasterRepository.findById(goalMasterId))
+                .willReturn(Optional.empty());
+
+        assertThrows(GoalMasterNotFoundException.class,
+                () -> adminLearningService.deleteGoal(goalMasterId));
 
         verify(goalMasterRepository).findById(goalMasterId);
     }
