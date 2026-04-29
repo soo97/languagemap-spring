@@ -1,8 +1,10 @@
 package kr.co.mapspring.global.exception.user;
 
-public class UserNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
+public class UserNotFoundException extends CustomException {
     public UserNotFoundException() {
-        super("존재하지 않는 이메일입니다.");
+        super(ErrorCode.USER_NOT_FOUND);
     }
 }
