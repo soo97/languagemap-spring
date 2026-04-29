@@ -12,7 +12,7 @@ public class AdminCreateMissionDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Schema(description = "미션 생성 요청 DTO")
+	@Schema(name = "AdminCreateMissionRequest", description = "미션 생성 요청 DTO")
 	public static class RequestCreate {
 		@Schema(
 				description = "미션 제목", 

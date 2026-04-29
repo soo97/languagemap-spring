@@ -9,7 +9,7 @@ public class AdminUpdateScenarioDto {
 
     @Getter
     @Builder
-    @Schema(description = "시나리오 수정 요청 DTO")
+    @Schema(name = "AdminUpdateScenarioRequest", description = "시나리오 수정 요청 DTO")
     public static class RequestUpdate {
 
         @Schema(

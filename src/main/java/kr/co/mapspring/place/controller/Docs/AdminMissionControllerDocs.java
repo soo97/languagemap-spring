@@ -42,7 +42,7 @@ public interface AdminMissionControllerDocs {
             @ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(schema = @Schema(implementation = AdminMissionListDto.ResponseList.class)))
     })
-	ResponseEntity<ApiResponseDTO<List<AdminMissionListDto.ResponseList>>> readMissionList(@RequestParam String keyword);
+	ResponseEntity<ApiResponseDTO<List<AdminMissionListDto.ResponseList>>> readMissionList(@RequestParam(required = false) String keyword);
 	
 	@Operation(
             summary = "미션 수정",
