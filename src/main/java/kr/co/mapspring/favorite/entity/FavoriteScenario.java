@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
+@Table( 
         name = "favorite_scenario",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_favorite_scenario_user_scenario", columnNames = {"user_id", "scenario_id"})
