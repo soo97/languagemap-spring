@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
+import kr.co.mapspring.place.dto.AdminPlaceListDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
 import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
 import kr.co.mapspring.place.entity.Place;
@@ -126,7 +128,7 @@ class AdminPlaceServiceTest {
         assertThrows(RegionNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
-    
+
     @Test
     @DisplayName("장소 생성 실패 존재하지 않는 시나리오")
     void 장소_생성_실패_존재하지_않는_시나리오() {
@@ -156,34 +158,34 @@ class AdminPlaceServiceTest {
         assertThrows(ScenarioNotFoundException.class, () -> adminPlaceService.savePlace(request));
         verify(placeRepository, never()).save(any(Place.class));
     }
-    
+
     @Test
     @DisplayName("장소 상세 조회 성공")
     void 장소_상세_조회_성공() {
         // given
-        AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
-        		.placeId(1L)
-        		.build();
+        Long placeId = 1L;
 
         Region region = Region.withId(10L);
-
         Scenario scenario = Scenario.withId(20L);
 
-        Place place = Place.testOf(1L, 
-        					   "google-place-123",
-        					   "스타벅스 강남점",
-        					   "인천시 서구",
-        					   "커피를 주문할 수 있는 장소", 
-        					   new BigDecimal("37.12345678"), 
-        					   new BigDecimal("127.12345678"), 
-        					   region, 
-        					   scenario);
+        Place place = Place.testOf(
+                placeId,
+                "google-place-123",
+                "스타벅스 강남점",
+                "인천시 서구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
 
-        when(placeRepository.findById(request.getPlaceId()))
+        when(placeRepository.findById(placeId))
                 .thenReturn(Optional.of(place));
 
         // when
-        AdminReadPlaceDto.ResponseRead response = adminPlaceService.readPlace(request);
+        AdminReadPlaceDto.ResponseRead response =
+                adminPlaceService.readPlace(placeId);
 
         // then
         assertEquals("스타벅스 강남점", response.getPlaceName());
@@ -192,23 +194,144 @@ class AdminPlaceServiceTest {
         assertEquals(new BigDecimal("127.12345678"), response.getLongitude());
         assertEquals(scenario.getScenarioDescription(), response.getScenarioDescription());
         assertEquals(region.getCity(), response.getCity());
-    }
 
+        verify(placeRepository, times(1)).findById(placeId);
+    }
+    
     @Test
     @DisplayName("장소 상세 조회 실패 존재하지 않는 장소")
     void 장소_상세_조회_실패_존재하지_않는_장소() {
         // given
-        AdminReadPlaceDto.RequestRead request = AdminReadPlaceDto.RequestRead.builder()
-        		.placeId(99L)
-        		.build();
+        Long placeId = 99L;
 
-        when(placeRepository.findById(request.getPlaceId()))
+        when(placeRepository.findById(placeId))
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(PlaceNotFoundException.class, () -> adminPlaceService.readPlace(request));
+        assertThrows(PlaceNotFoundException.class,
+                () -> adminPlaceService.readPlace(placeId));
+
+        verify(placeRepository, times(1)).findById(placeId);
     }
     
+    @Test
+    @DisplayName("장소 리스트 조회 성공 키워드 없음")
+    void 장소_리스트_조회_성공_키워드_없음() {
+        // given
+        Region region = Region.withId(1L);
+        Scenario scenario = Scenario.withId(1L);
+
+        Place place1 = Place.testOf(
+                1L,
+                "google-place-1",
+                "스타벅스 강남점",
+                "서울 강남구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
+
+        Place place2 = Place.testOf(
+                2L,
+                "google-place-2",
+                "투썸플레이스 홍대점",
+                "서울 마포구",
+                "디저트를 주문할 수 있는 장소",
+                new BigDecimal("37.98765432"),
+                new BigDecimal("127.98765432"),
+                region,
+                scenario
+        );
+
+        when(placeRepository.findAll())
+                .thenReturn(List.of(place1, place2));
+
+        // when
+        List<AdminPlaceListDto.ResponseList> responseList =
+                adminPlaceService.placeList(null);
+
+        // then
+        assertEquals(2, responseList.size());
+        assertEquals("스타벅스 강남점", responseList.get(0).getPlaceName());
+        assertEquals("투썸플레이스 홍대점", responseList.get(1).getPlaceName());
+
+        verify(placeRepository, times(1)).findAll();
+        verify(placeRepository, never()).findByPlaceNameContaining(any());
+    }
+    
+    @Test
+    @DisplayName("장소 리스트 조회 성공 빈 문자열")
+    void 장소_리스트_조회_성공_빈_문자열() {
+        // given
+        Region region = Region.withId(1L);
+        Scenario scenario = Scenario.withId(1L);
+
+        Place place = Place.testOf(
+                1L,
+                "google-place-1",
+                "스타벅스 강남점",
+                "서울 강남구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
+
+        when(placeRepository.findAll())
+                .thenReturn(List.of(place));
+
+        // when
+        List<AdminPlaceListDto.ResponseList> responseList =
+                adminPlaceService.placeList("   ");
+
+        // then
+        assertEquals(1, responseList.size());
+        assertEquals("스타벅스 강남점", responseList.get(0).getPlaceName());
+
+        verify(placeRepository, times(1)).findAll();
+        verify(placeRepository, never()).findByPlaceNameContaining(any());
+    }
+    
+    @Test
+    @DisplayName("장소 검색 성공 장소명 키워드 있음")
+    void 장소_검색_성공_장소명_키워드_있음() {
+        // given
+        String keyword = "  스타벅스  ";
+        String normalizedKeyword = "스타벅스";
+
+        Region region = Region.withId(1L);
+        Scenario scenario = Scenario.withId(1L);
+
+        Place place = Place.testOf(
+                1L,
+                "google-place-1",
+                "스타벅스 강남점",
+                "서울 강남구",
+                "커피를 주문할 수 있는 장소",
+                new BigDecimal("37.12345678"),
+                new BigDecimal("127.12345678"),
+                region,
+                scenario
+        );
+
+        when(placeRepository.findByPlaceNameContaining(normalizedKeyword))
+                .thenReturn(List.of(place));
+
+        // when
+        List<AdminPlaceListDto.ResponseList> responseList =
+                adminPlaceService.placeList(keyword);
+
+        // then
+        assertEquals(1, responseList.size());
+        assertEquals("스타벅스 강남점", responseList.get(0).getPlaceName());
+
+        verify(placeRepository, times(1)).findByPlaceNameContaining(normalizedKeyword);
+        verify(placeRepository, never()).findAll();
+    }
+
     @Test
     @DisplayName("장소 수정 성공")
     void 장소_수정_성공() {

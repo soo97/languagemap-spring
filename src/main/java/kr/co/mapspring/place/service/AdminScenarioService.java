@@ -24,8 +24,7 @@ public interface AdminScenarioService {
 	 * @param request 조회할 때 필요한 시나리오 Id
 	 * @return 조회한 시나리오 상세 값
 	 */
-	AdminReadScenarioDto.ResponseRead readScenario(AdminReadScenarioDto.RequestRead request); 
-
+	AdminReadScenarioDto.ResponseRead readScenario(Long scenarioId);
 	/**
 	 * 관리자 시나리오 수정 기능
 	 * 
