@@ -1,5 +1,6 @@
 package kr.co.mapspring.learning.service;
 
+import kr.co.mapspring.learning.dto.AdminLearningDto;
 import kr.co.mapspring.learning.entity.GoalMaster;
 import kr.co.mapspring.learning.entity.StudyLog;
 
@@ -44,4 +45,26 @@ public interface AdminLearningService {
      * @param active 활성화 여부
      */
     void updateGoalActive(Long goalMasterId, boolean active);
+
+    /**
+     * 관리자가 학습 목표를 생성한다.
+     *
+     * @param request 학습 목표 생성 요청 DTO
+     */
+    void createGoal(AdminLearningDto.RequestCreateGoal request);
+
+    /**
+     * 관리자가 학습 목표를 수정한다.
+     *
+     * @param goalMasterId 수정할 목표 ID
+     * @param request 학습 목표 수정 요청 DTO
+     */
+    void updateGoal(Long goalMasterId, AdminLearningDto.RequestUpdateGoal request);
+
+    /**
+     * 관리자가 학습 목표를 삭제한다.
+     *
+     * @param goalMasterId 삭제할 목표 ID
+     */
+    void deleteGoal(Long goalMasterId);
 }

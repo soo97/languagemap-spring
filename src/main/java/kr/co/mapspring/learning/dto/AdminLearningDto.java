@@ -15,6 +15,56 @@ import lombok.NoArgsConstructor;
 public class AdminLearningDto {
 
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(description = "관리자 학습 목표 생성 요청 DTO")
+    public static class RequestCreateGoal {
+
+        @Schema(description = "배지 ID", example = "1")
+        private Long badgeId;
+
+        @Schema(description = "목표 타입", example = "STUDY_COUNT")
+        private GoalType goalType;
+
+        @Schema(description = "목표 이름", example = "하루 학습 3회")
+        private String goalTitle;
+
+        @Schema(description = "목표 설명", example = "하루에 학습을 3회 완료합니다.")
+        private String goalDescription;
+
+        @Schema(description = "목표 값", example = "3")
+        private Integer targetValue;
+
+        @Schema(description = "목표 기간 타입", example = "DAILY")
+        private GoalPeriodType periodType;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(description = "관리자 학습 목표 수정 요청 DTO")
+    public static class RequestUpdateGoal {
+
+        @Schema(description = "배지 ID", example = "1")
+        private Long badgeId;
+
+        @Schema(description = "목표 타입", example = "STUDY_TIME")
+        private GoalType goalType;
+
+        @Schema(description = "목표 이름", example = "하루 학습 30분")
+        private String goalTitle;
+
+        @Schema(description = "목표 설명", example = "하루에 30분 이상 학습합니다.")
+        private String goalDescription;
+
+        @Schema(description = "목표 값", example = "30")
+        private Integer targetValue;
+
+        @Schema(description = "목표 기간 타입", example = "DAILY")
+        private GoalPeriodType periodType;
+    }
+
+    @Getter
     @Builder
     @Schema(description = "관리자 학습 기록 응답 DTO")
     public static class ResponseStudyLog {
