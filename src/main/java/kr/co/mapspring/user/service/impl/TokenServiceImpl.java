@@ -1,5 +1,7 @@
 package kr.co.mapspring.user.service.impl;
 
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
