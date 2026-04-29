@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.ai;
 
-public class CoachingSessionNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class CoachingSessionNotFoundException extends CustomException {
 
     public CoachingSessionNotFoundException() {
-        super("코칭 세션을 찾을 수 없습니다.");
+        super(ErrorCode.COACHING_SESSION_NOT_FOUND);
     }
 }
