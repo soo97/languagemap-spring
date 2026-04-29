@@ -1,13 +1,20 @@
 package kr.co.mapspring.user.controller;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.user.controller.docs.AuthControllerDocs;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.SignUpDto;
+import kr.co.mapspring.user.dto.TokenDto;
 import kr.co.mapspring.user.service.LoginService;
 import kr.co.mapspring.user.service.SignUpService;
+import kr.co.mapspring.user.service.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,6 +26,9 @@ public class AuthController implements AuthControllerDocs {
 
     // 회원가입 서비스
     private final SignUpService signUpService;
+    
+    // 토큰 서비스
+    private final TokenService tokenService;
 
     @Override
     @PostMapping("/login")
@@ -43,4 +53,18 @@ public class AuthController implements AuthControllerDocs {
         // 공통 성공 응답 반환
         return ApiResponseDTO.success("회원가입 성공", response);
     }
+    
+    @Override
+    @PostMapping("/tokens")
+    public ApiResponseDTO<TokenDto.ResponseReissue> reissueToken(
+            @Valid @RequestBody TokenDto.RequestReissue request
+    ) {
+        // Refresh Token 기반 토큰 재발급 서비스 호출
+        TokenDto.ResponseReissue response = tokenService.reissue(request);
+
+        // 공통 성공 응답 반환
+        return ApiResponseDTO.success("토큰 재발급 성공", response);
+    }
+    
+    
 }
