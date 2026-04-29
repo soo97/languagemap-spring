@@ -52,7 +52,7 @@ public interface AdminPlaceControllerDocs {
 	            @ApiResponse(responseCode = "200", description = "조회 성공",
 	                    content = @Content(schema = @Schema(implementation = AdminPlaceListDto.ResponseList.class)))
 	    })
-	ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam String keyword);
+	ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam(required = false) String keyword);
 	 
 	 @Operation(
 	            summary = "장소 수정",

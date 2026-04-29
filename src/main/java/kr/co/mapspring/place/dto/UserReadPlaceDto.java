@@ -1,7 +1,10 @@
 package kr.co.mapspring.place.dto;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.Place;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,8 +20,10 @@ public class UserReadPlaceDto {
 		private String regionCountry;
 		private String scenarioCategory;
 		private String scenarioDescription;
+		private List<UserMissionListDto.ResponseList> mission;
 		
-		public static UserReadPlaceDto.ResponseRead from(Place place) {
+		public static UserReadPlaceDto.ResponseRead from(Place place, List<Mission> missionList) {
+			
 			return UserReadPlaceDto.ResponseRead.builder()
 					.placeName(place.getPlaceName())
 					.placeDescription(place.getPlaceDescription())
@@ -34,6 +39,10 @@ public class UserReadPlaceDto {
 					.scenarioDescription(Optional.ofNullable(place.getScenario())
 							.map(scenario -> scenario.getScenarioDescription())
 							.orElse(null))
+					.mission(
+							missionList.stream()
+							.map(UserMissionListDto.ResponseList::from)
+							.collect(Collectors.toList()))
 					.build();
 		}
 	}

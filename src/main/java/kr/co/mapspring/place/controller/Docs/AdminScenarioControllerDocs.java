@@ -42,7 +42,7 @@ public interface AdminScenarioControllerDocs {
 	            @ApiResponse(responseCode = "200", description = "조회 성공",
 	                    content = @Content(schema = @Schema(implementation = AdminScenarioListDto.ResponseList.class)))
 	    })
-	public ResponseEntity<ApiResponseDTO<List<AdminScenarioListDto.ResponseList>>> readScenarioList(@RequestParam String keyword);
+	public ResponseEntity<ApiResponseDTO<List<AdminScenarioListDto.ResponseList>>> readScenarioList(@RequestParam(required = false) String keyword);
 	
 	 
 	 @Operation(
