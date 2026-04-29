@@ -23,7 +23,7 @@ import kr.co.mapspring.place.service.AdminPlaceService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/content/places")
+@RequestMapping("/api/admin/places")
 @RequiredArgsConstructor
 public class AdminPlaceController implements AdminPlaceControllerDocs {
 	
@@ -45,7 +45,7 @@ public class AdminPlaceController implements AdminPlaceControllerDocs {
 	
 	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam(name = "PlaceName", required = false) String keyword) {
+	public ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam(name = "placeName", required = false) String keyword) {
 		List<AdminPlaceListDto.ResponseList> placeList = adminPlaceService.placeList(keyword);
 		return ResponseEntity.ok(ApiResponseDTO.success("장소 리스트 조회 완료", placeList));
 	}

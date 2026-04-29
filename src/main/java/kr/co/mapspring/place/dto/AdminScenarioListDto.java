@@ -10,7 +10,7 @@ public class AdminScenarioListDto {
 
     @Getter
     @Builder
-    @Schema(description = "시나리오 리스트 응답 DTO")
+    @Schema(name = "AdminScenarioListResponse", description = "시나리오 리스트 응답 DTO")
     public static class ResponseList {
 
         @Schema(

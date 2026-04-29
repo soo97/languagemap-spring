@@ -23,7 +23,7 @@ import kr.co.mapspring.place.service.AdminScenarioService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/content/scenarios")
+@RequestMapping("/api/admin/scenarios")
 @RequiredArgsConstructor
 public class AdminScenarioController implements AdminScenarioControllerDocs {
 	

@@ -61,6 +61,7 @@ public enum ErrorCode {
 	
 	// Admin Region
 	REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 지역입니다."),
+	REGION_IN_USE(HttpStatus.CONFLICT, "참조 중인 지역입니다."),
 	
 	// Admin Scenario
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),

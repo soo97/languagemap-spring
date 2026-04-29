@@ -12,7 +12,7 @@ public class AdminPlaceListDto {
 
     @Getter
     @Builder
-    @Schema(description = "장소 리스트 응답 DTO")
+    @Schema(name = "AdminPlaceListResponse", description = "장소 리스트 응답 DTO")
     public static class ResponseList {
 
         @Schema(

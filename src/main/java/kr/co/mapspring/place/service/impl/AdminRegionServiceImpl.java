@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.place.RegionInUseException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateRegionDto;
 import kr.co.mapspring.place.dto.AdminReadRegionDto;
 import kr.co.mapspring.place.dto.AdminRegionListDto;
 import kr.co.mapspring.place.dto.AdminUpdateRegionDto;
 import kr.co.mapspring.place.entity.Region;
+import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.service.AdminRegionService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminRegionServiceImpl implements AdminRegionService {
 	
 	 private final RegionRepository regionRepository;
+	 private final PlaceRepository placeRepository;
 
 	    // 지역 생성
 	    @Override
@@ -50,9 +53,10 @@ public class AdminRegionServiceImpl implements AdminRegionService {
 	    @Override
 	    @Transactional(readOnly = true)
 	    public List<AdminRegionListDto.ResponseList> regionList(String keyword) {
-	        String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 
 	        List<Region> region;
+	        
+	        String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 
 	        if (normalizedKeyword == null || normalizedKeyword.isBlank()) {
 	            region = regionRepository.findAll();
@@ -89,6 +93,10 @@ public class AdminRegionServiceImpl implements AdminRegionService {
 	    public void deleteRegion(Long regionId) {
 	        Region region = regionRepository.findById(regionId)
 	                .orElseThrow(RegionNotFoundException::new);
+	        
+	        if (placeRepository.existsByRegion_RegionId(regionId)) {
+		        throw new RegionInUseException();
+		    }
 
 	        regionRepository.delete(region);
 	    }
