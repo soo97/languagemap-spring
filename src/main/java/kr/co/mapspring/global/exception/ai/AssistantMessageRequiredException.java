@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.ai;
 
-public class AssistantMessageRequiredException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class AssistantMessageRequiredException extends CustomException {
 
     public AssistantMessageRequiredException() {
-        super("AI 메시지는 비어 있을 수 없습니다.");
+        super(ErrorCode.ASSISTANT_MESSAGE_REQUIRED);
     }
 }
