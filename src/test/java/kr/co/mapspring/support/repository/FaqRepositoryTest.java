@@ -10,12 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.test.context.ActiveProfiles;
 
-import jakarta.transaction.Transactional;
 import kr.co.mapspring.support.entity.Faq;
 import kr.co.mapspring.user.entity.User;
 
@@ -25,7 +24,7 @@ import kr.co.mapspring.user.entity.User;
         pattern = "kr.co.mapspring.support.*"
     )
 )
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")   // test 프로필 → H2 DB 사용
 @DisplayName("FaqRepository 테스트")
 class FaqRepositoryTest {
 
@@ -81,7 +80,6 @@ class FaqRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("Faq 수정 후 조회")
     void faq_수정_후_조회() {
         Faq saved = faqRepository.save(
@@ -102,7 +100,6 @@ class FaqRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("Faq 삭제 후 조회 시 빈 결과")
     void faq_삭제() {
         Faq saved = faqRepository.save(

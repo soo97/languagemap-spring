@@ -10,11 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
 import kr.co.mapspring.support.entity.Counsel;
 import kr.co.mapspring.support.entity.CounselAnswer;
@@ -28,7 +27,7 @@ import kr.co.mapspring.user.entity.User;
         pattern = "kr.co.mapspring.support.*"
     )
 )
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")   // test 프로필 → H2 DB 사용
 @DisplayName("CounselRepository / CounselAnswerRepository / CounselImgRepository 테스트")
 class CounselRepositoryTest {
 
@@ -135,7 +134,6 @@ class CounselRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("Counsel 삭제")
     void counsel_삭제() {
         Long id = counsel.getCounselId();
@@ -180,7 +178,6 @@ class CounselRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("CounselAnswer counselId로 전체 삭제")
     void counselAnswer_counselId로_전체_삭제() {
         counselAnswerRepository.save(CounselAnswer.builder()
@@ -224,7 +221,6 @@ class CounselRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("CounselImg counselId로 전체 삭제")
     void counselImg_counselId로_전체_삭제() {
         counselImgRepository.save(CounselImg.builder().counsel(counsel).image("images/img1.jpg").build());

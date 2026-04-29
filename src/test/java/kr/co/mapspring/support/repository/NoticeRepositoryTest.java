@@ -10,12 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.test.context.ActiveProfiles;
 
-import jakarta.transaction.Transactional;
 import kr.co.mapspring.support.entity.Notice;
 import kr.co.mapspring.support.enums.NoticeKind;
 import kr.co.mapspring.user.entity.User;
@@ -26,7 +25,7 @@ import kr.co.mapspring.user.entity.User;
         pattern = "kr.co.mapspring.support.*"
     )
 )
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")   // test 프로필 → H2 DB 사용
 @DisplayName("NoticeRepository 테스트")
 class NoticeRepositoryTest {
 	
@@ -123,7 +122,6 @@ class NoticeRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("Notice 삭제 성공")
     void notice_삭제() {
         Notice notice = Notice.builder()

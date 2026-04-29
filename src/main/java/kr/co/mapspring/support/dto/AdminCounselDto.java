@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import kr.co.mapspring.support.entity.Counsel;
 import kr.co.mapspring.support.entity.CounselAnswer;
 import kr.co.mapspring.support.enums.CounselKind;
@@ -20,7 +21,7 @@ public class AdminCounselDto {
     @NoArgsConstructor
     @Schema(description = "답변 작성 요청 DTO (관리자)")
     public static class RequestCreateAnswer {
-    	
+    	@NotBlank
         @Schema(description = "답변 내용", example = "안녕하세요. 로그인 완료 후 홈 화면으로 이동합니다.")
         private String answer;
     }
@@ -32,7 +33,7 @@ public class AdminCounselDto {
     @NoArgsConstructor
     @Schema(description = "답변 수정 요청 DTO (관리자)")
     public static class RequestUpdateAnswer {
-    	
+    	@NotBlank
         @Schema(description = "수정할 답변 내용", example = "안녕하세요. 로그인 완료 후 홈 화면으로 이동합니다.")
         private String answer;
     }

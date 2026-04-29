@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import kr.co.mapspring.support.entity.Counsel;
 import kr.co.mapspring.support.entity.CounselAnswer;
 import kr.co.mapspring.support.enums.CounselKind;
@@ -22,12 +24,15 @@ public class CounselDto {
     @Schema(description = "문의 작성 요청 DTO (일반 사용자)")
     public static class RequestCreate {
     	
+    	@NotBlank
         @Schema(description = "문의 제목", example = "로그인 후 홈 이동 여부")
         private String counselName;
- 
+    	
+    	@NotNull
         @Schema(description = "문의 유형", example = "LOGIN_SIGNUP")
         private CounselKind counselKind;
- 
+    	
+        @NotBlank
         @Schema(description = "문의 내용", example = "로그인 완료 후 홈으로 이동하는 플로우를 확인하고 싶어요.")
         private String counselText;
     }

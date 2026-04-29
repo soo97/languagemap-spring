@@ -10,11 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
 import kr.co.mapspring.support.entity.Notice;
 import kr.co.mapspring.support.entity.NoticeImg;
@@ -28,7 +27,7 @@ import kr.co.mapspring.user.entity.User;
         pattern = "kr.co.mapspring.support.*"
     )
 )
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")   // test 프로필 → H2 DB 사용
 @DisplayName("NoticeImgRepository / NoticeUrlRepository 테스트")
 class NoticeImgUrlRepositoryTest {
 
@@ -92,7 +91,6 @@ class NoticeImgUrlRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("NoticeImg noticeId로 전체 삭제")
     void noticeImg_noticeId로_전체_삭제() {
         noticeImgRepository.save(NoticeImg.builder().notice(notice).image("images/img1.jpg").build());
@@ -134,7 +132,6 @@ class NoticeImgUrlRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("NoticeUrl noticeId로 전체 삭제")
     void noticeUrl_noticeId로_전체_삭제() {
         noticeUrlRepository.save(NoticeUrl.builder().notice(notice).link("https://url1.com").build());
