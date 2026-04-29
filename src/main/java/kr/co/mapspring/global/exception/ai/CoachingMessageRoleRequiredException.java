@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.ai;
 
-public class CoachingMessageRoleRequiredException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class CoachingMessageRoleRequiredException extends CustomException {
 
     public CoachingMessageRoleRequiredException() {
-        super("메시지 역할은 필수입니다.");
+        super(ErrorCode.COACHING_MESSAGE_ROLE_REQUIRED);
     }
 }
