@@ -1,9 +1,12 @@
 package kr.co.mapspring.global.exception.place;
 
-public class PlaceAlreadyExistsException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class PlaceAlreadyExistsException extends CustomException {
 	
 	public PlaceAlreadyExistsException() {
-		super("이미 존재하는 지역입니다.");
+		super(ErrorCode.PLACE_ALREADY_EXISTS);
 	}
 
 }

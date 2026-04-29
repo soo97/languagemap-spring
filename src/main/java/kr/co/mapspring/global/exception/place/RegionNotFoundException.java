@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.place;
 
-public class RegionNotFoundException extends RuntimeException{
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class RegionNotFoundException extends CustomException {
 
 	public RegionNotFoundException() {
-		super("존재하지 않는 지역입니다.");
+		super(ErrorCode.REGION_NOT_FOUND);
 	}
 }

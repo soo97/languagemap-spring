@@ -27,6 +27,9 @@ public enum ErrorCode {
 	SERVICE_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "서비스 이용약관 동의는 필수입니다."),
 	PRIVACY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "개인정보 수집 및 이용 동의는 필수입니다."),
 	TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "활성 약관 정보를 찾을 수 없습니다."),
+	
+	// JWT 토큰용
+	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Refresh Token이 유효하지 않습니다."),
 
     // Favorite Place
     FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
@@ -36,6 +39,13 @@ public enum ErrorCode {
     FAVORITE_SCENARIO_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 시나리오입니다."),
     FAVORITE_SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 즐겨찾기 시나리오입니다."),
 
+    // Friendship
+    USER_NOT_FOUND_FOR_SOCIAL(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    SELF_FRIEND_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+    FRIENDSHIP_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 관계를 찾을 수 없습니다."),
+    FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다."),
+  
     // Learning Goal
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),
     GOAL_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 선택한 학습 목표입니다."),
@@ -48,6 +58,24 @@ public enum ErrorCode {
     ASSISTANT_MESSAGE_REQUIRED(HttpStatus.BAD_REQUEST, "AI 메시지는 비어 있을 수 없습니다."),
     COACHING_MESSAGE_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "메시지 역할은 필수입니다."),
     INVALID_COACHING_MESSAGE(HttpStatus.BAD_REQUEST, "유효하지 않은 코칭 메시지입니다.");
+
+    // Ranking
+    RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다."),
+	
+	// Admin Mission
+	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
+	
+	// Admin Place
+	PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 장소입니다."),
+	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 장소입니다."),
+	
+	// Admin Region
+	REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 지역입니다."),
+	REGION_IN_USE(HttpStatus.CONFLICT, "참조 중인 지역입니다."),
+	
+	// Admin Scenario
+	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
+	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다.");
 
     private final HttpStatus status;
     private final String message;
