@@ -38,7 +38,6 @@ JWT 일반 로그인 흐름은 1차 마무리했습니다.
 :::
 
 
-============================================================================================
 
 - Access Token
 - Refresh Token
@@ -55,8 +54,6 @@ value = refreshToken
 TTL   = 7일
 
 ```
-
-============================================================================================
 
 ## 2. 현재 인증 적용 방식
 
@@ -190,94 +187,4 @@ ttl refresh:1
 Authorization: Bearer <ACCESS_TOKEN>
 
 추후 JWT 인증 강제 적용 시에는 로그인/회원가입/Swagger를 제외한 API 요청에 이 Header가 필요합니다.
-
-=====================================================================================================
-
-## API 권한 분류 기준
-
-현재 JWT 인증 필터는 적용되어 있지만, 팀원들의 API 개발 편의를 위해 전체 API는 임시로 허용하고 있습니다.
-
-다만 추후 JWT 인증 강제 적용을 위해 API 경로는 아래 기준으로 분류합니다.
-
-### 1. PUBLIC_URLS
-
-로그인하지 않은 사용자도 접근 가능한 API입니다.
-
-예시:
-
-- 로그인
-- 회원가입
-- 토큰 재발급
-- 로그아웃
-- Swagger 문서
-- 공개 조회 API
-
-SecurityConfig 위치:
-
-```java
-private static final String[] PUBLIC_URLS = {
-        "/api/auth/login",
-        "/api/auth/signup",
-        "/api/auth/tokens",
-        "/api/auth/logout",
-        "/swagger-ui/**",
-        "/v3/api-docs/**"
-};
-```
-
-### 2. USER_URLS
-
-로그인한 일반 사용자와 관리자 모두 접근 가능한 API입니다.
-
-예시:
-
-내 계정 정보 조회
-내 정보 수정
-즐겨찾기
-내 기록 조회
-회원 탈퇴
-
-SecurityConfig 위치:
-
-```private static final String[] USER_URLS = {
-        "/api/users/me"
-};
-```
-
-### 3. ADMIN_URLS
-
-관리자만 접근 가능한 API입니다.
-
-예시:
-
-회원 목록 조회
-회원 상세 조회
-회원 상태 변경
-관리자 페이지 기능
-
-관리자 API는 가능하면 아래 경로로 통일합니다.
-
-/api/admin/**
-
-SecurityConfig 위치:
-
-```
-private static final String[] ADMIN_URLS = {
-        "/api/admin/**"
-};
-```
-
-현재 상태
-
-현재는 팀원 API 개발 중이므로 아래 설정을 유지합니다.
-
-```
-.anyRequest().permitAll()
-```
-
-추후 API 경로가 정리되면 아래처럼 변경합니다.
-
-```
-.anyRequest().authenticated()
-```
 

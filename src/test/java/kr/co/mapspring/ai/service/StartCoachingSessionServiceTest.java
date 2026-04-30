@@ -45,8 +45,8 @@ class StartCoachingSessionServiceTest {
     private LearningSessionRepository learningSessionRepository;
 
     @Test
-    @DisplayName("코칭 세션 시작 성공 - 기존 세션이 없으면 새로 생성한다")
-    void 코칭_세션_시작_성공_새로_생성() throws Exception {
+    @DisplayName("코칭 세션 시작 성공 - RUNNING 세션이 없으면 새로 생성한다")
+    void 코칭_세션_시작_성공_RUNNING_세션이_없으면_새로_생성() throws Exception {
         // given
         StartCoachingSessionDto.RequestStartCoachingSession request =
                 StartCoachingSessionDto.RequestStartCoachingSession.builder()
@@ -60,8 +60,11 @@ class StartCoachingSessionServiceTest {
 
         when(learningSessionRepository.findBySessionId(10L))
                 .thenReturn(Optional.of(learningSession));
-        when(coachingSessionRepository.findByLearningSession_SessionId(10L))
+
+        when(coachingSessionRepository.findByLearningSession_SessionIdAndCoachingSessionStatus(
+                10L, CoachingSessionStatus.RUNNING))
                 .thenReturn(Optional.empty());
+
         when(coachingSessionRepository.save(any(CoachingSession.class)))
                 .thenReturn(coachingSession);
 
@@ -77,8 +80,8 @@ class StartCoachingSessionServiceTest {
     }
 
     @Test
-    @DisplayName("코칭 세션 시작 성공 - 이미 존재하면 기존 세션을 반환한다")
-    void 코칭_세션_시작_성공_기존_세션_반환() throws Exception {
+    @DisplayName("코칭 세션 시작 성공 - RUNNING 세션이 이미 있으면 기존 세션을 반환한다")
+    void 코칭_세션_시작_성공_RUNNING_세션이_이미_있으면_기존_세션_반환() throws Exception {
         // given
         StartCoachingSessionDto.RequestStartCoachingSession request =
                 StartCoachingSessionDto.RequestStartCoachingSession.builder()
@@ -92,7 +95,9 @@ class StartCoachingSessionServiceTest {
 
         when(learningSessionRepository.findBySessionId(10L))
                 .thenReturn(Optional.of(learningSession));
-        when(coachingSessionRepository.findByLearningSession_SessionId(10L))
+
+        when(coachingSessionRepository.findByLearningSession_SessionIdAndCoachingSessionStatus(
+                10L, CoachingSessionStatus.RUNNING))
                 .thenReturn(Optional.of(existingCoachingSession));
 
         // when
@@ -122,6 +127,7 @@ class StartCoachingSessionServiceTest {
         // when & then
         assertThrows(LearningSessionNotFoundException.class,
                 () -> startCoachingSessionService.startCoachingSession(request));
+
         verify(coachingSessionRepository, never()).save(any(CoachingSession.class));
     }
 
@@ -134,7 +140,7 @@ class StartCoachingSessionServiceTest {
         Scenario scenario = createInstance(Scenario.class);
         setField(scenario, "scenarioId", 2L);
         setField(scenario, "prompt", "coffee ordering prompt");
-        setField(scenario, "scenariosDescription", "Cafe ordering");
+        setField(scenario, "scenarioDescription", "Cafe ordering");
         setField(scenario, "completeExp", 10);
         setField(scenario, "level", ScenarioLevel.BEGINNER);
         setField(scenario, "category", "CAFE");

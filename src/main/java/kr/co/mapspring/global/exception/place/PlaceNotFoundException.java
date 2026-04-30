@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.place;
 
-public class PlaceNotFoundException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class PlaceNotFoundException extends CustomException {
 	
 	public PlaceNotFoundException() {
-		super("존재하지 않는 장소입니다.");
+		super(ErrorCode.PLACE_NOT_FOUND);
 	}
 }

@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.place.ScenarioInUseException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateScenarioDto;
 import kr.co.mapspring.place.dto.AdminReadScenarioDto;
 import kr.co.mapspring.place.dto.AdminScenarioListDto;
 import kr.co.mapspring.place.dto.AdminUpdateScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
+import kr.co.mapspring.place.repository.MissionRepository;
+import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
 import kr.co.mapspring.place.service.AdminScenarioService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminScenarioServiceImpl implements AdminScenarioService{
 	
 	private final ScenarioRepository scenarioRepository;
+	private final MissionRepository missionRepository;
+	private final PlaceRepository placeRepository;
 	
 	// 시나리오 생성
 	@Override
@@ -34,14 +39,12 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 											request.getCategory());	
 		
 		scenarioRepository.save(scenario);
-	}
+	} 
 	
 	// 시나리오 상세 조회
 	@Override
 	@Transactional(readOnly = true)
-	public AdminReadScenarioDto.ResponseRead readScenario(AdminReadScenarioDto.RequestRead request) {
-		
-		Long scenarioId = request.getScenarioId();
+	public AdminReadScenarioDto.ResponseRead readScenario(Long scenarioId) {
 		
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);
@@ -53,22 +56,25 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<AdminScenarioListDto.ResponseList> scenarioList(String keyword) {
+	
+		List<Scenario> scenarioList;
 		
-		List<AdminScenarioListDto.ResponseList> responseList;
+		String normalizedKeyword = (keyword == null) ? null : keyword.trim();
 		
-		if(keyword == null || keyword.isBlank()) {
-			List<Scenario> scenario = scenarioRepository.findAll();
+		if(normalizedKeyword == null || normalizedKeyword.isBlank()) {
 			
-			responseList = scenario.stream()
-					.map(AdminScenarioListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			scenarioList = scenarioRepository.findAll();
+			
 		} else {
-			List<Scenario> scenario = scenarioRepository.findByCategoryContaining(keyword);
 			
-			responseList = scenario.stream()
-					.map(AdminScenarioListDto.ResponseList::from)
-					.collect(Collectors.toList());
+			scenarioList = scenarioRepository.findByCategoryContaining(normalizedKeyword);
+			
 			}
+		
+		List<AdminScenarioListDto.ResponseList> responseList = scenarioList.stream()
+				.map(AdminScenarioListDto.ResponseList::from)
+				.collect(Collectors.toList());
+		
 		return responseList;
 	}
 	
@@ -95,6 +101,14 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		
 		Scenario scenario = scenarioRepository.findById(scenarioId)
 				.orElseThrow(ScenarioNotFoundException::new);
+		
+		if (missionRepository.existsByScenario_ScenarioId(scenarioId)) {
+	        throw new ScenarioInUseException();
+	    }
+
+	    if (placeRepository.existsByScenario_ScenarioId(scenarioId)) {
+	        throw new ScenarioInUseException();
+	    }
 		
 		scenarioRepository.delete(scenario);
 	}

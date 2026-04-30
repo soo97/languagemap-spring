@@ -2,12 +2,17 @@ package kr.co.mapspring.favorite.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import kr.co.mapspring.place.entity.Place;
+import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,25 +34,21 @@ public class FavoritePlace {
     @Column(name = "favorite_place_id", nullable = false, updatable = false)
     private Long favoritePlaceId;
 
-//    TODO: 추후 엔티티 확정 시 연관관계로 매핑 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-//    TODO: 추후 Place 엔티티 확정 시 연관관계로 변경 예정
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "place_id", nullable = false)
-    @Column(name = "place_id", nullable = false)
-    private Long placeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public static FavoritePlace create(Long userId, Long placeId) {
+    public static FavoritePlace create(User user, Place place) {
         FavoritePlace favoritePlace = new FavoritePlace();
-        favoritePlace.userId = userId;
-        favoritePlace.placeId = placeId;
+        favoritePlace.user = user;
+        favoritePlace.place = place;
         return favoritePlace;
     }
 
@@ -57,11 +58,11 @@ public class FavoritePlace {
     }
 
     // 테스트 전용 메서드
-    public static FavoritePlace of(Long favoritePlaceId, Long userId, Long placeId) {
+    public static FavoritePlace of(Long favoritePlaceId, User user, Place place) {
         FavoritePlace favoritePlace = new FavoritePlace();
         favoritePlace.favoritePlaceId = favoritePlaceId;
-        favoritePlace.userId = userId;
-        favoritePlace.placeId = placeId;
+        favoritePlace.user = user;
+        favoritePlace.place = place;
         favoritePlace.createdAt = LocalDateTime.now();
         return favoritePlace;
     }
