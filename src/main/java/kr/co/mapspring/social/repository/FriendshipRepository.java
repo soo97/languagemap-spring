@@ -91,7 +91,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
         ORDER BY RAND()
         LIMIT 5
         """, nativeQuery = true)
-    List<User> findRandomRecommendedUsers(
-            @Param("userId") Long userId
-    );
+    List<User> findRandomRecommendedUsers(@Param("userId") Long userId);
+
+    List<Friendship> findAllByStatusOrderByRespondedAtDesc(FriendshipStatus status);
 }
+
