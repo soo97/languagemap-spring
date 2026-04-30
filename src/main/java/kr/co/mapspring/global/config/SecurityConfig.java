@@ -47,8 +47,10 @@ public class SecurityConfig {
             "/api/auth/signup",
             "/api/auth/tokens",
             "/api/auth/logout",
+            "/api/auth/oauth/tokens",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            
 
             // Google OAuth 시작 경로: /oauth2/authorization/google
             "/oauth2/**",
