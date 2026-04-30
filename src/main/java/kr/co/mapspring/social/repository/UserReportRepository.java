@@ -8,4 +8,6 @@ import java.util.List;
 public interface UserReportRepository extends JpaRepository<UserReport, Long> {
 
     List<UserReport> findByReporter_UserId(Long userId);
+
+    List<UserReport> findAllByOrderByCreatedAtDesc();
 }
