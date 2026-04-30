@@ -2,32 +2,37 @@ package kr.co.mapspring.common.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.event.RecordApplicationEvents;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.EntityManagerFactory;
+import kr.co.mapspring.global.config.AsyncConfig;
+import kr.co.mapspring.place.repository.LearningSessionRepository;
 
 
-@SpringBootTest  // 전체 컨텍스트 로드
-@ActiveProfiles("test")
-@EnableAutoConfiguration(exclude = {
-	    DataSourceAutoConfiguration.class, 
-	    HibernateJpaAutoConfiguration.class,
-	    DataSourceTransactionManagerAutoConfiguration.class
-	})
-@DisplayName("이메일 실제 발송 테스트")
+@RecordApplicationEvents // 발송 이벤트 기록 (선택 사항)
+@Import({CommonService.class, AsyncConfig.class}) // 이메일 관련 설정과 서비스만 로드
+@ExtendWith(SpringExtension.class)
+@TestPropertySource(locations = "classpath:application-test.yml") // 이메일 계정 정보가 있는 설정 파일
 public class EmailServiceIntegrationTest {
 
 	@Autowired
     private JavaMailSender mailSender;  // EmailService 대신 직접 주입
 
+	@MockitoBean
+    private LearningSessionRepository learningSessionRepository;
+	
+	@MockitoBean
+	private EntityManagerFactory entityManagerFactory;
+	
     @Test
     @DisplayName("실제 이메일 발송 테스트")
     void 실제_이메일_발송() throws Exception {
