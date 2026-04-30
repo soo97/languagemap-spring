@@ -12,21 +12,42 @@ import lombok.NoArgsConstructor;
 public class UserCreateLearningSessionDto {
 	
 	@Getter
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Schema(name = "UserCreateLearningSessionRequest", description = "학습 세선 생성 DTO")
-	public static class RequestCreate {
-		private Long userId;
-		private LearningSessionLevel level;
-	}
-	
-	@Getter
-	@Builder
-	@Schema(name = "AdminCreateLearningSessionResponse", description = "학습 세선 응답 DTO")
-	public static class ResponseCreate {
-		private Long learningSessionId;
-		private LearningSessionStatus learningSessionStatus;
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "UserCreateLearningSessionRequest", description = "학습 세션 생성 요청 DTO")
+    public static class RequestCreate {
+
+        @Schema(
+                description = "사용자 ID",
+                example = "1"
+        )
+        private Long userId;
+
+        @Schema(
+                description = "학습 레벨 (BEGINNER, INTERMEDIATE, ADVANCED)",
+                example = "BEGINNER"
+        )
+        private LearningSessionLevel level;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @Schema(name = "UserCreateLearningSessionResponse", description = "학습 세션 생성 응답 DTO")
+    public static class ResponseCreate {
+
+        @Schema(
+                description = "학습 세션 ID",
+                example = "1"
+        )
+        private Long learningSessionId;
+
+        @Schema(
+                description = "학습 세션 상태 (READY, RUNNING, COMPLETED)",
+                example = "READY"
+        )
+        private LearningSessionStatus learningSessionStatus;
 		
 		public static UserCreateLearningSessionDto.ResponseCreate from(LearningSession learningSession) {
 			return UserCreateLearningSessionDto.ResponseCreate.builder()
