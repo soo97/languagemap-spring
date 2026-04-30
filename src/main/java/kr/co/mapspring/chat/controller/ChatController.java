@@ -2,39 +2,62 @@ package kr.co.mapspring.chat.controller;
 
 import kr.co.mapspring.chat.controller.docs.ChatControllerDocs;
 import kr.co.mapspring.chat.dto.ChatMessageDto;
-import kr.co.mapspring.global.exception.chat.InvalidChatMessageException;
-import kr.co.mapspring.user.entity.User;
-import kr.co.mapspring.user.repository.UserRepository;
+import kr.co.mapspring.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatController implements ChatControllerDocs {
 
-    private final UserRepository userRepository;
+    private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @Override
+    @MessageMapping("/chat/enter")
+    public void enter(
+            ChatMessageDto.RequestChatUser request,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        String sessionId = headerAccessor.getSessionId();
+
+        ChatMessageDto.ResponseMessage response =
+                chatService.enter(sessionId, request.getUserId());
+
+        messagingTemplate.convertAndSend("/topic/chat", response);
+        messagingTemplate.convertAndSend(
+                "/topic/chat/participants",
+                chatService.getParticipantCount()
+        );
+    }
 
     @Override
     @MessageMapping("/chat/send")
-    @SendTo("/topic/chat")
-    public ChatMessageDto.ResponseMessage sendMessage(
-            ChatMessageDto.RequestSendMessage request
-    ) {
-        validateMessage(request.getMessage());
+    public void sendMessage(ChatMessageDto.RequestSendMessage request) {
+        ChatMessageDto.ResponseMessage response =
+                chatService.sendMessage(request.getUserId(), request.getMessage());
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        return ChatMessageDto.ResponseMessage.of(user, request.getMessage());
+        messagingTemplate.convertAndSend("/topic/chat", response);
     }
 
-    private void validateMessage(String message) {
-        if (message == null || message.isBlank()) {
-            throw new InvalidChatMessageException();
+    @Override
+    @MessageMapping("/chat/leave")
+    public void leave(SimpMessageHeaderAccessor headerAccessor) {
+        String sessionId = headerAccessor.getSessionId();
+
+        ChatMessageDto.ResponseMessage response = chatService.leave(sessionId);
+
+        if (response == null) {
+            return;
         }
+
+        messagingTemplate.convertAndSend("/topic/chat", response);
+        messagingTemplate.convertAndSend(
+                "/topic/chat/participants",
+                chatService.getParticipantCount()
+        );
     }
 }
