@@ -3,6 +3,8 @@ package kr.co.mapspring.user.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.exception.user.InactiveUserException;
 import kr.co.mapspring.global.exception.user.InvalidRefreshTokenException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;

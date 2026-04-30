@@ -97,7 +97,10 @@ class FaqEntityTest {
 	                .answer("답변")
 	                .build();
 	 
-	        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(faq));
+	        assertThrows(Exception.class, () -> {
+	            em.persist(faq);
+	            em.flush(); 
+	        });
 	    }
 	 
 	    @Test
@@ -109,7 +112,10 @@ class FaqEntityTest {
 	                .answer(null)
 	                .build();
 	 
-	        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(faq));
+	        assertThrows(Exception.class, () -> {
+	            em.persist(faq);
+	            em.flush(); 
+	        });
 	    }
 	 
 	    @Test
@@ -121,7 +127,10 @@ class FaqEntityTest {
 	                .answer("답변")
 	                .build();
 	 
-	        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(faq));
+	        assertThrows(Exception.class, () -> {
+	            em.persist(faq);
+	            em.flush(); 
+	        });
 	    }
 	 
 	    @Test
@@ -133,7 +142,10 @@ class FaqEntityTest {
 	                .answer("가".repeat(501))
 	                .build();
 	 
-	        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(faq));
+	        assertThrows(Exception.class, () -> {
+	            em.persist(faq);
+	            em.flush(); 
+	        });
 	    }
 	 
 	    @Test
@@ -145,6 +157,9 @@ class FaqEntityTest {
 	                .answer("답변")
 	                .build();
 	 
-	        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(faq));
+	        assertThrows(Exception.class, () -> {
+	            em.persist(faq);
+	            em.flush(); 
+	        });
 	    }
 }

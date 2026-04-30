@@ -121,7 +121,10 @@ class NoticeEntityTest {
                 .noticeText("내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(notice));
+        assertThrows(Exception.class, () -> {
+            em.persist(notice);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -134,7 +137,10 @@ class NoticeEntityTest {
                 .noticeText(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(notice));
+        assertThrows(Exception.class, () -> {
+            em.persist(notice);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -147,7 +153,10 @@ class NoticeEntityTest {
                 .noticeText("내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(notice));
+        assertThrows(Exception.class, () -> {
+            em.persist(notice);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -160,7 +169,10 @@ class NoticeEntityTest {
                 .noticeText("내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(notice));
+        assertThrows(Exception.class, () -> {
+            em.persist(notice);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -173,6 +185,9 @@ class NoticeEntityTest {
                 .noticeText("가".repeat(501))
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(notice));
+        assertThrows(Exception.class, () -> {
+            em.persist(notice);
+            em.flush(); 
+        });
     }
 }

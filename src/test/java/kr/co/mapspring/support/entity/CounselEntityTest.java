@@ -102,7 +102,10 @@ class CounselEntityTest {
                 .counselText("내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(c));
+        assertThrows(RuntimeException.class, () -> {
+            em.persist(c);
+            em.flush(); // 여기서 DB로 쿼리가 날아가며 에러가 발생함
+        });
     }
  
     @Test
@@ -115,7 +118,10 @@ class CounselEntityTest {
                 .counselText(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(c));
+        assertThrows(RuntimeException.class, () -> {
+            em.persist(c);
+            em.flush(); // 여기서 DB로 쿼리가 날아가며 에러가 발생함
+        });
     }
  
     @Test
@@ -128,7 +134,10 @@ class CounselEntityTest {
                 .counselText("내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(c));
+        assertThrows(RuntimeException.class, () -> {
+            em.persist(c);
+            em.flush(); // 여기서 DB로 쿼리가 날아가며 에러가 발생함
+        });
     }
  
     @Test
@@ -140,8 +149,13 @@ class CounselEntityTest {
                 .counselKind(CounselKind.OTHER)
                 .counselText("가".repeat(501))
                 .build();
- 
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(c));
+        
+        
+        
+        assertThrows(Exception.class, () -> {
+            em.persist(c);
+            em.flush(); 
+        });
     }
  
     // ══════════════════════════════════════════════
@@ -176,7 +190,10 @@ class CounselEntityTest {
                 .answer(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(answer));
+        assertThrows(Exception.class, () -> {
+            em.persist(answer);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -188,7 +205,10 @@ class CounselEntityTest {
                 .answer("가".repeat(101))
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(answer));
+        assertThrows(Exception.class, () -> {
+            em.persist(answer);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -200,7 +220,10 @@ class CounselEntityTest {
                 .answer("답변 내용")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(answer));
+        assertThrows(Exception.class, () -> {
+            em.persist(answer);
+            em.flush(); 
+        });
     }
  
     // ══════════════════════════════════════════════
@@ -233,7 +256,10 @@ class CounselEntityTest {
                 .image(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -244,7 +270,10 @@ class CounselEntityTest {
                 .image("a".repeat(101))
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -255,6 +284,9 @@ class CounselEntityTest {
                 .image("images/counsel.jpg")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
 }

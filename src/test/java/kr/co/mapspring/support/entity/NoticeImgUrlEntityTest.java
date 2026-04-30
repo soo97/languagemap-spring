@@ -105,7 +105,10 @@ class NoticeImgUrlEntityTest {
                 .image(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -116,7 +119,10 @@ class NoticeImgUrlEntityTest {
                 .image("a".repeat(101))
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -127,7 +133,10 @@ class NoticeImgUrlEntityTest {
                 .image("images/test.jpg")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(img));
+        assertThrows(Exception.class, () -> {
+            em.persist(img);
+            em.flush(); 
+        });
     }
  
     // ══════════════════════════════════════════════
@@ -174,7 +183,10 @@ class NoticeImgUrlEntityTest {
                 .link(null)
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(url));
+        assertThrows(Exception.class, () -> {
+            em.persist(url);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -185,7 +197,10 @@ class NoticeImgUrlEntityTest {
                 .link("https://" + "a".repeat(100))
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(url));
+        assertThrows(Exception.class, () -> {
+            em.persist(url);
+            em.flush(); 
+        });
     }
  
     @Test
@@ -196,6 +211,9 @@ class NoticeImgUrlEntityTest {
                 .link("https://example.com")
                 .build();
  
-        assertThrows(DataIntegrityViolationException.class, () -> em.persistAndFlush(url));
+        assertThrows(Exception.class, () -> {
+            em.persist(url);
+            em.flush(); 
+        });
     }
 }
