@@ -23,7 +23,7 @@ public class AdminSocialController implements AdminSocialControllerDocs {
     private final AdminSocialService adminSocialService;
 
     @Override
-    @GetMapping("reports")
+    @GetMapping("/reports")
     public ResponseEntity<ApiResponseDTO<List<AdminSocialDto.ResponseReport>>> getReports() {
         List<AdminSocialDto.ResponseReport> result = adminSocialService.getReports();
 
@@ -31,7 +31,7 @@ public class AdminSocialController implements AdminSocialControllerDocs {
     }
 
     @Override
-    @GetMapping("reports/{reportId}")
+    @GetMapping("/reports/{reportId}")
     public ResponseEntity<ApiResponseDTO<AdminSocialDto.ResponseReport>> getReport(@PathVariable("reportId") Long reportId) {
         AdminSocialDto.ResponseReport result = adminSocialService.getReport(reportId);
 
