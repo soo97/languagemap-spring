@@ -16,9 +16,6 @@ public class ChatMessageDto {
     @Schema(description = "채팅 메시지 전송 요청 DTO")
     public static class RequestSendMessage {
 
-        @Schema(description = "사용자 ID", example = "1")
-        private Long userId;
-
         @Schema(description = "메시지 내용", example = "안녕하새요~!")
         private String message;
     }
@@ -27,9 +24,6 @@ public class ChatMessageDto {
     @NoArgsConstructor
     @Schema(description = "채팅방 입장/퇴장 요청 DTO")
     public static class RequestChatUser {
-
-        @Schema(description = "사용자 ID", example = "1")
-        private Long userId;
     }
 
     @Getter
