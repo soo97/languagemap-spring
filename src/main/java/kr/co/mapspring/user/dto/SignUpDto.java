@@ -66,6 +66,7 @@ public class SignUpDto {
     	    regexp = "^[A-Z](?=.*[!@#$%^&*(),.?\":{}|<>]).*$",
     	    message = "첫 글자는 대문자여야 하며, 특수문자를 최소 1개 포함해야 합니다."
     	)
+    	@Schema(description = "비밀번호", example = "1234")
         private String password;
     	
     	@NotBlank
