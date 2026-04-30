@@ -15,6 +15,7 @@ import kr.co.mapspring.global.jwt.JwtTokenProvider;
 import kr.co.mapspring.global.jwt.RefreshTokenService;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.oauth.dto.OauthUserDto;
+import kr.co.mapspring.user.oauth.service.OauthLoginCodeService;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -23,7 +24,8 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
-
+    private final OauthLoginCodeService oauthLoginCodeService;
+    
     @Value("${oauth.google.success-redirect-url}")
     private String successRedirectUrl;
 
@@ -48,23 +50,29 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         /*
          * 3. 기존 Redis Refresh Token 저장 로직을 재사용합니다.
+         * 이 값은 refreshToken rotation/reissue/logout 흐름에서 사용됩니다.
          */
         refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
 
         /*
-         * 4. 소셜 회원은 프로필 필드가 null일 수 있으므로
-         * 프론트가 추가 정보 입력 필요 여부를 판단할 수 있게 내려줍니다.
+         * 4. 실제 토큰은 URL에 싣지 않고 Redis에 1회용 code로 임시 저장합니다.
          */
+        
         boolean profileRequired = user.isProfileIncomplete();
 
+        String code = oauthLoginCodeService.saveToken(
+                accessToken,
+                refreshToken,
+                profileRequired
+        );
+        
         /*
-         * 5. 프론트 성공 페이지로 redirect합니다.
-         * 1차 구현에서는 Query Parameter 방식으로 토큰을 전달합니다.
+         * 5. 프론트 성공 페이지에는 실제 토큰 대신 1회용 code만 전달합니다.
+         * 
          */
         String redirectUrl = UriComponentsBuilder
                 .fromUriString(successRedirectUrl)
-                .queryParam("accessToken", accessToken)
-                .queryParam("refreshToken", refreshToken)
+                .queryParam("code", code)
                 .queryParam("profileRequired", profileRequired)
                 .build()
                 .toUriString();
