@@ -2,6 +2,7 @@ package kr.co.mapspring.chat.event;
 
 import kr.co.mapspring.chat.dto.ChatMessageDto;
 import kr.co.mapspring.chat.service.ChatService;
+import kr.co.mapspring.chat.session.ChatSessionRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +15,7 @@ public class ChatWebSocketEventListener {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ChatSessionRegistry chatSessionRegistry;
 
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {

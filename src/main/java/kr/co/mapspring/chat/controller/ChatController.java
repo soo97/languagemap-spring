@@ -3,13 +3,12 @@ package kr.co.mapspring.chat.controller;
 import kr.co.mapspring.chat.controller.docs.ChatControllerDocs;
 import kr.co.mapspring.chat.dto.ChatMessageDto;
 import kr.co.mapspring.chat.service.ChatService;
+import kr.co.mapspring.chat.session.ChatSessionRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,6 +16,7 @@ public class ChatController implements ChatControllerDocs {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ChatSessionRegistry chatSessionRegistry;
 
     @Override
     @MessageMapping("/chat/enter")
@@ -25,7 +25,7 @@ public class ChatController implements ChatControllerDocs {
             SimpMessageHeaderAccessor headerAccessor
     ) {
         String sessionId = headerAccessor.getSessionId();
-        Long userId = getUserId(headerAccessor.getUser());
+        Long userId = getUserId(sessionId);
 
         ChatMessageDto.ResponseMessage response =
                 chatService.enter(sessionId, userId);
@@ -47,7 +47,8 @@ public class ChatController implements ChatControllerDocs {
             ChatMessageDto.RequestSendMessage request,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        Long userId = getUserId(headerAccessor.getUser());
+        String sessionId = headerAccessor.getSessionId();
+        Long userId = getUserId(sessionId);
 
         ChatMessageDto.ResponseMessage response =
                 chatService.sendMessage(userId, request.getMessage());
@@ -62,6 +63,8 @@ public class ChatController implements ChatControllerDocs {
 
         ChatMessageDto.ResponseMessage response = chatService.leave(sessionId);
 
+        chatSessionRegistry.remove(sessionId);
+
         if (response == null) {
             return;
         }
@@ -73,11 +76,13 @@ public class ChatController implements ChatControllerDocs {
         );
     }
 
-    private Long getUserId(Principal principal) {
-        if (principal == null) {
-            throw new IllegalArgumentException("인증 정보가 없습니다.");
+    private Long getUserId(String sessionId) {
+        Long userId = chatSessionRegistry.getUserId(sessionId);
+
+        if (userId == null) {
+            throw new IllegalArgumentException("인증된 사용자 정보가 없습니다.");
         }
 
-        return Long.valueOf(principal.getName());
+        return userId;
     }
 }

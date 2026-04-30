@@ -1,5 +1,6 @@
-package kr.co.mapspring.chat.interceptor;
+package kr.co.mapspring.global.config;
 
+import kr.co.mapspring.chat.session.ChatSessionRegistry;
 import kr.co.mapspring.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
@@ -10,8 +11,6 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
-
 @Component
 @RequiredArgsConstructor
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
@@ -20,6 +19,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final ChatSessionRegistry chatSessionRegistry;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -45,24 +45,11 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             }
 
             Long userId = jwtTokenProvider.getUserId(token);
+            String sessionId = accessor.getSessionId();
 
-            accessor.setUser(new ChatPrincipal(userId));
+            chatSessionRegistry.register(sessionId, userId);
         }
 
         return message;
-    }
-
-    private static class ChatPrincipal implements Principal {
-
-        private final Long userId;
-
-        private ChatPrincipal(Long userId) {
-            this.userId = userId;
-        }
-
-        @Override
-        public String getName() {
-            return String.valueOf(userId);
-        }
     }
 }
