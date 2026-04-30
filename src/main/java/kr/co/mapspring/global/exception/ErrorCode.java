@@ -75,7 +75,10 @@ public enum ErrorCode {
 	
 	// Admin Scenario
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
-	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다.");
+	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다."),
+	
+	// Common email
+	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 발송에 실패했어요.");
 
     private final HttpStatus status;
     private final String message;
