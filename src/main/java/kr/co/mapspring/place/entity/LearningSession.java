@@ -52,7 +52,7 @@ public class LearningSession {
 	
 	@Column(name = "study_status", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
-	private LearningSessionStatus studyStatus = LearningSessionStatus.READY;
+	private LearningSessionStatus studyStatus = LearningSessionStatus.RUNNING;
 	
 	@PrePersist
 	public void prePersist() {

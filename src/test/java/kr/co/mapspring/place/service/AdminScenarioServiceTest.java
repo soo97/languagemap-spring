@@ -18,12 +18,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kr.co.mapspring.global.exception.place.ScenarioInUseException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateScenarioDto;
 import kr.co.mapspring.place.dto.AdminReadScenarioDto;
 import kr.co.mapspring.place.dto.AdminScenarioListDto;
 import kr.co.mapspring.place.dto.AdminUpdateScenarioDto;
 import kr.co.mapspring.place.entity.Scenario;
+import kr.co.mapspring.place.repository.MissionRepository;
+import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.ScenarioRepository;
 import kr.co.mapspring.place.service.impl.AdminScenarioServiceImpl;
 
@@ -35,6 +38,12 @@ class AdminScenarioServiceTest {
 
     @Mock
     private ScenarioRepository scenarioRepository;
+    
+    @Mock
+    private MissionRepository missionRepository;
+
+    @Mock
+    private PlaceRepository placeRepository;
 
     @Test
     @DisplayName("시나리오 생성 성공")
@@ -172,7 +181,7 @@ class AdminScenarioServiceTest {
     }
 
     @Test
-    @DisplayName("시나리오 삭제 성공")
+    @DisplayName("시나리오 삭제 성공 참조하는 미션/장소 없음")
     void 시나리오_삭제_성공() {
         // given
         Long scenarioId = 1L;
@@ -188,13 +197,46 @@ class AdminScenarioServiceTest {
         when(scenarioRepository.findById(scenarioId))
                 .thenReturn(Optional.of(scenario));
 
+        when(missionRepository.existsByScenario_ScenarioId(scenarioId))
+                .thenReturn(false);
+
+        when(placeRepository.existsByScenario_ScenarioId(scenarioId))
+                .thenReturn(false);
+
         // when
         adminScenarioService.deleteScenario(scenarioId);
 
         // then
         verify(scenarioRepository, times(1)).delete(scenario);
     }
+    
+    @Test
+    @DisplayName("시나리오 삭제 실패 참조하는 미션 존재")
+    void 시나리오_삭제_실패_미션_존재() {
+        // given
+        Long scenarioId = 1L;
 
+        Scenario scenario = Scenario.testOf(
+                scenarioId,
+                "프롬프트",
+                "시나리오 설명",
+                50,
+                "CAFE"
+        );
+
+        when(scenarioRepository.findById(scenarioId))
+                .thenReturn(Optional.of(scenario));
+
+        when(missionRepository.existsByScenario_ScenarioId(scenarioId))
+                .thenReturn(true);
+
+        // when & then
+        assertThrows(ScenarioInUseException.class,
+                () -> adminScenarioService.deleteScenario(scenarioId));
+
+        verify(scenarioRepository, never()).delete(any(Scenario.class));
+    }
+    
     @Test
     @DisplayName("시나리오 삭제 실패 존재하지 않는 시나리오")
     void 시나리오_삭제_실패_존재하지_않는_시나리오() {
@@ -206,6 +248,38 @@ class AdminScenarioServiceTest {
 
         // when & then
         assertThrows(ScenarioNotFoundException.class,
+                () -> adminScenarioService.deleteScenario(scenarioId));
+
+        verify(missionRepository, never()).existsByScenario_ScenarioId(any());
+        verify(placeRepository, never()).existsByScenario_ScenarioId(any());
+        verify(scenarioRepository, never()).delete(any(Scenario.class));
+    }
+    
+    @Test
+    @DisplayName("시나리오 삭제 실패 참조하는 장소 존재")
+    void 시나리오_삭제_실패_장소_존재() {
+        // given
+        Long scenarioId = 1L;
+
+        Scenario scenario = Scenario.testOf(
+                scenarioId,
+                "프롬프트",
+                "시나리오 설명",
+                50,
+                "CAFE"
+        );
+
+        when(scenarioRepository.findById(scenarioId))
+                .thenReturn(Optional.of(scenario));
+
+        when(missionRepository.existsByScenario_ScenarioId(scenarioId))
+                .thenReturn(false);
+
+        when(placeRepository.existsByScenario_ScenarioId(scenarioId))
+                .thenReturn(true);
+
+        // when & then
+        assertThrows(ScenarioInUseException.class,
                 () -> adminScenarioService.deleteScenario(scenarioId));
 
         verify(scenarioRepository, never()).delete(any(Scenario.class));

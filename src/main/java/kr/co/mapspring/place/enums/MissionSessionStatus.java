@@ -1,7 +1,7 @@
 package kr.co.mapspring.place.enums;
 
-public enum MissionStatus {
+public enum MissionSessionStatus {
 	READY,
-	INCOMPLETE,
+	RUNNING,
 	COMPLETED
 }

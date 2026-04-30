@@ -15,13 +15,13 @@ public class AdminScenarioListDto {
         @Schema(
                 description = "시나리오 설명",
                 example = "카페에서 커피를 주문하는 상황"
-        )
+        		)
         private String scenarioDescription;
 
         @Schema(
                 description = "시나리오 카테고리",
                 example = "CAFE"
-        )
+        		)
         private String category;
 
         public static AdminScenarioListDto.ResponseList from(Scenario scenario) {

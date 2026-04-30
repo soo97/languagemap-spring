@@ -16,25 +16,45 @@ public class UserReadPlaceDto {
     @Schema(name = "UserReadPlaceResponse", description = "마커 상세 조회 응답 DTO")
     public static class ResponseRead {
 
-        @Schema(description = "장소 이름", example = "광화문역")
+        @Schema(
+        		description = "장소 이름",
+        		example = "광화문역"
+        		)
         private String placeName;
 
-        @Schema(description = "장소 설명", example = "서울 중심부에 위치한 지하철역")
+        @Schema(
+        		description = "장소 설명", 
+        		example = "서울 중심부에 위치한 지하철역"
+        		)
         private String placeDescription;
 
-        @Schema(description = "지역 도시", example = "Seoul")
+        @Schema(
+        		description = "지역 도시",
+        		example = "Seoul"
+        		)
         private String regionCity;
 
-        @Schema(description = "지역 국가", example = "Korea")
+        @Schema(
+        		description = "지역 국가",
+        		example = "Korea"
+        		)
         private String regionCountry;
 
-        @Schema(description = "시나리오 카테고리", example = "TRANSPORT")
+        @Schema(
+        		description = "시나리오 카테고리", 
+        		example = "TRANSPORT"
+        		)
         private String scenarioCategory;
 
-        @Schema(description = "시나리오 설명", example = "지하철역에서 길을 묻는 상황")
+        @Schema(
+        		description = "시나리오 설명",
+        		example = "지하철역에서 길을 묻는 상황"
+        		)
         private String scenarioDescription;
 
-        @Schema(description = "미션 리스트")
+        @Schema(
+        		description = "미션 리스트"
+        		)
         private List<UserMissionListDto.ResponseList> mission;
 
         public static ResponseRead from(Place place, List<Mission> missionList) {

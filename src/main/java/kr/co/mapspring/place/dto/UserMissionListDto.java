@@ -15,13 +15,13 @@ public class UserMissionListDto {
         @Schema(
                 description = "미션 제목",
                 example = "커피 주문하기"
-        )
+        		)
         private String missionTitle;
 
         @Schema(
                 description = "미션 설명",
                 example = "카페에서 원하는 음료를 영어로 주문한다."
-        )
+        		)
         private String missionDescription;
 
         public static ResponseList from(Mission mission) {

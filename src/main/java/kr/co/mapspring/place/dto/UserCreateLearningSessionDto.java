@@ -12,22 +12,22 @@ import lombok.NoArgsConstructor;
 public class UserCreateLearningSessionDto {
 	
 	@Getter
-    @Builder
+	@Builder // 테스트 코드용
+	@AllArgsConstructor
     @NoArgsConstructor
-    @AllArgsConstructor
     @Schema(name = "UserCreateLearningSessionRequest", description = "학습 세션 생성 요청 DTO")
     public static class RequestCreate {
 
         @Schema(
                 description = "사용자 ID",
                 example = "1"
-        )
+        		)
         private Long userId;
 
         @Schema(
                 description = "학습 레벨 (BEGINNER, INTERMEDIATE, ADVANCED)",
                 example = "BEGINNER"
-        )
+        		)
         private LearningSessionLevel level;
     }
 
@@ -40,13 +40,13 @@ public class UserCreateLearningSessionDto {
         @Schema(
                 description = "학습 세션 ID",
                 example = "1"
-        )
+        		)
         private Long learningSessionId;
 
         @Schema(
                 description = "학습 세션 상태 (READY, RUNNING, COMPLETED)",
                 example = "READY"
-        )
+        		)
         private LearningSessionStatus learningSessionStatus;
 		
 		public static UserCreateLearningSessionDto.ResponseCreate from(LearningSession learningSession) {

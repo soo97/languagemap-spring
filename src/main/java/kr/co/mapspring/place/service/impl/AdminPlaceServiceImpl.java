@@ -97,7 +97,7 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 		
 		List<AdminPlaceListDto.ResponseList> responseList = placeList.stream()
 				.map(AdminPlaceListDto.ResponseList::from)
-				.collect(Collectors.toList());
+				.toList();
 
 		return responseList;
 	}

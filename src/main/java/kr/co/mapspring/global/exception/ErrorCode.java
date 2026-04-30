@@ -75,7 +75,10 @@ public enum ErrorCode {
 	
 	// Admin Scenario
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
-	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다.");
+	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다."),
+	
+	// User MissionSession
+	MISSION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션 세션입니다.");
 
     private final HttpStatus status;
     private final String message;

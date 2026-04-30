@@ -141,7 +141,7 @@ class UserPlaceLearningServiceTest {
                 LearningSession.create(place, user, LearningSessionLevel.BEGINNER);
 
         ReflectionTestUtils.setField(savedSession, "sessionId", 100L);
-        ReflectionTestUtils.setField(savedSession, "studyStatus", LearningSessionStatus.READY);
+        ReflectionTestUtils.setField(savedSession, "studyStatus", LearningSessionStatus.RUNNING);
 
         when(placeRepository.findById(placeId))
                 .thenReturn(Optional.of(place));
@@ -158,7 +158,7 @@ class UserPlaceLearningServiceTest {
 
         // then
         assertEquals(100L, response.getLearningSessionId());
-        assertEquals(LearningSessionStatus.READY, response.getLearningSessionStatus());
+        assertEquals(LearningSessionStatus.RUNNING, response.getLearningSessionStatus());
 
         verify(placeRepository, times(1)).findById(placeId);
         verify(userRepository, times(1)).findById(userId);

@@ -27,9 +27,18 @@ public interface AdminPlaceControllerDocs {
 	            description = "새로운 장소를 생성한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "생성 성공"),
-	            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-	            @ApiResponse(responseCode = "409", description = "이미 존재하는 장소")
+	            @ApiResponse(
+	            		responseCode = "200",
+	            		description = "생성 성공"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "400", 
+	            		description = "잘못된 요청 값"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "409", 
+	            		description = "이미 존재하는 장소"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<Void>> createPlace(@RequestBody AdminCreatePlaceDto.RequestCreate request);
 	
@@ -38,9 +47,17 @@ public interface AdminPlaceControllerDocs {
 	            description = "placeId를 기준으로 장소 상세 정보를 조회한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "조회 성공",
-	                    content = @Content(schema = @Schema(implementation = AdminReadPlaceDto.ResponseRead.class))),
-	            @ApiResponse(responseCode = "404", description = "장소를 찾을 수 없음")
+	            @ApiResponse(
+	            		responseCode = "200",
+	            		description = "조회 성공",
+	                    content = @Content(
+	                    		schema = @Schema(implementation = AdminReadPlaceDto.ResponseRead.class)
+	                    		)
+	            		),
+	            @ApiResponse(
+	            		responseCode = "404",
+	            		description = "장소를 찾을 수 없음"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<AdminReadPlaceDto.ResponseRead>> readPlaceDetail(@PathVariable Long placeId);
 	
@@ -49,8 +66,13 @@ public interface AdminPlaceControllerDocs {
 	            description = "keyword가 없으면 전체 조회, 있으면 장소명 기준 검색"
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "조회 성공",
-	                    content = @Content(schema = @Schema(implementation = AdminPlaceListDto.ResponseList.class)))
+	            @ApiResponse(
+	            		responseCode = "200", 
+	            		description = "조회 성공",
+	                    content = @Content(
+	                    		schema = @Schema(implementation = AdminPlaceListDto.ResponseList.class)
+	                    		)
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<List<AdminPlaceListDto.ResponseList>>> readPlaceList(@RequestParam(required = false) String keyword);
 	 
@@ -59,9 +81,17 @@ public interface AdminPlaceControllerDocs {
 	            description = "placeId를 기준으로 장소 정보를 수정한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "수정 성공"),
-	            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-	            @ApiResponse(responseCode = "404", description = "장소를 찾을 수 없음")
+	            @ApiResponse(
+	            		responseCode = "200",
+	            		description = "수정 성공"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "400",
+	            		description = "잘못된 요청 값"),
+	            @ApiResponse(
+	            		responseCode = "404", 
+	            		description = "장소를 찾을 수 없음"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<Void>> updatePlace(@PathVariable Long placeId, @RequestBody AdminUpdatePlaceDto.RequestUpdate request);
 	
@@ -70,8 +100,14 @@ public interface AdminPlaceControllerDocs {
 	            description = "placeId를 기준으로 장소를 삭제한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-	            @ApiResponse(responseCode = "404", description = "장소를 찾을 수 없음")
+	            @ApiResponse(
+	            		responseCode = "200",
+	            		description = "삭제 성공"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "404",
+	            		description = "장소를 찾을 수 없음"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<Void>> deletePlace(@PathVariable Long placeId);
 	

@@ -72,7 +72,7 @@ public class AdminScenarioServiceImpl implements AdminScenarioService{
 		
 		List<AdminScenarioListDto.ResponseList> responseList = scenarioList.stream()
 				.map(AdminScenarioListDto.ResponseList::from)
-				.collect(Collectors.toList());
+				.toList();
 		
 		return responseList;
 	}
