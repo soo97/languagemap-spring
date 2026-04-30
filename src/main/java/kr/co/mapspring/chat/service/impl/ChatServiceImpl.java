@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Transactional(readOnly = true)
 public class ChatServiceImpl implements ChatService {
 
+    private static final int MAX_MESSAGE_LENGTH = 200;
+
     private final UserRepository userRepository;
 
     private final Set<Long> participantUserIds = ConcurrentHashMap.newKeySet();
@@ -27,6 +29,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatMessageDto.ResponseMessage enter(String sessionId, Long userId) {
+        Long existingUserId = sessionUserMap.get(sessionId);
+
+        if (existingUserId != null) {
+            return null;
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -69,6 +77,10 @@ public class ChatServiceImpl implements ChatService {
 
     private void validateMessage(String message) {
         if (message == null || message.isBlank()) {
+            throw new InvalidChatMessageException();
+        }
+
+        if (message.length() > MAX_MESSAGE_LENGTH) {
             throw new InvalidChatMessageException();
         }
     }

@@ -27,6 +27,10 @@ public class ChatController implements ChatControllerDocs {
         ChatMessageDto.ResponseMessage response =
                 chatService.enter(sessionId, request.getUserId());
 
+        if (response == null) {
+            return;
+        }
+
         messagingTemplate.convertAndSend("/topic/chat", response);
         messagingTemplate.convertAndSend(
                 "/topic/chat/participants",
