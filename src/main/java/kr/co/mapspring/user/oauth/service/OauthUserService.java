@@ -121,37 +121,34 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     ) {
         /*
          * 2순위:
-         * oauth_account는 없지만 같은 email의 일반 회원이 있으면
-         * 기존 User에 Google 계정을 연결합니다.
+         * oauth_account는 없지만 같은 email의 User가 이미 존재하는 경우입니다.
          *
-         * 3순위:
-         * 같은 email의 User도 없으면 소셜 회원을 자동 생성합니다.
-         */
-        User user = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User oauthUser = User.createOauthUser(email, name);
-                    return userRepository.save(oauthUser);
-                });
-
-        /*
-         * 이미 같은 provider가 연결되어 있는데 providerUserId가 다르면
-         * 같은 User에 다른 Google 계정을 추가 연결하려는 상황입니다.
+         * 기존에는 같은 email이면 자동으로 Google 계정을 연결했지만,
+         * 현재 프로젝트는 일반 회원가입 email 소유 인증이 없으므로 자동 연결하지 않습니다.
          *
-         * 현재 DB에 uk_user_provider 제약이 있으므로 이 경우는 차단합니다.
+         * 기존 일반 계정과 Google 계정 연결은 추후
+         * "로그인된 사용자 본인"이 계정 설정에서 직접 연결하는 방식으로 분리하는 것이 안전합니다.
          */
-        oauthUserRepository.findByUserAndProvider(user, provider)
-                .ifPresent(existingOauthUser -> {
+        userRepository.findByEmail(email)
+                .ifPresent(existingUser -> {
                     throw new OAuth2AuthenticationException(
-                            new OAuth2Error("oauth_account_already_linked"),
-                            "이미 다른 Google 계정이 연결된 사용자입니다."
+                            new OAuth2Error("oauth_link_required"),
+                            "이미 가입된 이메일입니다. 일반 로그인 후 소셜 계정 연결을 진행해주세요."
                     );
                 });
 
         /*
-         * User와 Google 계정 연결 정보를 oauth_account에 저장합니다.
+         * 같은 email의 기존 User가 없으면 소셜 회원을 신규 생성합니다.
+         * Google에서 제공하지 않는 birthDate/address/phoneNumber/passwordHash는 null로 저장됩니다.
+         */
+        User user = User.createOauthUser(email, name);
+        User savedUser = userRepository.save(user);
+
+        /*
+         * 신규 생성된 User와 Google 계정을 oauth_account에 연결합니다.
          */
         OauthUser oauthUser = OauthUser.create(
-                user,
+                savedUser,
                 provider,
                 providerUserId,
                 email
@@ -159,7 +156,7 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
         oauthUserRepository.save(oauthUser);
 
-        return user;
+        return savedUser;
     }
 
     private SocialProvider resolveProvider(String registrationId) {
