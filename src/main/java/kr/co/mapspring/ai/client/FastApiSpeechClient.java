@@ -11,11 +11,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.client.RestClientException;
 
 import kr.co.mapspring.ai.dto.FastApiSpeechDto;
 import kr.co.mapspring.global.exception.ai.FastApiAiClientException;
 import lombok.RequiredArgsConstructor;
+import java.io.IOException;
 
 
 @Component
@@ -146,7 +146,7 @@ public class FastApiSpeechClient {
                     return file.getOriginalFilename();
                 }
             };
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new FastApiAiClientException(e);
         }
     }
