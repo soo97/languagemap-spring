@@ -1,8 +1,10 @@
 package kr.co.mapspring.place.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,19 +22,25 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import kr.co.mapspring.global.exception.place.MissionSessionNotFoundException;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Mission;
+import kr.co.mapspring.place.entity.MissionSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Scenario;
+import kr.co.mapspring.place.entity.SessionMessage;
 import kr.co.mapspring.place.enums.LearningSessionLevel;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.MissionRepository;
+import kr.co.mapspring.place.repository.MissionSessionRepository;
 import kr.co.mapspring.place.repository.PlaceRepository;
+import kr.co.mapspring.place.repository.SessionMessageRepository;
 import kr.co.mapspring.place.service.impl.UserPlaceLearningServiceImpl;
 import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.repository.UserRepository;
@@ -54,6 +62,11 @@ class UserPlaceLearningServiceTest {
 
     @Mock
     private LearningSessionRepository learningSessionRepository;
+    
+    @Mock
+    private MissionSessionRepository missionSessionRepository;
+    
+    @Mock SessionMessageRepository sessionMessageRepository;
 
     @Test
     @DisplayName("마커 상세 정보 조회 성공")
@@ -127,9 +140,7 @@ class UserPlaceLearningServiceTest {
         // given
         Long placeId = 1L;
         Long userId = 10L;
-
-        Place place = mock(Place.class);
-        User user = mock(User.class);
+        Long scenarioId = 20L;
 
         UserCreateLearningSessionDto.RequestCreate request =
                 UserCreateLearningSessionDto.RequestCreate.builder()
@@ -137,11 +148,22 @@ class UserPlaceLearningServiceTest {
                         .level(LearningSessionLevel.BEGINNER)
                         .build();
 
+        User user = mock(User.class);
+
+        Scenario scenario = mock(Scenario.class);
+        when(scenario.getScenarioId()).thenReturn(scenarioId);
+
+        Place place = mock(Place.class);
+        when(place.getScenario()).thenReturn(scenario);
+
+        Mission mission1 = mock(Mission.class);
+        Mission mission2 = mock(Mission.class);
+        List<Mission> missionList = List.of(mission1, mission2);
+
         LearningSession savedSession =
                 LearningSession.create(place, user, LearningSessionLevel.BEGINNER);
 
         ReflectionTestUtils.setField(savedSession, "sessionId", 100L);
-        ReflectionTestUtils.setField(savedSession, "studyStatus", LearningSessionStatus.RUNNING);
 
         when(placeRepository.findById(placeId))
                 .thenReturn(Optional.of(place));
@@ -151,6 +173,9 @@ class UserPlaceLearningServiceTest {
 
         when(learningSessionRepository.save(any(LearningSession.class)))
                 .thenReturn(savedSession);
+
+        when(missionRepository.findByScenario_ScenarioId(scenarioId))
+                .thenReturn(missionList);
 
         // when
         UserCreateLearningSessionDto.ResponseCreate response =
@@ -163,17 +188,20 @@ class UserPlaceLearningServiceTest {
         verify(placeRepository, times(1)).findById(placeId);
         verify(userRepository, times(1)).findById(userId);
         verify(learningSessionRepository, times(1)).save(any(LearningSession.class));
-    }
 
+        verify(missionRepository, times(1)).findByScenario_ScenarioId(scenarioId);
+        verify(missionSessionRepository, times(1)).saveAll(anyList());
+    }
+    
     @Test
-    @DisplayName("학습 세션 생성 실패 존재하지 않는 장소")
+    @DisplayName("학습 세션 생성 실패 - 존재하지 않는 장소")
     void 학습_세션_생성_실패_존재하지_않는_장소() {
         // given
         Long placeId = 999L;
 
         UserCreateLearningSessionDto.RequestCreate request =
                 UserCreateLearningSessionDto.RequestCreate.builder()
-                        .userId(1L)
+                        .userId(10L)
                         .level(LearningSessionLevel.BEGINNER)
                         .build();
 
@@ -187,10 +215,12 @@ class UserPlaceLearningServiceTest {
         verify(placeRepository, times(1)).findById(placeId);
         verify(userRepository, never()).findById(any());
         verify(learningSessionRepository, never()).save(any());
+        verify(missionRepository, never()).findByScenario_ScenarioId(any());
+        verify(missionSessionRepository, never()).saveAll(anyList());
     }
-
+    
     @Test
-    @DisplayName("학습 세션 생성 실패 존재하지 않는 사용자")
+    @DisplayName("학습 세션 생성 실패 - 존재하지 않는 사용자")
     void 학습_세션_생성_실패_존재하지_않는_사용자() {
         // given
         Long placeId = 1L;
@@ -217,5 +247,67 @@ class UserPlaceLearningServiceTest {
         verify(placeRepository, times(1)).findById(placeId);
         verify(userRepository, times(1)).findById(userId);
         verify(learningSessionRepository, never()).save(any());
+        verify(missionRepository, never()).findByScenario_ScenarioId(any());
+        verify(missionSessionRepository, never()).saveAll(anyList());
+    }
+    
+    @Test
+    @DisplayName("미션 시작 성공")
+    void 미션_시작_성공() {
+        // given
+        Long sessionId = 100L;
+        Long missionId = 1L;
+
+        LearningSession learningSession = mock(LearningSession.class);
+        Mission mission = mock(Mission.class);
+        MissionSession missionSession = mock(MissionSession.class);
+
+        when(missionSession.getLearningSession()).thenReturn(learningSession);
+        when(missionSession.getMission()).thenReturn(mission);
+
+        when(missionSessionRepository.findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId))
+                .thenReturn(Optional.of(missionSession));
+
+        when(sessionMessageRepository.save(any(SessionMessage.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        UserMissionStartDto.ResponseMissionStart response =
+                userPlaceLearningService.missionStart(sessionId, missionId);
+
+        // then
+        assertNotNull(response);
+
+        verify(missionSessionRepository, times(1))
+                .findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId);
+
+        verify(missionSession, times(1)).start();
+
+        verify(sessionMessageRepository, times(1))
+                .save(any(SessionMessage.class));
+
+        verify(missionSession, times(1)).getLearningSession();
+        verify(missionSession, times(1)).getMission();
+    }
+    
+    @Test
+    @DisplayName("미션 시작 실패 - 존재하지 않는 미션 세션")
+    void 미션_시작_실패_존재하지_않는_미션_세션() {
+        // given
+        Long sessionId = 999L;
+        Long missionId = 999L;
+
+        when(missionSessionRepository.findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(MissionSessionNotFoundException.class,
+                () -> userPlaceLearningService.missionStart(sessionId, missionId));
+
+        verify(missionSessionRepository, times(1))
+                .findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId);
+
+        verify(sessionMessageRepository, never())
+                .save(any(SessionMessage.class));
     }
 }

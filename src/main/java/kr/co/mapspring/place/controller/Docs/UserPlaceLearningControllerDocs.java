@@ -68,24 +68,27 @@ public interface UserPlaceLearningControllerDocs {
     
     @Operation(
             summary = "미션 시작",
-            description = "placeId와 missionId를 기준으로 해당 미션 세션을 찾아 상태를 RUNNING으로 변경, ai 메세지로 대화 시작"
+            description = "sessionId와 missionId를 기준으로 특정 학습 세션의 미션을 시작 상태로 변경하고, AI 첫 메시지를 반환한다."
     )
     @ApiResponses({
             @ApiResponse(
-            		responseCode = "200",
-            		description = "미션 세션 상태 변경 성공"
-            		),
+                    responseCode = "200",
+                    description = "미션 시작 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = UserMissionStartDto.ResponseMissionStart.class)
+                    )
+            ),
             @ApiResponse(
-            		responseCode = "400",
-            		description = "잘못된 요청 값"
-            		),
+                    responseCode = "404",
+                    description = "미션 세션 또는 미션을 찾을 수 없음"
+            ),
             @ApiResponse(
-            		responseCode = "404",
-            		description = "미션 세션을 찾을 수 없음"
-            		)
+                    responseCode = "400",
+                    description = "이미 진행 중이거나 완료된 미션"
+            )
     })
     ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
-            @PathVariable Long placeId,
+            @PathVariable Long sessionId,
             @PathVariable Long missionId
     );
 }

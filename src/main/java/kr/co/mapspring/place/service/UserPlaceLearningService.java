@@ -24,10 +24,11 @@ public interface UserPlaceLearningService {
 	UserCreateLearningSessionDto.ResponseCreate learningStart(Long placeId, UserCreateLearningSessionDto.RequestCreate request);
 
 	/**
-	 * 미션 시작 버튼 클릭시 미션 상태 RUNNING으로 변경
+	 * 미션 시작 버튼 클릭시 미션 상태 RUNNING으로 변경 후 미션에 대한 ai 첫 대화 반환
 	 * 
 	 * @param sessionId 미션 세션 조회용
 	 * @param missionId 미션 세션 조회용
+	 * @return 미션 세션 정보 및 사용자에게 보여줄 ai 메세지
 	 */
 	UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId);
 }
