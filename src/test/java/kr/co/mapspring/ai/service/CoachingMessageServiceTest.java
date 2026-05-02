@@ -23,12 +23,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kr.co.mapspring.ai.dto.CoachingMessageDto;
 import kr.co.mapspring.ai.entity.CoachingMessage;
+import kr.co.mapspring.ai.entity.CoachingScriptTurn;
 import kr.co.mapspring.ai.entity.CoachingSession;
 import kr.co.mapspring.ai.enums.CoachingMessageRole;
 import kr.co.mapspring.ai.enums.CoachingSessionStatus;
 import kr.co.mapspring.ai.repository.CoachingMessageRepository;
+import kr.co.mapspring.ai.repository.CoachingScriptTurnRepository;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.impl.CoachingMessageServiceImpl;
+import kr.co.mapspring.global.exception.ai.CoachingScriptTurnNotFoundException;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 import kr.co.mapspring.global.exception.ai.InvalidCoachingMessageException;
 import kr.co.mapspring.place.entity.LearningSession;
@@ -45,7 +48,11 @@ class CoachingMessageServiceTest {
     @Mock
     private CoachingSessionRepository coachingSessionRepository;
 
+    @Mock
+    private CoachingScriptTurnRepository coachingScriptTurnRepository;
+
     private CoachingSession coachingSession;
+    private CoachingScriptTurn coachingScriptTurn;
     private CoachingMessage userMessage;
     private CoachingMessage assistantMessage;
 
@@ -59,9 +66,18 @@ class CoachingMessageServiceTest {
         setField(coachingSession, "learningSession", learningSession);
         setField(coachingSession, "coachingSessionStatus", CoachingSessionStatus.RUNNING);
 
+        coachingScriptTurn = createInstance(CoachingScriptTurn.class);
+        setField(coachingScriptTurn, "coachingScriptTurnId", 1L);
+        setField(coachingScriptTurn, "coachingSession", coachingSession);
+        setField(coachingScriptTurn, "turnOrder", 1);
+        setField(coachingScriptTurn, "assistantText", "Good morning. What would you like to order?");
+        setField(coachingScriptTurn, "expectedText", "I would like a latte, please.");
+        setField(coachingScriptTurn, "createdAt", LocalDateTime.of(2026, 4, 25, 9, 59));
+
         userMessage = createInstance(CoachingMessage.class);
         setField(userMessage, "coachingMessageId", 1L);
         setField(userMessage, "coachingSession", coachingSession);
+        setField(userMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(userMessage, "role", CoachingMessageRole.USER);
         setField(userMessage, "message", "Could you make it less sweet?");
         setField(userMessage, "audioUrl", "/static/uploads/user-1.wav");
@@ -70,6 +86,7 @@ class CoachingMessageServiceTest {
         assistantMessage = createInstance(CoachingMessage.class);
         setField(assistantMessage, "coachingMessageId", 2L);
         setField(assistantMessage, "coachingSession", coachingSession);
+        setField(assistantMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(assistantMessage, "role", CoachingMessageRole.ASSISTANT);
         setField(assistantMessage, "message", "Sure. Would you like anything else?");
         setField(assistantMessage, "audioUrl", "/static/audio/assistant-1.mp3");
@@ -82,6 +99,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(1L)
                         .role(CoachingMessageRole.USER)
                         .message("hello")
                         .audioUrl("/static/uploads/user-hello.wav")
@@ -90,12 +108,14 @@ class CoachingMessageServiceTest {
         CoachingMessage savedMessage = createInstance(CoachingMessage.class);
         setField(savedMessage, "coachingMessageId", 1L);
         setField(savedMessage, "coachingSession", coachingSession);
+        setField(savedMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(savedMessage, "role", CoachingMessageRole.USER);
         setField(savedMessage, "message", "hello");
         setField(savedMessage, "audioUrl", "/static/uploads/user-hello.wav");
         setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 0));
 
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
+        when(coachingScriptTurnRepository.findById(1L)).thenReturn(Optional.of(coachingScriptTurn));
         when(coachingMessageRepository.save(any(CoachingMessage.class))).thenReturn(savedMessage);
 
         CoachingMessageDto.ResponseCoachingMessage response =
@@ -103,6 +123,7 @@ class CoachingMessageServiceTest {
 
         assertThat(response.getCoachingMessageId()).isEqualTo(1L);
         assertThat(response.getCoachingSessionId()).isEqualTo(100L);
+        assertThat(response.getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getRole()).isEqualTo(CoachingMessageRole.USER);
         assertThat(response.getMessage()).isEqualTo("hello");
         assertThat(response.getAudioUrl()).isEqualTo("/static/uploads/user-hello.wav");
@@ -116,6 +137,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(1L)
                         .role(CoachingMessageRole.ASSISTANT)
                         .message("Hi")
                         .audioUrl("/static/audio/assistant-hi.mp3")
@@ -124,12 +146,14 @@ class CoachingMessageServiceTest {
         CoachingMessage savedMessage = createInstance(CoachingMessage.class);
         setField(savedMessage, "coachingMessageId", 2L);
         setField(savedMessage, "coachingSession", coachingSession);
+        setField(savedMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(savedMessage, "role", CoachingMessageRole.ASSISTANT);
         setField(savedMessage, "message", "Hi");
         setField(savedMessage, "audioUrl", "/static/audio/assistant-hi.mp3");
         setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 1));
 
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
+        when(coachingScriptTurnRepository.findById(1L)).thenReturn(Optional.of(coachingScriptTurn));
         when(coachingMessageRepository.save(any(CoachingMessage.class))).thenReturn(savedMessage);
 
         CoachingMessageDto.ResponseCoachingMessage response =
@@ -137,6 +161,7 @@ class CoachingMessageServiceTest {
 
         assertThat(response.getCoachingMessageId()).isEqualTo(2L);
         assertThat(response.getCoachingSessionId()).isEqualTo(100L);
+        assertThat(response.getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getRole()).isEqualTo(CoachingMessageRole.ASSISTANT);
         assertThat(response.getMessage()).isEqualTo("Hi");
         assertThat(response.getAudioUrl()).isEqualTo("/static/audio/assistant-hi.mp3");
@@ -145,22 +170,24 @@ class CoachingMessageServiceTest {
     }
 
     @Test
-    @DisplayName("코칭 메시지 저장 성공 - USER 메시지가 null이어도 저장")
-    void USER_null_메시지_저장_성공() throws Exception {
+    @DisplayName("코칭 메시지 저장 성공 - 스크립트 턴이 없어도 저장")
+    void 스크립트턴_null_메시지_저장_성공() throws Exception {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(null)
                         .role(CoachingMessageRole.USER)
-                        .message(null)
-                        .audioUrl("/static/uploads/user-null.wav")
+                        .message("옵션 선택 메시지")
+                        .audioUrl(null)
                         .build();
 
         CoachingMessage savedMessage = createInstance(CoachingMessage.class);
         setField(savedMessage, "coachingMessageId", 3L);
         setField(savedMessage, "coachingSession", coachingSession);
+        setField(savedMessage, "coachingScriptTurn", null);
         setField(savedMessage, "role", CoachingMessageRole.USER);
-        setField(savedMessage, "message", null);
-        setField(savedMessage, "audioUrl", "/static/uploads/user-null.wav");
+        setField(savedMessage, "message", "옵션 선택 메시지");
+        setField(savedMessage, "audioUrl", null);
         setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 2));
 
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
@@ -170,45 +197,34 @@ class CoachingMessageServiceTest {
                 coachingMessageService.saveCoachingMessage(request);
 
         assertThat(response.getCoachingMessageId()).isEqualTo(3L);
-        assertThat(response.getCoachingSessionId()).isEqualTo(100L);
+        assertThat(response.getCoachingScriptTurnId()).isNull();
         assertThat(response.getRole()).isEqualTo(CoachingMessageRole.USER);
-        assertThat(response.getMessage()).isNull();
-        assertThat(response.getAudioUrl()).isEqualTo("/static/uploads/user-null.wav");
+        assertThat(response.getMessage()).isEqualTo("옵션 선택 메시지");
 
+        verify(coachingScriptTurnRepository, never()).findById(any());
         verify(coachingMessageRepository).save(any(CoachingMessage.class));
     }
 
     @Test
-    @DisplayName("코칭 메시지 저장 성공 - USER 메시지가 빈 문자열이어도 저장")
-    void USER_빈문자열_메시지_저장_성공() throws Exception {
+    @DisplayName("코칭 메시지 저장 실패 - 스크립트 턴이 존재하지 않는다")
+    void 코칭_메시지_저장_실패_스크립트턴없음() {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(999L)
                         .role(CoachingMessageRole.USER)
-                        .message("")
-                        .audioUrl("/static/uploads/user-empty.wav")
+                        .message("hello")
+                        .audioUrl("/static/uploads/user-hello.wav")
                         .build();
 
-        CoachingMessage savedMessage = createInstance(CoachingMessage.class);
-        setField(savedMessage, "coachingMessageId", 4L);
-        setField(savedMessage, "coachingSession", coachingSession);
-        setField(savedMessage, "role", CoachingMessageRole.USER);
-        setField(savedMessage, "message", "");
-        setField(savedMessage, "audioUrl", "/static/uploads/user-empty.wav");
-        setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 3));
-
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
-        when(coachingMessageRepository.save(any(CoachingMessage.class))).thenReturn(savedMessage);
+        when(coachingScriptTurnRepository.findById(999L)).thenReturn(Optional.empty());
 
-        CoachingMessageDto.ResponseCoachingMessage response =
-                coachingMessageService.saveCoachingMessage(request);
+        assertThatThrownBy(() -> coachingMessageService.saveCoachingMessage(request))
+                .isInstanceOf(CoachingScriptTurnNotFoundException.class)
+                .hasMessage("코칭 스크립트 턴을 찾을 수 없습니다.");
 
-        assertThat(response.getCoachingMessageId()).isEqualTo(4L);
-        assertThat(response.getRole()).isEqualTo(CoachingMessageRole.USER);
-        assertThat(response.getMessage()).isEqualTo("");
-        assertThat(response.getAudioUrl()).isEqualTo("/static/uploads/user-empty.wav");
-
-        verify(coachingMessageRepository).save(any(CoachingMessage.class));
+        verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));
     }
 
     @Test
@@ -217,6 +233,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(1L)
                         .role(CoachingMessageRole.ASSISTANT)
                         .message(null)
                         .audioUrl("/static/audio/assistant-null.mp3")
@@ -235,6 +252,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(1L)
                         .role(CoachingMessageRole.ASSISTANT)
                         .message("")
                         .audioUrl("/static/audio/assistant-empty.mp3")
@@ -253,6 +271,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(999L)
+                        .coachingScriptTurnId(1L)
                         .role(CoachingMessageRole.USER)
                         .message("hello")
                         .audioUrl("/static/uploads/user-hello.wav")
@@ -264,6 +283,7 @@ class CoachingMessageServiceTest {
                 .isInstanceOf(CoachingSessionNotFoundException.class)
                 .hasMessage("코칭 세션을 찾을 수 없습니다.");
 
+        verify(coachingScriptTurnRepository, never()).findById(any());
         verify(coachingMessageRepository, never()).save(any(CoachingMessage.class));
     }
 
@@ -273,6 +293,7 @@ class CoachingMessageServiceTest {
         CoachingMessageDto.RequestSaveCoachingMessage request =
                 CoachingMessageDto.RequestSaveCoachingMessage.builder()
                         .coachingSessionId(100L)
+                        .coachingScriptTurnId(1L)
                         .role(null)
                         .message("hello")
                         .audioUrl("/static/uploads/user-hello.wav")
@@ -291,22 +312,26 @@ class CoachingMessageServiceTest {
         CoachingMessage savedMessage = createInstance(CoachingMessage.class);
         setField(savedMessage, "coachingMessageId", 5L);
         setField(savedMessage, "coachingSession", coachingSession);
+        setField(savedMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(savedMessage, "role", CoachingMessageRole.USER);
         setField(savedMessage, "message", "I would like a latte.");
         setField(savedMessage, "audioUrl", "/static/uploads/user-turn-1.wav");
         setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 4));
 
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
+        when(coachingScriptTurnRepository.findById(1L)).thenReturn(Optional.of(coachingScriptTurn));
         when(coachingMessageRepository.save(any(CoachingMessage.class))).thenReturn(savedMessage);
 
         CoachingMessageDto.ResponseCoachingMessage response =
                 coachingMessageService.saveUserMessage(
                         100L,
+                        1L,
                         "I would like a latte.",
                         "/static/uploads/user-turn-1.wav"
                 );
 
         assertThat(response.getCoachingMessageId()).isEqualTo(5L);
+        assertThat(response.getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getRole()).isEqualTo(CoachingMessageRole.USER);
         assertThat(response.getMessage()).isEqualTo("I would like a latte.");
         assertThat(response.getAudioUrl()).isEqualTo("/static/uploads/user-turn-1.wav");
@@ -320,22 +345,26 @@ class CoachingMessageServiceTest {
         CoachingMessage savedMessage = createInstance(CoachingMessage.class);
         setField(savedMessage, "coachingMessageId", 6L);
         setField(savedMessage, "coachingSession", coachingSession);
+        setField(savedMessage, "coachingScriptTurn", coachingScriptTurn);
         setField(savedMessage, "role", CoachingMessageRole.ASSISTANT);
         setField(savedMessage, "message", "Good morning. What would you like to order?");
         setField(savedMessage, "audioUrl", "/static/audio/assistant-turn-1.mp3");
         setField(savedMessage, "createdAt", LocalDateTime.of(2026, 4, 25, 10, 5));
 
         when(coachingSessionRepository.findById(100L)).thenReturn(Optional.of(coachingSession));
+        when(coachingScriptTurnRepository.findById(1L)).thenReturn(Optional.of(coachingScriptTurn));
         when(coachingMessageRepository.save(any(CoachingMessage.class))).thenReturn(savedMessage);
 
         CoachingMessageDto.ResponseCoachingMessage response =
                 coachingMessageService.saveAssistantMessage(
                         100L,
+                        1L,
                         "Good morning. What would you like to order?",
                         "/static/audio/assistant-turn-1.mp3"
                 );
 
         assertThat(response.getCoachingMessageId()).isEqualTo(6L);
+        assertThat(response.getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getRole()).isEqualTo(CoachingMessageRole.ASSISTANT);
         assertThat(response.getMessage()).isEqualTo("Good morning. What would you like to order?");
         assertThat(response.getAudioUrl()).isEqualTo("/static/audio/assistant-turn-1.mp3");
@@ -372,8 +401,10 @@ class CoachingMessageServiceTest {
         assertThat(response.getCoachingSessionId()).isEqualTo(100L);
         assertThat(response.getMessages()).hasSize(2);
         assertThat(response.getMessages().get(0).getRole()).isEqualTo(CoachingMessageRole.USER);
+        assertThat(response.getMessages().get(0).getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getMessages().get(0).getAudioUrl()).isEqualTo("/static/uploads/user-1.wav");
         assertThat(response.getMessages().get(1).getRole()).isEqualTo(CoachingMessageRole.ASSISTANT);
+        assertThat(response.getMessages().get(1).getCoachingScriptTurnId()).isEqualTo(1L);
         assertThat(response.getMessages().get(1).getAudioUrl()).isEqualTo("/static/audio/assistant-1.mp3");
     }
 
