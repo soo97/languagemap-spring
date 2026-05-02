@@ -58,6 +58,7 @@ public enum ErrorCode {
     ASSISTANT_MESSAGE_REQUIRED(HttpStatus.BAD_REQUEST, "AI 메시지는 비어 있을 수 없습니다."),
     COACHING_MESSAGE_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "메시지 역할은 필수입니다."),
     INVALID_COACHING_MESSAGE(HttpStatus.BAD_REQUEST, "유효하지 않은 코칭 메시지입니다."),
+    COACHING_SCRIPT_TURN_NOT_FOUND(HttpStatus.NOT_FOUND, "코칭 스크립트 턴을 찾을 수 없습니다."),
 
     // Ranking
     RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다."),
