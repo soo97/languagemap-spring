@@ -15,12 +15,14 @@ public interface CoachingMessageService {
     // 사용자 음성 인식 결과와 음성 URL을 USER 메시지로 저장
     CoachingMessageDto.ResponseCoachingMessage saveUserMessage(
             Long coachingSessionId,
+            Long coachingScriptTurnId,
             String message,
             String audioUrl
     );
     // AI 응답 문장과 TTS 음성 URL을 ASSISTANT 메시지로 저장
     CoachingMessageDto.ResponseCoachingMessage saveAssistantMessage(
             Long coachingSessionId,
+            Long coachingScriptTurnId,
             String message,
             String audioUrl
     );

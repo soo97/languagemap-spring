@@ -7,15 +7,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.mapspring.ai.dto.CoachingMessageDto;
 import kr.co.mapspring.ai.entity.CoachingMessage;
+import kr.co.mapspring.ai.entity.CoachingScriptTurn;
 import kr.co.mapspring.ai.entity.CoachingSession;
 import kr.co.mapspring.ai.enums.CoachingMessageRole;
 import kr.co.mapspring.ai.repository.CoachingMessageRepository;
+import kr.co.mapspring.ai.repository.CoachingScriptTurnRepository;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.CoachingMessageService;
 import kr.co.mapspring.global.exception.ai.AssistantMessageRequiredException;
 import kr.co.mapspring.global.exception.ai.CoachingMessageRoleRequiredException;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
+import kr.co.mapspring.global.exception.ai.CoachingScriptTurnNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
 
     private final CoachingMessageRepository coachingMessageRepository;
     private final CoachingSessionRepository coachingSessionRepository;
+    private final CoachingScriptTurnRepository coachingScriptTurnRepository;
 
     // DTO 기반 메시지 저장 (공통 저장용)
     @Override
@@ -43,8 +48,13 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
         CoachingSession coachingSession = coachingSessionRepository.findById(request.getCoachingSessionId())
                 .orElseThrow(CoachingSessionNotFoundException::new);
 
+        CoachingScriptTurn coachingScriptTurn = getCoachingScriptTurnOrNull(
+                request.getCoachingScriptTurnId()
+        );
+
         CoachingMessage coachingMessage = CoachingMessage.create(
                 coachingSession,
+                coachingScriptTurn,
                 request.getRole(),
                 request.getMessage(),
                 request.getAudioUrl()
@@ -58,7 +68,6 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
     // 메시지 목록 조회
     @Override
     public CoachingMessageDto.ResponseGetCoachingMessages getCoachingMessages(Long coachingSessionId) {
-
         coachingSessionRepository.findById(coachingSessionId)
                 .orElseThrow(CoachingSessionNotFoundException::new);
 
@@ -75,19 +84,23 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
                 .build();
     }
 
-    // USER 메시지 저장 (STT 결과)
+    // USER 메시지 저장
     @Override
     @Transactional
     public CoachingMessageDto.ResponseCoachingMessage saveUserMessage(
             Long coachingSessionId,
+            Long coachingScriptTurnId,
             String message,
             String audioUrl
     ) {
-        CoachingSession session = coachingSessionRepository.findById(coachingSessionId)
+        CoachingSession coachingSession = coachingSessionRepository.findById(coachingSessionId)
                 .orElseThrow(CoachingSessionNotFoundException::new);
 
+        CoachingScriptTurn coachingScriptTurn = getCoachingScriptTurnOrNull(coachingScriptTurnId);
+
         CoachingMessage coachingMessage = CoachingMessage.create(
-                session,
+                coachingSession,
+                coachingScriptTurn,
                 CoachingMessageRole.USER,
                 message,
                 audioUrl
@@ -98,11 +111,12 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
         return CoachingMessageDto.ResponseCoachingMessage.from(saved);
     }
 
-    // ASSISTANT 메시지 저장 (TTS 포함)
+    // ASSISTANT 메시지 저장
     @Override
     @Transactional
     public CoachingMessageDto.ResponseCoachingMessage saveAssistantMessage(
             Long coachingSessionId,
+            Long coachingScriptTurnId,
             String message,
             String audioUrl
     ) {
@@ -110,11 +124,14 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
             throw new AssistantMessageRequiredException();
         }
 
-        CoachingSession session = coachingSessionRepository.findById(coachingSessionId)
+        CoachingSession coachingSession = coachingSessionRepository.findById(coachingSessionId)
                 .orElseThrow(CoachingSessionNotFoundException::new);
 
+        CoachingScriptTurn coachingScriptTurn = getCoachingScriptTurnOrNull(coachingScriptTurnId);
+
         CoachingMessage coachingMessage = CoachingMessage.create(
-                session,
+                coachingSession,
+                coachingScriptTurn,
                 CoachingMessageRole.ASSISTANT,
                 message,
                 audioUrl
@@ -123,5 +140,14 @@ public class CoachingMessageServiceImpl implements CoachingMessageService {
         CoachingMessage saved = coachingMessageRepository.save(coachingMessage);
 
         return CoachingMessageDto.ResponseCoachingMessage.from(saved);
+    }
+
+    private CoachingScriptTurn getCoachingScriptTurnOrNull(Long coachingScriptTurnId) {
+        if (coachingScriptTurnId == null) {
+            return null;
+        }
+
+        return coachingScriptTurnRepository.findById(coachingScriptTurnId)
+                .orElseThrow(CoachingScriptTurnNotFoundException::new);
     }
 }

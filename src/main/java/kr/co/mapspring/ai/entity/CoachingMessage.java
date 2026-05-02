@@ -33,6 +33,10 @@ public class CoachingMessage {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "coaching_session_id", nullable = false)
 	private CoachingSession coachingSession;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "coaching_script_turn_id")
+	private CoachingScriptTurn coachingScriptTurn;
 
 	@Column(name = "role", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
@@ -54,12 +58,14 @@ public class CoachingMessage {
 	
 	public static CoachingMessage create(
 	        CoachingSession coachingSession,
+	        CoachingScriptTurn coachingScriptTurn,
 	        CoachingMessageRole role,
 	        String message,
 	        String audioUrl
 	) {
 	    CoachingMessage coachingMessage = new CoachingMessage();
 	    coachingMessage.coachingSession = coachingSession;
+	    coachingMessage.coachingScriptTurn = coachingScriptTurn;
 	    coachingMessage.role = role;
 	    coachingMessage.message = message;
 	    coachingMessage.audioUrl = audioUrl;
