@@ -40,6 +40,9 @@ public class CoachingMessage {
 
 	@Column(name = "message", nullable = true, columnDefinition = "TEXT")
 	private String message;
+	
+	@Column(name = "audio_url", length = 600)
+	private String audioUrl;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -52,12 +55,14 @@ public class CoachingMessage {
 	public static CoachingMessage create(
 	        CoachingSession coachingSession,
 	        CoachingMessageRole role,
-	        String message
+	        String message,
+	        String audioUrl
 	) {
 	    CoachingMessage coachingMessage = new CoachingMessage();
 	    coachingMessage.coachingSession = coachingSession;
 	    coachingMessage.role = role;
 	    coachingMessage.message = message;
+	    coachingMessage.audioUrl = audioUrl;
 	    return coachingMessage;
 	}
 }

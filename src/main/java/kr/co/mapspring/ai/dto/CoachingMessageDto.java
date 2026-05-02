@@ -25,16 +25,21 @@ public class CoachingMessageDto {
 
         @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+        
+        @Schema(description = "메시지와 연결된 음성 파일 URL", example = "/static/audio/user-1.wav")
+        private String audioUrl;
 
         @Builder
         public RequestSaveCoachingMessage(
                 Long coachingSessionId,
                 CoachingMessageRole role,
-                String message
+                String message,
+                String audioUrl
         ) {
             this.coachingSessionId = coachingSessionId;
             this.role = role;
             this.message = message;
+            this.audioUrl = audioUrl;
         }
     }
 
@@ -54,6 +59,9 @@ public class CoachingMessageDto {
 
         @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+        
+        @Schema(description = "메시지와 연결된 음성 파일 URL", example = "/static/audio/user-1.wav")
+        private String audioUrl;
 
         @Schema(description = "메시지 생성 시각", example = "2026-04-26T17:40:00")
         private LocalDateTime createdAt;
@@ -64,6 +72,7 @@ public class CoachingMessageDto {
                     .coachingSessionId(coachingMessage.getCoachingSession().getCoachingSessionId())
                     .role(coachingMessage.getRole())
                     .message(coachingMessage.getMessage())
+                    .audioUrl(coachingMessage.getAudioUrl())
                     .createdAt(coachingMessage.getCreatedAt())
                     .build();
         }
