@@ -41,6 +41,11 @@ public class LoginServiceImpl implements LoginService {
     public ResponseLogin login(RequestLogin request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        
+        // 비밀번호 null 방지 방어로직 
+        if (user.getPasswordHash() == null) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
@@ -50,10 +55,7 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(ErrorCode.INACTIVE_USER);
         }
         
-        // 비밀번호 null 방지 방어로직 
-        if (user.getPasswordHash() == null) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
-        }
+
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
 
