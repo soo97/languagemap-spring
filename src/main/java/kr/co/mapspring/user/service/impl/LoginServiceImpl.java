@@ -41,8 +41,11 @@ public class LoginServiceImpl implements LoginService {
     public ResponseLogin login(RequestLogin request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        
-        // 비밀번호 null 방지 방어로직 
+
+        /*
+         * 소셜 회원은 passwordHash가 null일 수 있습니다.
+         * passwordEncoder.matches(...)보다 먼저 검사해야 합니다.
+         */
         if (user.getPasswordHash() == null) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
@@ -54,13 +57,15 @@ public class LoginServiceImpl implements LoginService {
         if (!user.isActive()) {
             throw new CustomException(ErrorCode.INACTIVE_USER);
         }
-        
-
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
 
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
+        /*
+         * Refresh Token은 기존처럼 Redis에 저장합니다.
+         * 다만 클라이언트에는 body가 아니라 HttpOnly Cookie로 내려갑니다.
+         */
         refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
 
         return LoginDto.ResponseLogin.from(user, accessToken, refreshToken);
