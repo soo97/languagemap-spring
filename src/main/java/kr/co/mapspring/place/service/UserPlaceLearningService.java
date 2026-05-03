@@ -1,6 +1,8 @@
 package kr.co.mapspring.place.service;
 
+import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 
@@ -31,4 +33,21 @@ public interface UserPlaceLearningService {
 	 * @return 미션 세션 정보 및 사용자에게 보여줄 ai 메세지
 	 */
 	UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId);
+	
+	/**
+	 * 대화 기능 현재 학습 중인 세션을 조회하고 유저 메세지를 저장 후 ai 답면을 저장 후 보여준다.
+	 * 
+	 * @param request 현재 학습핫고 있는 sessionId, user 메세지
+	 * @return ai 메세지
+	 */
+	UserChatDto.ResponseChat chat(UserChatDto.RequestChat request);
+	
+	/**
+	 * 사용자가 미션을 수행한뒤 미션 완료 버튼을 누르면 미션 종료, 모든 미션이 완료되면 학습 세션 종료
+	 * 
+	 * @param sessionId 완료 버튼을 누를 미션 세션을 찾을 값
+	 * @param missionId 완료 버튼을 누를 미션 세션을 찾을 값
+	 * @return 미션 세션 상태, 학습 세션 상태
+	 */
+	UserMissionCompleteDto.ResponseComplete missionComplete(Long sessionId, Long missionId);
 }
