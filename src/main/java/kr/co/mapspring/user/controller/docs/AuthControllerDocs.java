@@ -1,13 +1,15 @@
 package kr.co.mapspring.user.controller.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.user.dto.LoginDto;
 import kr.co.mapspring.user.dto.SignUpDto;
@@ -18,7 +20,11 @@ public interface AuthControllerDocs {
 
     @Operation(
             summary = "로그인",
-            description = "이메일과 비밀번호를 입력받아 로그인 처리하고 사용자 정보 및 토큰 정보를 반환합니다."
+            description = """
+                    이메일과 비밀번호를 입력받아 로그인 처리합니다.
+                    로그인 성공 시 Access Token은 응답 body로 반환하고,
+                    Refresh Token은 HttpOnly Cookie로 설정합니다.
+                    """
     )
     @ApiResponses({
             @ApiResponse(
@@ -38,8 +44,7 @@ public interface AuthControllerDocs {
                                                 "email": "test@naver.com",
                                                 "name": "홍길동",
                                                 "role": "USER",
-                                                "accessToken": "<ACCESS_TOKEN>",
-                                                "refreshToken": "<REFRESH_TOKEN>"
+                                                "accessToken": "<ACCESS_TOKEN>"
                                               }
                                             }
                                             """
@@ -102,7 +107,7 @@ public interface AuthControllerDocs {
             )
     })
     ApiResponseDTO<LoginDto.ResponseLogin> login(
-            @RequestBody(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "로그인 요청 정보",
                     required = true,
                     content = @Content(
@@ -112,13 +117,16 @@ public interface AuthControllerDocs {
                                     value = """
                                             {
                                               "email": "test@naver.com",
-                                              "password": "1234"
+                                              "password": "Password123!"
                                             }
                                             """
                             )
                     )
             )
-            LoginDto.RequestLogin request
+            LoginDto.RequestLogin request,
+
+            @Parameter(hidden = true)
+            HttpServletResponse httpServletResponse
     );
 
     @Operation(
@@ -168,7 +176,7 @@ public interface AuthControllerDocs {
                                     ),
                                     @ExampleObject(
                                             name = "입력값 검증 실패",
-                                            summary = "생년월일 형식 오류 등 요청값 검증에 실패한 경우",
+                                            summary = "요청값 검증에 실패한 경우",
                                             value = """
                                                     {
                                                       "success": false,
@@ -258,7 +266,7 @@ public interface AuthControllerDocs {
             )
     })
     ApiResponseDTO<SignUpDto.ResponseSignUp> signUp(
-            @RequestBody(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "회원가입 요청 정보",
                     required = true,
                     content = @Content(
@@ -272,8 +280,8 @@ public interface AuthControllerDocs {
                                               "address": "서울시 강남구",
                                               "phoneNumber": "010-0000-0001",
                                               "email": "test@test1.com",
-                                              "password": "1234",
-                                              "passwordConfirm": "1234",
+                                              "password": "Password123!",
+                                              "passwordConfirm": "Password123!",
                                               "serviceAgree": true,
                                               "privacyAgree": true,
                                               "marketingAgree": false
@@ -286,8 +294,12 @@ public interface AuthControllerDocs {
     );
 
     @Operation(
-            summary = "Access Token 및 Refresh Token 재발급",
-            description = "Refresh Token을 검증한 뒤 새로운 Access Token과 Refresh Token을 발급합니다."
+            summary = "Access Token 재발급",
+            description = """
+                    HttpOnly Cookie에 저장된 Refresh Token을 검증한 뒤
+                    새로운 Access Token을 발급합니다.
+                    Refresh Token Rotation으로 새 Refresh Token은 다시 HttpOnly Cookie로 설정됩니다.
+                    """
     )
     @ApiResponses({
             @ApiResponse(
@@ -303,8 +315,7 @@ public interface AuthControllerDocs {
                                               "status": 200,
                                               "message": "토큰 재발급 성공",
                                               "data": {
-                                                "accessToken": "<NEW_ACCESS_TOKEN>",
-                                                "refreshToken": "<NEW_REFRESH_TOKEN>"
+                                                "accessToken": "<NEW_ACCESS_TOKEN>"
                                               }
                                             }
                                             """
@@ -349,27 +360,20 @@ public interface AuthControllerDocs {
             )
     })
     ApiResponseDTO<TokenDto.ResponseReissue> reissueToken(
-            @RequestBody(
-                    description = "토큰 재발급 요청 정보",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TokenDto.RequestReissue.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "refreshToken": "<REFRESH_TOKEN>"
-                                            }
-                                            """
-                            )
-                    )
-            )
-            TokenDto.RequestReissue request
+            @Parameter(hidden = true)
+            HttpServletRequest httpServletRequest,
+
+            @Parameter(hidden = true)
+            HttpServletResponse httpServletResponse
     );
 
     @Operation(
             summary = "로그아웃",
-            description = "Refresh Token을 검증한 뒤 Redis에 저장된 Refresh Token을 삭제합니다."
+            description = """
+                    HttpOnly Cookie의 Refresh Token을 검증한 뒤
+                    Redis에 저장된 Refresh Token을 삭제하고,
+                    브라우저의 Refresh Token Cookie를 만료시킵니다.
+                    """
     )
     @ApiResponses({
             @ApiResponse(
@@ -410,21 +414,10 @@ public interface AuthControllerDocs {
             )
     })
     ApiResponseDTO<Void> logout(
-            @RequestBody(
-                    description = "로그아웃 요청 정보",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TokenDto.RequestLogout.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "refreshToken": "<REFRESH_TOKEN>"
-                                            }
-                                            """
-                            )
-                    )
-            )
-            TokenDto.RequestLogout request
+            @Parameter(hidden = true)
+            HttpServletRequest httpServletRequest,
+
+            @Parameter(hidden = true)
+            HttpServletResponse httpServletResponse
     );
 }
