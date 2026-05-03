@@ -30,6 +30,7 @@ public enum ErrorCode {
 	
 	// JWT 토큰용
 	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Refresh Token이 유효하지 않습니다."),
+	INVALID_OAUTH_LOGIN_CODE(HttpStatus.BAD_REQUEST, "유효하지 않거나 만료된 OAuth 로그인 코드입니다."),
 
     // Favorite Place
     FAVORITE_PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 즐겨찾기한 장소입니다."),
