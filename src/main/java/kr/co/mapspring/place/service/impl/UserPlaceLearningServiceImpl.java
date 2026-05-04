@@ -17,6 +17,7 @@ import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.MissionSession;
 import kr.co.mapspring.place.entity.Place;
+import kr.co.mapspring.place.entity.SessionEvaluation;
 import kr.co.mapspring.place.entity.SessionMessage;
 import kr.co.mapspring.place.enums.MissionSessionStatus;
 import kr.co.mapspring.place.enums.SessionMessageRole;
@@ -24,6 +25,7 @@ import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.MissionRepository;
 import kr.co.mapspring.place.repository.MissionSessionRepository;
 import kr.co.mapspring.place.repository.PlaceRepository;
+import kr.co.mapspring.place.repository.SessionEvaluationRepository;
 import kr.co.mapspring.place.repository.SessionMessageRepository;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
 import kr.co.mapspring.user.entity.User;
@@ -40,6 +42,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	private final LearningSessionRepository learningSessionRepository;
 	private final MissionSessionRepository missionSessionRepository;
 	private final SessionMessageRepository sessionMessageRepository;
+	private final SessionEvaluationRepository sessionEvaluationRepository;
 	
 	// 마커 상세 정보 조회
 	@Override
@@ -151,6 +154,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 //	            .getPlace()
 //	            .getScenario();
 
+	    // TODO: FastApi 연결 전 임시 데이터
 	    String aiMessage = "임시 AI 응답입니다.";
 
 	    SessionMessage assistantMessage = SessionMessage.create(
@@ -185,12 +189,23 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	                    sessionId,
 	                    MissionSessionStatus.COMPLETED
 	            );
+	    
+	    String evaluation = null;
 
 	    if (!hasNotCompletedMission) {
 	        learningSession.complete();
+	        
+	        // TODO: FastApi 연결 전 임시 데이터
+	        evaluation = "평가 임시 데이터 입니다.";
+	        
+	        SessionEvaluation sessionEvaluation =
+	                SessionEvaluation.create(learningSession, evaluation);
+
+	        sessionEvaluationRepository.save(sessionEvaluation);
+	        
 	    }
 
-	    return UserMissionCompleteDto.ResponseComplete.of(missionSession, learningSession);
+	    return UserMissionCompleteDto.ResponseComplete.of(missionSession, learningSession, evaluation);
 	}
 	
 	

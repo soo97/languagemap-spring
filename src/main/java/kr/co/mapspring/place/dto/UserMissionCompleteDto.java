@@ -20,14 +20,22 @@ public class UserMissionCompleteDto {
 
 	    @Schema(description = "학습 세션 상태", example = "RUNNING")
 	    private LearningSessionStatus learningSessionStatus;
+	    
+	    @Schema(
+                description = "학습 세션 최종 평가. 모든 미션 완료 시에만 값이 반환된다.",
+                example = "전체적으로 자연스럽게 대화했습니다. 목적지를 먼저 말한 점이 좋았습니다."
+        )
+        private String evaluation;
 
 	    public static ResponseComplete of(
 	            MissionSession missionSession,
-	            LearningSession learningSession
+	            LearningSession learningSession,
+	            String evaluation
 	    ) {
 	        return ResponseComplete.builder()
 	                .missionStatus(missionSession.getMissionStatus())
 	                .learningSessionStatus(learningSession.getStudyStatus())
+	                .evaluation(evaluation)
 	                .build();
 	    }
 	}
