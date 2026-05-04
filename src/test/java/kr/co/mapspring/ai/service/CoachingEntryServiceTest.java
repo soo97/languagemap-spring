@@ -27,7 +27,6 @@ import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.entity.SessionEvaluation;
 import kr.co.mapspring.place.entity.SessionMessage;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import kr.co.mapspring.place.enums.SessionMessageRole;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.SessionEvaluationRepository;
@@ -66,7 +65,6 @@ class CoachingEntryServiceTest {
                 "coffee ordering prompt",
                 "Cafe ordering",
                 10,
-                ScenarioLevel.BEGINNER,
                 "CAFE"
         );
 

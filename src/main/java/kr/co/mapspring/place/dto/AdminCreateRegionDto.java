@@ -11,28 +11,28 @@ import lombok.NoArgsConstructor;
 public class AdminCreateRegionDto {
 
     @Getter
-    @NoArgsConstructor
+    @Builder // 테스트 코드용
     @AllArgsConstructor
-    @Builder
+    @NoArgsConstructor
     @Schema(name = "AdminCreateRegionRequest", description = "지역 생성 요청 DTO")
     public static class RequestCreate {
 
         @Schema(
                 description = "국가명",
                 example = "대한민국"
-        )
+        		)
         private String country;
 
         @Schema(
                 description = "도시명",
                 example = "서울"
-        )
+        		)
         private String city;
 
         @Schema(
                 description = "지역 중심 위도",
                 example = "37.5665"
-        )
+        		)
         private BigDecimal latitude;
 
         @Schema(

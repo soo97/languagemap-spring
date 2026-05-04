@@ -29,7 +29,6 @@ import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -146,7 +145,6 @@ class StartCoachingSessionServiceTest {
         setField(scenario, "prompt", "coffee ordering prompt");
         setField(scenario, "scenarioDescription", "Cafe ordering");
         setField(scenario, "completeExp", 10);
-        setField(scenario, "level", ScenarioLevel.BEGINNER);
         setField(scenario, "category", "CAFE");
 
         Place place = createInstance(Place.class);

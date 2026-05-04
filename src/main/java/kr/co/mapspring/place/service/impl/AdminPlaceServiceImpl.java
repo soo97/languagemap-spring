@@ -11,11 +11,9 @@ import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.global.exception.place.ScenarioNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreatePlaceDto;
-import kr.co.mapspring.place.dto.AdminMissionListDto;
 import kr.co.mapspring.place.dto.AdminPlaceListDto;
 import kr.co.mapspring.place.dto.AdminReadPlaceDto;
 import kr.co.mapspring.place.dto.AdminUpdatePlaceDto;
-import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
@@ -99,7 +97,7 @@ public class AdminPlaceServiceImpl implements AdminPlaceService{
 		
 		List<AdminPlaceListDto.ResponseList> responseList = placeList.stream()
 				.map(AdminPlaceListDto.ResponseList::from)
-				.collect(Collectors.toList());
+				.toList();
 
 		return responseList;
 	}
