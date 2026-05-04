@@ -25,7 +25,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final OauthLoginCodeService oauthLoginCodeService;
-    
+
     @Value("${oauth.google.success-redirect-url}")
     private String successRedirectUrl;
 
@@ -37,27 +37,25 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     ) throws IOException, ServletException {
 
         /*
-         * 1. OauthUserService에서 반환한 principal을 가져옵니다.
+         * OauthUserService에서 반환한 principal을 가져옵니다.
          */
         OauthUserDto principal = (OauthUserDto) authentication.getPrincipal();
         User user = principal.getUser();
 
         /*
-         * 2. 기존 JWT 발급 로직을 재사용합니다.
+         * 기존 JWT 발급 로직을 재사용합니다.
          */
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
         /*
-         * 3. 기존 Redis Refresh Token 저장 로직을 재사용합니다.
-         * 이 값은 refreshToken rotation/reissue/logout 흐름에서 사용됩니다.
+         * Refresh Token은 기존 Redis 저장 구조를 유지합니다.
          */
         refreshTokenService.saveRefreshToken(user.getUserId(), refreshToken);
 
         /*
-         * 4. 실제 토큰은 URL에 싣지 않고 Redis에 1회용 code로 임시 저장합니다.
+         * 실제 토큰은 URL에 싣지 않고 Redis에 1회용 code로 임시 저장합니다.
          */
-        
         boolean profileRequired = user.isProfileIncomplete();
 
         String code = oauthLoginCodeService.saveToken(
@@ -65,10 +63,9 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 refreshToken,
                 profileRequired
         );
-        
+
         /*
-         * 5. 프론트 성공 페이지에는 실제 토큰 대신 1회용 code만 전달합니다.
-         * 
+         * 프론트에는 실제 토큰 대신 1회용 code만 전달합니다.
          */
         String redirectUrl = UriComponentsBuilder
                 .fromUriString(successRedirectUrl)
@@ -77,9 +74,6 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 .build()
                 .toUriString();
 
-        /*
-         * 6. OAuth 인증 과정에서 사용한 임시 인증 정보를 정리합니다.
-         */
         clearAuthenticationAttributes(request);
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
