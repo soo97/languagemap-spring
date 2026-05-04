@@ -30,24 +30,21 @@ public class OauthController implements OauthControllerDocs {
             @Valid @RequestBody OauthLoginDto.RequestToken request,
             HttpServletResponse httpServletResponse
     ) {
-        /*
-         * 프론트가 전달한 1회용 code로 Redis에 임시 저장된 토큰 정보를 조회합니다.
-         * code는 조회 후 즉시 삭제됩니다.
-         */
         OauthLoginDto.TokenResult tokenResult =
                 oauthLoginCodeService.consumeToken(request.getCode());
 
-        /*
-         * refreshToken은 JSON body에 노출하지 않고 HttpOnly Cookie로 내려보냅니다.
-         */
-        httpServletResponse.addHeader(
-                HttpHeaders.SET_COOKIE,
-                authCookieService.createRefreshTokenCookie(tokenResult.getRefreshToken()).toString()
-        );
+        // ✅ 로그 추가 - 여기서 null이면 쿠키 내용이 비어서 세팅 안 됨
+        System.out.println("=== OAuth Cookie Debug ===");
+        System.out.println("refreshToken = " + tokenResult.getRefreshToken());
 
-        /*
-         * 응답 body에는 accessToken과 profileRequired만 포함됩니다.
-         */
+        String cookieValue = authCookieService
+                .createRefreshTokenCookie(tokenResult.getRefreshToken())
+                .toString();
+
+        System.out.println("Set-Cookie value = " + cookieValue);
+
+        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookieValue);
+
         OauthLoginDto.ResponseToken response =
                 OauthLoginDto.ResponseToken.from(tokenResult);
 

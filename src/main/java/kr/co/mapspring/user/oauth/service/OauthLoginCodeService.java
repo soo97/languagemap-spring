@@ -65,7 +65,7 @@ public class OauthLoginCodeService {
         String value = stringRedisTemplate.opsForValue().get(key);
 
         if (value == null) {
-            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        	 throw new CustomException(ErrorCode.INVALID_OAUTH_LOGIN_CODE);
         }
 
         /*
