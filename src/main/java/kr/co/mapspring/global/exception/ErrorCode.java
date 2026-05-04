@@ -45,7 +45,8 @@ public enum ErrorCode {
     FRIENDSHIP_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 관계를 찾을 수 없습니다."),
     FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다."),
-  
+    DUPLICATE_USER_REPORT(HttpStatus.CONFLICT, "이미 해당 사용자를 신고했습니다."),
+
     // Learning Goal
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),
     GOAL_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 선택한 학습 목표입니다."),
