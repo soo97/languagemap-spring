@@ -61,6 +61,9 @@ public enum ErrorCode {
 
     // Ranking
     RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다."),
+
+    // Community Chat
+    INVALID_CHAT_MESSAGE(HttpStatus.BAD_REQUEST, "채팅 메시지는 비어 있거나 200자를 초과할 수 없습니다."),
 	
 	// Admin Mission
 	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
