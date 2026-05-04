@@ -50,6 +50,9 @@ public class SecurityConfig {
             "/api/auth/oauth/tokens",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+
+            // WebSocket 허용
+            "/ws/**",
             
 
             // Google OAuth 시작 경로: /oauth2/authorization/google
@@ -140,9 +143,12 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
                 "http://localhost:80",
                 "http://localhost"
         ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

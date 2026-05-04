@@ -66,6 +66,9 @@ public enum ErrorCode {
 
     // Ranking
     RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다."),
+
+    // Community Chat
+    INVALID_CHAT_MESSAGE(HttpStatus.BAD_REQUEST, "채팅 메시지는 비어 있거나 200자를 초과할 수 없습니다."),
 	
 	// Admin Mission
 	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
@@ -80,7 +83,10 @@ public enum ErrorCode {
 	
 	// Admin Scenario
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
-	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다.");
+	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다."),
+	
+	// FastAPI 연동
+	FASTAPI_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FastAPI 연동 중 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String message;
