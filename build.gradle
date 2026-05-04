@@ -37,12 +37,22 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
+    
     // JWT 생성/검증을 위한 JJWT 라이브러리
 	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+<<<<<<< HEAD
 	
 	testImplementation 'com.h2database:h2'
+=======
+
+    // WebSocket 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	
+	// Google OAuth2 Login 연동을 위한 Spring Security OAuth2 Client
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+>>>>>>> main
 }
 
 tasks.named('test') {

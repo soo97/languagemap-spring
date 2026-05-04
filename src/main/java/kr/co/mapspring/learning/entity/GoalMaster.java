@@ -85,6 +85,26 @@ public class GoalMaster {
         return goalMaster;
     }
 
+    public void updateActive(boolean active) {
+        this.isActive = active;
+    }
+
+    public void update(
+            Long badgeId,
+            GoalType goalType,
+            String goalTitle,
+            String goalDescription,
+            Integer targetValue,
+            GoalPeriodType periodType
+    ) {
+        this.badgeId = badgeId;
+        this.goalType = goalType;
+        this.goalTitle = goalTitle;
+        this.goalDescription = goalDescription;
+        this.targetValue = targetValue;
+        this.periodType = periodType;
+    }
+
     // 테스트 전용 메서드
     public static GoalMaster of(Long goalMasterId, String goalTitle, GoalPeriodType periodType, GoalType goalType, Integer targetValue) {
         GoalMaster goalMaster = new GoalMaster();
