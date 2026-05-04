@@ -1,13 +1,13 @@
 package kr.co.mapspring.ai.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 public class StartCoachingSessionDto {
 	
-	@Getter
+    @Getter
     @NoArgsConstructor
     @Schema(description = "AI 코칭 세션 시작 요청 DTO")
     public static class RequestStartCoachingSession {
@@ -38,5 +38,11 @@ public class StartCoachingSessionDto {
 
         @Schema(description = "AI 코칭 세션 상태", example = "RUNNING")
         private String coachingSessionStatus;
+
+        @Schema(description = "사용자가 선택한 코칭 옵션", example = "WORD")
+        private String selectedOption;
+
+        @Schema(description = "현재 진행 중인 대화 턴 번호", example = "0")
+        private Integer currentTurnOrder;
     }
 }

@@ -33,7 +33,7 @@ public class AuthController implements AuthControllerDocs {
     @Override
     @PostMapping("/login")
     public ApiResponseDTO<LoginDto.ResponseLogin> login(
-            @RequestBody LoginDto.RequestLogin request
+    		@Valid @RequestBody LoginDto.RequestLogin request
     ) {
         // 로그인 서비스 호출
         LoginDto.ResponseLogin response = loginService.login(request);
@@ -45,7 +45,7 @@ public class AuthController implements AuthControllerDocs {
     @Override
     @PostMapping("/signup")
     public ApiResponseDTO<SignUpDto.ResponseSignUp> signUp(
-            @RequestBody SignUpDto.RequestSignUp request
+    		@Valid @RequestBody SignUpDto.RequestSignUp request
     ) {
         // 회원가입 서비스 호출
         SignUpDto.ResponseSignUp response = signUpService.signUp(request);

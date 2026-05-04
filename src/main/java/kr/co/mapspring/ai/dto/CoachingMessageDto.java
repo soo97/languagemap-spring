@@ -19,22 +19,32 @@ public class CoachingMessageDto {
 
         @Schema(description = "AI 코칭 세션 ID", example = "1")
         private Long coachingSessionId;
+        
+        @Schema(description = "연결된 코칭 스크립트 턴 ID", example = "1")
+        private Long coachingScriptTurnId;
 
         @Schema(description = "메시지 역할", example = "USER")
         private CoachingMessageRole role;
 
         @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+        
+        @Schema(description = "메시지와 연결된 음성 파일 URL", example = "/static/audio/user-1.wav")
+        private String audioUrl;
 
         @Builder
         public RequestSaveCoachingMessage(
                 Long coachingSessionId,
+                Long coachingScriptTurnId,
                 CoachingMessageRole role,
-                String message
+                String message,
+                String audioUrl
         ) {
             this.coachingSessionId = coachingSessionId;
+            this.coachingScriptTurnId = coachingScriptTurnId;
             this.role = role;
             this.message = message;
+            this.audioUrl = audioUrl;
         }
     }
 
@@ -48,12 +58,18 @@ public class CoachingMessageDto {
 
         @Schema(description = "AI 코칭 세션 ID", example = "1")
         private Long coachingSessionId;
+        
+        @Schema(description = "연결된 코칭 스크립트 턴 ID", example = "1")
+        private Long coachingScriptTurnId;
 
         @Schema(description = "메시지 역할", example = "USER")
         private CoachingMessageRole role;
 
         @Schema(description = "메시지 내용", example = "Could you make it less sweet?")
         private String message;
+        
+        @Schema(description = "메시지와 연결된 음성 파일 URL", example = "/static/audio/user-1.wav")
+        private String audioUrl;
 
         @Schema(description = "메시지 생성 시각", example = "2026-04-26T17:40:00")
         private LocalDateTime createdAt;
@@ -61,9 +77,15 @@ public class CoachingMessageDto {
         public static ResponseCoachingMessage from(CoachingMessage coachingMessage) {
             return ResponseCoachingMessage.builder()
                     .coachingMessageId(coachingMessage.getCoachingMessageId())
+                    .coachingScriptTurnId(
+                            coachingMessage.getCoachingScriptTurn() != null
+                                    ? coachingMessage.getCoachingScriptTurn().getCoachingScriptTurnId()
+                                    : null
+                    )
                     .coachingSessionId(coachingMessage.getCoachingSession().getCoachingSessionId())
                     .role(coachingMessage.getRole())
                     .message(coachingMessage.getMessage())
+                    .audioUrl(coachingMessage.getAudioUrl())
                     .createdAt(coachingMessage.getCreatedAt())
                     .build();
         }
