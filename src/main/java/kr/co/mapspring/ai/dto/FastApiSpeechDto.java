@@ -1,5 +1,5 @@
 package kr.co.mapspring.ai.dto;
-
+import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +24,6 @@ public class FastApiSpeechDto {
     @NoArgsConstructor
     @Schema(description = "FastAPI TTS 응답 DTO")
     public static class ResponseTts {
-
         private String audioUrl;
     }
 
@@ -32,7 +31,6 @@ public class FastApiSpeechDto {
     @NoArgsConstructor
     @Schema(description = "FastAPI STT 응답 DTO")
     public static class ResponseStt {
-
         private String recognizedText;
     }
 
@@ -46,6 +44,17 @@ public class FastApiSpeechDto {
         private Double fluencyScore;
         private Double completenessScore;
         private Double pronunciationScore;
+        private String feedback;
+        private List<PronunciationProblemWord> problemWords;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @Schema(description = "FastAPI 발음 문제 단어 DTO")
+    public static class PronunciationProblemWord {
+        private String word;
+        private Double score;
+        private String feedback;
     }
 
     @Getter
@@ -65,7 +74,6 @@ public class FastApiSpeechDto {
     @NoArgsConstructor
     @Schema(description = "FastAPI 문제 단어 음성 응답 DTO")
     public static class ResponseProblemWordAudio {
-
         private String word;
         private String audioUrl;
     }

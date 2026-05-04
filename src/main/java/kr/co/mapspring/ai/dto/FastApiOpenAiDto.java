@@ -105,6 +105,8 @@ public class FastApiOpenAiDto {
         private Double accuracyScore;
         private Double fluencyScore;
         private Double completenessScore;
+        private Double pronunciationScore;
+        private List<String> problemWords;
 
         @Builder
         public PronunciationResult(
@@ -112,13 +114,17 @@ public class FastApiOpenAiDto {
                 String recognizedText,
                 Double accuracyScore,
                 Double fluencyScore,
-                Double completenessScore
+                Double completenessScore,
+                Double pronunciationScore,
+                List<String> problemWords
         ) {
             this.expectedText = expectedText;
             this.recognizedText = recognizedText;
             this.accuracyScore = accuracyScore;
             this.fluencyScore = fluencyScore;
             this.completenessScore = completenessScore;
+            this.pronunciationScore = pronunciationScore;
+            this.problemWords = problemWords;
         }
     }
 
