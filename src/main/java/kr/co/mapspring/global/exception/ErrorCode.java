@@ -80,13 +80,13 @@ public enum ErrorCode {
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
 	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다."),
 	
-<<<<<<< HEAD
+
 	// Common email
-	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 발송에 실패했어요.");
-=======
+	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 발송에 실패했어요."),
+    
 	// FastAPI 연동
 	FASTAPI_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FastAPI 연동 중 오류가 발생했습니다.");
->>>>>>> main
+
 
     private final HttpStatus status;
     private final String message;

@@ -2,12 +2,16 @@ package kr.co.mapspring.common.service;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.messaging.MessagingException;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import kr.co.mapspring.global.exception.common.EmailSendException;
+import kr.co.mapspring.common.dto.NotificationSettingDto;
+import kr.co.mapspring.user.entity.User;
+import kr.co.mapspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,14 +20,41 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CommonService {
 
-	
 	private final JavaMailSender mailSender;
-	 
-    /**
-     * 이메일 발송 공통 메서드
-     * "emailTaskExecutor" - AsyncConfig에서 설정한 ThreadPoolTaskExecutor 사용
-     */
-    @Async("emailTaskExecutor")
+    private final UserRepository userRepository;
+ 
+    // ══════════════════════════════════════════════
+    // 알림 설정
+    // ══════════════════════════════════════════════
+ 
+    // 알림 설정 조회
+    @Transactional(readOnly = true)
+    public NotificationSettingDto.Response getNotificationSetting(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없어요."));
+ 
+        return NotificationSettingDto.Response.from(user.isEmailNotification());
+    }
+ 
+    // 알림 설정 변경
+    @Transactional
+    public NotificationSettingDto.Response updateNotificationSetting(
+            Long userId, NotificationSettingDto.Request request) {
+ 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없어요."));
+ 
+        user.updateEmailNotification(request.isEmailNotification());
+ 
+        return NotificationSettingDto.Response.from(user.isEmailNotification());
+    }
+ 
+    // ══════════════════════════════════════════════
+    // 이메일 발송
+    // ══════════════════════════════════════════════
+ 
+    // 이메일 발송 공통 메서드 (비동기)
+    @Async
     public void sendEmail(String to, String subject, String content) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -35,13 +66,18 @@ public class CommonService {
  
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new EmailSendException();
+            throw new RuntimeException("이메일 발송 실패: " + e.getMessage());
         }
     }
  
-    // ── 문의 답변 등록 알림 ────────────────────────────
+    // 문의 답변 등록 알림
+    public void sendCounselAnswerNotification(Long userId, String counselName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없어요."));
  
-    public void sendCounselAnswerNotification(String to, String counselName) {
+        // 알림 수신 여부 확인
+        if (!user.isEmailNotification()) return;
+ 
         String subject = "[Mapingo] 문의하신 내용에 답변이 등록되었어요.";
         String content = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
@@ -60,12 +96,17 @@ public class CommonService {
                 </div>
                 """.formatted(counselName);
  
-        sendEmail(to, subject, content);
+        sendEmail(user.getEmail(), subject, content);
     }
  
-    // ── 공지사항 등록 알림 ────────────────────────────
+    // 공지사항 등록 알림
+    public void sendNoticeNotification(Long userId, String noticeTitle) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없어요."));
  
-    public void sendNoticeNotification(String to, String noticeTitle) {
+        // 알림 수신 여부 확인
+        if (!user.isEmailNotification()) return;
+ 
         String subject = "[Mapingo] 새로운 공지사항이 등록되었어요.";
         String content = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
@@ -83,6 +124,6 @@ public class CommonService {
                 </div>
                 """.formatted(noticeTitle);
  
-        sendEmail(to, subject, content);
+        sendEmail(user.getEmail(), subject, content);
     }
 }
