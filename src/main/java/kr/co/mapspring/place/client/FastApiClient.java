@@ -10,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FastApiClient {
 	
-	private final WebClient fastApiWebClient;
+	private final WebClient webClient;
 	
 	public FastApiMissionStartDto.ResponseMissionStart missionStart(FastApiMissionStartDto.RequestMissionStart request) {
-	    return fastApiWebClient.post()
-	            .uri("/mission/start")
+	    return webClient.post()
+	            .uri("gpt/mission/start")
 	            .bodyValue(request)
 	            .retrieve()
 	            .bodyToMono(FastApiMissionStartDto.ResponseMissionStart.class)
