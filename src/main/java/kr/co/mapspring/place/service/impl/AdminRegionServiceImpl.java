@@ -67,7 +67,7 @@ public class AdminRegionServiceImpl implements AdminRegionService {
 	       
 	        List<AdminRegionListDto.ResponseList> regionList = region.stream()
 	                .map(AdminRegionListDto.ResponseList::from)
-	                .collect(Collectors.toList());
+	                .toList();
 	        
 	        return regionList; 
 	    }

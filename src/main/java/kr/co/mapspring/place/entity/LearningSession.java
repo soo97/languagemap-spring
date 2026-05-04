@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import kr.co.mapspring.place.enums.LearningSessionLevel;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
 import kr.co.mapspring.user.entity.User;
 import lombok.AccessLevel;
@@ -34,8 +35,12 @@ public class LearningSession {
 	@Column(name = "start_time", nullable = false, updatable = false)
 	private LocalDateTime startTime;
 	
-	@Column(name = "endTime")
+	@Column(name = "end_Time")
 	private LocalDateTime endTime;
+	
+	@Column(name = "level", nullable = false, length = 20)
+	@Enumerated(EnumType.STRING)
+	private LearningSessionLevel level;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
@@ -47,10 +52,20 @@ public class LearningSession {
 	
 	@Column(name = "study_status", nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
-	private LearningSessionStatus studyStatus = LearningSessionStatus.READY;
+	private LearningSessionStatus studyStatus = LearningSessionStatus.RUNNING;
 	
 	@PrePersist
 	public void prePersist() {
 		this.startTime = LocalDateTime.now();
+	}
+	
+	public static LearningSession create(Place place, User user, LearningSessionLevel level) {
+		
+		LearningSession learningSession = new LearningSession();
+		learningSession.user = user;
+		learningSession.place = place;
+		learningSession.level = level;
+		
+		return learningSession;
 	}
 }

@@ -18,31 +18,31 @@ public class AdminReadPlaceDto {
         @Schema(
                 description = "장소 이름",
                 example = "스타벅스 강남점"
-        )
+        		)
         private String placeName;
 
         @Schema(
                 description = "장소 설명",
                 example = "조용한 분위기의 카페"
-        )
+        		)
         private String placeDescription;
 
         @Schema(
                 description = "장소 주소",
                 example = "서울특별시 강남구 테헤란로 123"
-        )
+        		)
         private String placeAddress;
 
         @Schema(
                 description = "위도",
                 example = "37.4979"
-        )
+        		)
         private BigDecimal latitude;
 
         @Schema(
                 description = "경도",
                 example = "127.0276"
-        )
+        		)
         private BigDecimal longitude;
 
         @Schema(
@@ -54,7 +54,7 @@ public class AdminReadPlaceDto {
         @Schema(
                 description = "지역 도시명",
                 example = "Seoul"
-        )
+        		)
         private String city;
 
         public static AdminReadPlaceDto.ResponseRead from(Place place) {

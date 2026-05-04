@@ -11,4 +11,5 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
 
     @EntityGraph(attributePaths = {"place", "place.region", "place.scenario"})
     Optional<LearningSession> findBySessionId(Long sessionId);
+    
 }

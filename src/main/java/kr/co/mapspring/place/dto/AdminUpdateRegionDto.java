@@ -20,25 +20,25 @@ public class AdminUpdateRegionDto {
         @Schema(
                 description = "국가명",
                 example = "대한민국"
-        )
+        		)
         private String country;
 
         @Schema(
                 description = "도시명",
                 example = "부산"
-        )
+        		)
         private String city;
 
         @Schema(
                 description = "지역 중심 위도",
                 example = "35.1796"
-        )
+        		)
         private BigDecimal latitude;
 
         @Schema(
                 description = "지역 중심 경도",
                 example = "129.0756"
-        )
+        		)
         private BigDecimal longitude;
     }
 }

@@ -28,9 +28,17 @@ public interface AdminMissionControllerDocs {
             description = "missionId를 기준으로 미션 상세 정보를 조회한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = AdminReadMissionDto.ResponseRead.class))),
-            @ApiResponse(responseCode = "404", description = "미션을 찾을 수 없음")
+            @ApiResponse(
+            		responseCode = "200", 
+            		description = "조회 성공",
+                    content = @Content(
+                    		schema = @Schema(implementation = AdminReadMissionDto.ResponseRead.class)
+                    		)
+            ),
+            @ApiResponse(
+            		responseCode = "404", 
+            		description = "미션을 찾을 수 없음"
+            		)
     })
 	ResponseEntity<ApiResponseDTO<AdminReadMissionDto.ResponseRead>> readMissionDetail(@PathVariable Long missionId);
 	
@@ -39,8 +47,13 @@ public interface AdminMissionControllerDocs {
             description = "keyword가 없으면 전체 조회, 있으면 미션명 검색"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = AdminMissionListDto.ResponseList.class)))
+            @ApiResponse(
+            		responseCode = "200", 
+            		description = "조회 성공",
+                    content = @Content(
+                    		schema = @Schema(implementation = AdminMissionListDto.ResponseList.class)
+                    		)
+            		)
     })
 	ResponseEntity<ApiResponseDTO<List<AdminMissionListDto.ResponseList>>> readMissionList(@RequestParam(required = false) String keyword);
 	
@@ -49,9 +62,18 @@ public interface AdminMissionControllerDocs {
             description = "missionId를 기준으로 미션을 수정한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "수정 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-            @ApiResponse(responseCode = "404", description = "미션을 찾을 수 없음")
+            @ApiResponse(
+            		responseCode = "200", 
+            		description = "수정 성공"
+            		),
+            @ApiResponse(
+            		responseCode = "400", 
+            		description = "잘못된 요청 값"
+            		),
+            @ApiResponse(
+            		responseCode = "404", 
+            		description = "미션을 찾을 수 없음"
+            		)
     })
 	ResponseEntity<ApiResponseDTO<Void>> updateMission(@PathVariable Long missionId, AdminUpdateMissionDto.RequestUpdate request);
 	
@@ -60,8 +82,14 @@ public interface AdminMissionControllerDocs {
 	            description = "새로운 미션을 생성한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "생성 성공"),
-	            @ApiResponse(responseCode = "400", description = "잘못된 요청 값")
+	            @ApiResponse(
+	            		responseCode = "200", 
+	            		description = "생성 성공"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "400", 
+	            		description = "잘못된 요청 값"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<Void>> createMission(@RequestBody AdminCreateMissionDto.RequestCreate request);
 	
@@ -70,8 +98,14 @@ public interface AdminMissionControllerDocs {
 	            description = "missionId를 기준으로 미션을 삭제한다."
 	    )
 	    @ApiResponses({
-	            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-	            @ApiResponse(responseCode = "404", description = "미션을 찾을 수 없음")
+	            @ApiResponse(
+	            		responseCode = "200", 
+	            		description = "삭제 성공"
+	            		),
+	            @ApiResponse(
+	            		responseCode = "404",
+	            		description = "미션을 찾을 수 없음"
+	            		)
 	    })
 	ResponseEntity<ApiResponseDTO<Void>> deleteMission(@PathVariable Long missionId);
 }

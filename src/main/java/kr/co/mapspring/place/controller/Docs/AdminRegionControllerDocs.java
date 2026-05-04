@@ -28,9 +28,18 @@ public interface AdminRegionControllerDocs {
             description = "새로운 지역을 생성한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "생성 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-            @ApiResponse(responseCode = "409", description = "이미 존재하는 지역")
+            @ApiResponse(
+            		responseCode = "200",
+            		description = "생성 성공"
+            		),
+            @ApiResponse(
+            		responseCode = "400",
+            		description = "잘못된 요청 값"
+            		),
+            @ApiResponse(
+            		responseCode = "409",
+            		description = "이미 존재하는 지역"
+            		)
     })
     ResponseEntity<ApiResponseDTO<Void>> createRegion(@RequestBody AdminCreateRegionDto.RequestCreate request);
 
@@ -43,9 +52,14 @@ public interface AdminRegionControllerDocs {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = AdminReadRegionDto.ResponseRead.class))
+                    content = @Content(
+                    		schema = @Schema(implementation = AdminReadRegionDto.ResponseRead.class)
+                    		)
             ),
-            @ApiResponse(responseCode = "404", description = "지역을 찾을 수 없음")
+            @ApiResponse(
+            		responseCode = "404", 
+            		description = "지역을 찾을 수 없음"
+            		)
     })
     ResponseEntity<ApiResponseDTO<AdminReadRegionDto.ResponseRead>> readRegionDetail(@PathVariable Long regionId);
 
@@ -58,7 +72,9 @@ public interface AdminRegionControllerDocs {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = AdminRegionListDto.ResponseList.class))
+                    content = @Content(
+                    		schema = @Schema(implementation = AdminRegionListDto.ResponseList.class)
+                    		)
             )
     })
     ResponseEntity<ApiResponseDTO<List<AdminRegionListDto.ResponseList>>> readRegionList(@RequestParam(required = false) String keyword);
@@ -69,9 +85,18 @@ public interface AdminRegionControllerDocs {
             description = "regionId를 기준으로 지역 정보를 수정한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "수정 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 값"),
-            @ApiResponse(responseCode = "404", description = "지역을 찾을 수 없음")
+            @ApiResponse(
+            		responseCode = "200", 
+            		description = "수정 성공"
+            		),
+            @ApiResponse(
+            		responseCode = "400", 
+            		description = "잘못된 요청 값"
+            		),
+            @ApiResponse(
+            		responseCode = "404",
+            		description = "지역을 찾을 수 없음"
+            		)
     })
     ResponseEntity<ApiResponseDTO<Void>> updateRegion(@PathVariable Long regionId, @RequestBody AdminUpdateRegionDto.RequestUpdate request);
 
@@ -81,8 +106,14 @@ public interface AdminRegionControllerDocs {
             description = "regionId를 기준으로 지역을 삭제한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "지역을 찾을 수 없음")
+            @ApiResponse(
+            		responseCode = "200", 
+            		description = "삭제 성공"
+            		),
+            @ApiResponse(
+            		responseCode = "404",
+            		description = "지역을 찾을 수 없음"
+            		)
     })
     ResponseEntity<ApiResponseDTO<Void>> deleteRegion(@PathVariable Long regionId);
 }

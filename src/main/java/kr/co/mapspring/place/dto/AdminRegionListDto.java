@@ -15,19 +15,19 @@ public class AdminRegionListDto {
         @Schema(
                 description = "지역 ID",
                 example = "10"
-        )
+        		)
         private Long regionId;
 
         @Schema(
                 description = "국가명",
                 example = "대한민국"
-        )
+        		)
         private String country;
 
         @Schema(
                 description = "도시명",
                 example = "서울"
-        )
+        		)
         private String city;
 
         public static ResponseList from(Region region) {

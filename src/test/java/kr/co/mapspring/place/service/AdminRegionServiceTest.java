@@ -19,12 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kr.co.mapspring.global.exception.place.RegionInUseException;
 import kr.co.mapspring.global.exception.place.RegionNotFoundException;
 import kr.co.mapspring.place.dto.AdminCreateRegionDto;
 import kr.co.mapspring.place.dto.AdminReadRegionDto;
 import kr.co.mapspring.place.dto.AdminRegionListDto;
 import kr.co.mapspring.place.dto.AdminUpdateRegionDto;
 import kr.co.mapspring.place.entity.Region;
+import kr.co.mapspring.place.repository.PlaceRepository;
 import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.service.impl.AdminRegionServiceImpl;
 
@@ -36,6 +38,9 @@ class AdminRegionServiceTest {
 
     @Mock
     private RegionRepository regionRepository;
+    
+    @Mock
+    private PlaceRepository placeRepository;
 
     @Test
     @DisplayName("지역 생성 성공")
@@ -156,26 +161,47 @@ class AdminRegionServiceTest {
     }
 
     @Test
-    @DisplayName("지역 삭제 성공")
-    void 지역_삭제() {
+    @DisplayName("지역 삭제 성공 참조하는 장소 없음")
+    void 지역_삭제_성공() {
         Region region = Region.create("Korea", "Seoul",
                 new BigDecimal("1"), new BigDecimal("1"));
 
         when(regionRepository.findById(1L))
                 .thenReturn(Optional.of(region));
 
+        when(placeRepository.existsByRegion_RegionId(1L))
+                .thenReturn(false);
+
         adminRegionService.deleteRegion(1L);
 
         verify(regionRepository).delete(region);
     }
-
+    
     @Test
-    @DisplayName("지역 삭제 실패")
-    void 지역_삭제_실패() {
+    @DisplayName("지역 삭제 실패 지역 없음")
+    void 지역_삭제_실패_지역없음() {
         when(regionRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
         assertThrows(RegionNotFoundException.class,
+                () -> adminRegionService.deleteRegion(1L));
+
+        verify(regionRepository, never()).delete(any());
+    }
+    
+    @Test
+    @DisplayName("지역 삭제 실패 참조하는 장소 존재")
+    void 지역_삭제_실패_장소존재() {
+        Region region = Region.create("Korea", "Seoul",
+                new BigDecimal("1"), new BigDecimal("1"));
+
+        when(regionRepository.findById(1L))
+                .thenReturn(Optional.of(region));
+
+        when(placeRepository.existsByRegion_RegionId(1L))
+                .thenReturn(true);
+
+        assertThrows(RegionInUseException.class,
                 () -> adminRegionService.deleteRegion(1L));
 
         verify(regionRepository, never()).delete(any());

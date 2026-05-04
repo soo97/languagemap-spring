@@ -10,29 +10,29 @@ import lombok.NoArgsConstructor;
 
 public class AdminCreatePlaceDto {
 
-	@Builder
 	@Getter
-	@NoArgsConstructor
+	@Builder // 테스트 코드용
 	@AllArgsConstructor
+	@NoArgsConstructor
     @Schema(name = "AdminCreatePlaceRequest", description = "장소 생성 요청 DTO")
     public static class RequestCreate {
 
         @Schema(
                 description = "구글 Place 고유 ID",
                 example = "ChIJN1t_tDeuEmsRUsoyG83frY4"
-        )
+        		)
         private String googlePlaceId;
 
         @Schema(
                 description = "장소 이름",
                 example = "스타벅스 강남점"
-        )
+        		)
         private String placeName;
 
         @Schema(
                 description = "장소 주소",
                 example = "서울특별시 강남구 테헤란로 123"
-        )
+        		)
         private String placeAddress;
 
         @Schema(

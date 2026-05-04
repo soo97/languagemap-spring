@@ -48,5 +48,18 @@ public class SessionMessage {
 	public void prePersist() {
 		this.createdAt = LocalDateTime.now();
 	}
+	
+	public static SessionMessage create(LearningSession session,
+								 String message,
+								 SessionMessageRole role
+								 ) 
+	{
+		SessionMessage sessionMessage = new SessionMessage();
+		sessionMessage.session = session;
+		sessionMessage.message = message;
+		sessionMessage.role = role;
+		
+		return sessionMessage;
+	}
 
 }
