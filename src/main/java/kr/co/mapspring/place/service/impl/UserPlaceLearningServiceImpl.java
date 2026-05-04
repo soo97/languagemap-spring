@@ -102,7 +102,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 		
 		missionSession.start();
 		
-		// FastApi 연결 전 임시 데이터
+		// TODO: FastApi 연결 전 임시 데이터 연결 후 로직 변경
 		String aiMessage = "Hello! Let's start this mission.";
 		
 		SessionMessage aiStartMessage = SessionMessage.create(
