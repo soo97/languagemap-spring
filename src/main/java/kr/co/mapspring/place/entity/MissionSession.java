@@ -61,5 +61,10 @@ public class MissionSession {
     	this.startedAt = LocalDateTime.now();
     	this.missionStatus = MissionSessionStatus.RUNNING;
     }
+    
+    public void complete() {
+        this.missionStatus = MissionSessionStatus.COMPLETED;
+        this.completedAt = LocalDateTime.now();
+    }
 }
 

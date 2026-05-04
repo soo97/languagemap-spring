@@ -61,7 +61,7 @@ public class AdminCreatePlaceDto {
 
         @Schema(
                 description = "지역 ID",
-                example = "10"
+                example = "1"
         )
         private Long regionId;
     }
