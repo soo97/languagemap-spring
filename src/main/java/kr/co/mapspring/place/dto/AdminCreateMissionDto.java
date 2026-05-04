@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 public class AdminCreateMissionDto {
 	
-	@Builder
 	@Getter
-	@NoArgsConstructor
+	@Builder // 테스트 코드용
 	@AllArgsConstructor
+	@NoArgsConstructor
 	@Schema(name = "AdminCreateMissionRequest", description = "미션 생성 요청 DTO")
 	public static class RequestCreate {
 		@Schema(

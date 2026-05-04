@@ -50,6 +50,9 @@ public class SecurityConfig {
             "/api/auth/oauth/tokens",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+
+            // WebSocket 허용
+            "/ws/**",
             
 
             // Google OAuth 시작 경로: /oauth2/authorization/google
@@ -105,19 +108,19 @@ public class SecurityConfig {
                          * 추후 전체 API 경로 정리 후 authenticated()로 전환합니다.
                          */
                         .anyRequest().permitAll()
-                )
+//                )
 
                 /*
                  * Google OAuth2 Login 설정입니다.
                  * Google 사용자 정보 조회 후 OauthUserService에서
                  * User 생성/조회 및 oauth_account 연결을 처리합니다.
                  */
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oauthUserService)
-                        )
-                        .successHandler(oauthLoginSuccessHandler)
-                        .failureHandler(oauthLoginFailureHandler)
+//                .oauth2Login(oauth2 -> oauth2
+//                        .userInfoEndpoint(userInfo -> userInfo
+//                                .userService(oauthUserService)
+//                        )
+//                        .successHandler(oauthLoginSuccessHandler)
+//                        .failureHandler(oauthLoginFailureHandler)
                 )
 
                 // JWT 인증 필터 등록
@@ -140,9 +143,12 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
                 "http://localhost:80",
                 "http://localhost"
         ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

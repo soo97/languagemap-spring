@@ -2,13 +2,10 @@ package kr.co.mapspring.place.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,37 +30,29 @@ public class Scenario {
 	@Column(name = "complete_exp", nullable = false)
 	private Integer completeExp;
 	
-	@Column(name = "level", nullable = false, length = 10)
-	@Enumerated(EnumType.STRING)
-	private ScenarioLevel level;
-	
 	@Column(name = "category", nullable = false, length = 50)
 	private String category;
 	
 	public static Scenario create(String prompt,
 							  String scenarioDescription,
 							  Integer completeExp,
-							  ScenarioLevel level,
 							  String category)
 	{
 		Scenario scenario = new Scenario();
 		scenario.prompt = prompt;
 		scenario.scenarioDescription = scenarioDescription;
 		scenario.completeExp = completeExp;
-		scenario.level = level;
 		scenario.category = category;
 		return scenario;
 	}
 	
 	public void update(String prompt,
 			   String scenarioDescription,
-			   ScenarioLevel level,
 			   String category,
 			   Integer completeExp) {
 	
 		this.prompt = prompt;
 		this.scenarioDescription = scenarioDescription;
-		this.level = level;
 		this.category = category;
 		this.completeExp = completeExp;
 }
@@ -82,7 +71,6 @@ public class Scenario {
 								  String prompt, 
 								  String scenarioDescription, 
 								  int completeExp, 
-								  ScenarioLevel level,
 								  String category
 								  ) {
 		Scenario scenario = new Scenario();
@@ -90,7 +78,6 @@ public class Scenario {
 		scenario.prompt = prompt;
 		scenario.scenarioDescription =  scenarioDescription;
 		scenario.completeExp = completeExp;
-		scenario.level = level;
 		scenario.category = category;
 		
 		return scenario;

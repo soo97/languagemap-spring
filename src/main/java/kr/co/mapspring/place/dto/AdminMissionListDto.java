@@ -15,13 +15,13 @@ public class AdminMissionListDto {
         @Schema(
                 description = "미션 제목",
                 example = "카페 주문 미션"
-        )
+                )
         private String missionTitle;
 
         @Schema(
                 description = "미션 설명",
                 example = "커피를 주문하는 상황을 연습한다."
-        )
+        		)
         private String missionDescription;
 
         public static AdminMissionListDto.ResponseList from(Mission mission) {

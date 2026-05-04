@@ -72,7 +72,7 @@ public class AdminMissionServiceImpl implements AdminMissionService{
 
 		List<AdminMissionListDto.ResponseList> responseList = missionList.stream()
 				.map(AdminMissionListDto.ResponseList::from)
-				.collect(Collectors.toList());
+				.toList();
 		
 		return responseList;
 	}

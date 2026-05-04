@@ -29,7 +29,6 @@ import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
-import kr.co.mapspring.place.enums.ScenarioLevel;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +54,7 @@ class StartCoachingSessionServiceTest {
                         .build();
 
         LearningSession learningSession = createLearningSession(10L);
-        CoachingSession coachingSession = CoachingSession.start(learningSession);
+        CoachingSession coachingSession = CoachingSession.start(learningSession, "WORD");
         setField(coachingSession, "coachingSessionId", 100L);
 
         when(learningSessionRepository.findBySessionId(10L))
@@ -76,6 +75,8 @@ class StartCoachingSessionServiceTest {
         assertEquals(100L, response.getCoachingSessionId());
         assertEquals(10L, response.getSessionId());
         assertEquals(CoachingSessionStatus.RUNNING.name(), response.getCoachingSessionStatus());
+        assertEquals("WORD", response.getSelectedOption());
+        assertEquals(0, response.getCurrentTurnOrder());
         verify(coachingSessionRepository).save(any(CoachingSession.class));
     }
 
@@ -90,7 +91,7 @@ class StartCoachingSessionServiceTest {
                         .build();
 
         LearningSession learningSession = createLearningSession(10L);
-        CoachingSession existingCoachingSession = CoachingSession.start(learningSession);
+        CoachingSession existingCoachingSession = CoachingSession.start(learningSession, "GRAMMAR");
         setField(existingCoachingSession, "coachingSessionId", 200L);
 
         when(learningSessionRepository.findBySessionId(10L))
@@ -108,6 +109,8 @@ class StartCoachingSessionServiceTest {
         assertEquals(200L, response.getCoachingSessionId());
         assertEquals(10L, response.getSessionId());
         assertEquals(CoachingSessionStatus.RUNNING.name(), response.getCoachingSessionStatus());
+        assertEquals("GRAMMAR", response.getSelectedOption());
+        assertEquals(0, response.getCurrentTurnOrder());
         verify(coachingSessionRepository, never()).save(any(CoachingSession.class));
     }
 
@@ -142,7 +145,6 @@ class StartCoachingSessionServiceTest {
         setField(scenario, "prompt", "coffee ordering prompt");
         setField(scenario, "scenarioDescription", "Cafe ordering");
         setField(scenario, "completeExp", 10);
-        setField(scenario, "level", ScenarioLevel.BEGINNER);
         setField(scenario, "category", "CAFE");
 
         Place place = createInstance(Place.class);

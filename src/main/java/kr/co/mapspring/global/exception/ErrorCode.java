@@ -46,7 +46,8 @@ public enum ErrorCode {
     FRIENDSHIP_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 친구 관계가 존재합니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 관계를 찾을 수 없습니다."),
     FRIEND_REQUEST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 친구 요청을 처리할 권한이 없습니다."),
-  
+    DUPLICATE_USER_REPORT(HttpStatus.CONFLICT, "이미 해당 사용자를 신고했습니다."),
+
     // Learning Goal
     GOAL_MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습 목표입니다."),
     GOAL_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 선택한 학습 목표입니다."),
@@ -59,9 +60,17 @@ public enum ErrorCode {
     ASSISTANT_MESSAGE_REQUIRED(HttpStatus.BAD_REQUEST, "AI 메시지는 비어 있을 수 없습니다."),
     COACHING_MESSAGE_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "메시지 역할은 필수입니다."),
     INVALID_COACHING_MESSAGE(HttpStatus.BAD_REQUEST, "유효하지 않은 코칭 메시지입니다."),
+    COACHING_SCRIPT_TURN_NOT_FOUND(HttpStatus.NOT_FOUND, "코칭 스크립트 턴을 찾을 수 없습니다."),
+    COACHING_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "코칭 메시지를 찾을 수 없습니다."),
+    COACHING_PRONUNCIATION_RESULT_NOT_FOUND(HttpStatus.NOT_FOUND, "발음 평가 결과를 찾을 수 없습니다."),
+    COACHING_FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "코칭 최종 피드백을 찾을 수 없습니다."),
+    COACHING_FEEDBACK_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 코칭 최종 피드백이 존재합니다."),
 
     // Ranking
     RANKING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자의 랭킹이 존재하지 않습니다."),
+
+    // Community Chat
+    INVALID_CHAT_MESSAGE(HttpStatus.BAD_REQUEST, "채팅 메시지는 비어 있거나 200자를 초과할 수 없습니다."),
 	
 	// Admin Mission
 	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
@@ -76,7 +85,12 @@ public enum ErrorCode {
 	
 	// Admin Scenario
 	SCENARIO_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시나리오입니다."),
-	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다.");
+	SCENARIO_IN_USE(HttpStatus.CONFLICT, "참조 중인 시나리오입니다."),
+	
+	// User MissionSession
+	MISSION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션 세션입니다.");
+	// FastAPI 연동
+	FASTAPI_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FastAPI 연동 중 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String message;
