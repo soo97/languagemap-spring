@@ -1,74 +1,131 @@
 package kr.co.mapspring.common.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import jakarta.mail.internet.MimeMessage;
+import kr.co.mapspring.global.exception.common.EmailSendException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
 
-import kr.co.mapspring.global.exception.common.EmailSendException;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CommonService 테스트")
-public class Commonservicetest {
+class CommonServiceTest {
 
     @Mock
-    private EmailService emailService; // JavaMailSender 대신 EmailService를 Mock으로 변경
+    private JavaMailSender mailSender;
 
     @InjectMocks
-    private CommonService commonservice; // 이제 가짜 emailService가 여기에 주입됩니다
+    private CommonService commonService;
 
-    // ── sendCounselAnswerNotification 테스트 ────────────────────────────
+    private MimeMessage mimeMessage;
+
+    @BeforeEach
+    void setUp() {
+        mimeMessage = mock(MimeMessage.class);
+        given(mailSender.createMimeMessage()).willReturn(mimeMessage);
+    }
+
+    // ── sendEmail ────────────────────────────
 
     @Test
-    @DisplayName("문의 답변 알림 이메일 발송 성공")
-    void sendCounselAnswerNotification_성공() {
-        // when
-        commonservice.sendCounselAnswerNotification("test@test.com", "로그인 후 홈 이동 여부");
+    @DisplayName("이메일 발송에 성공한다")
+    void 이메일_발송에_성공한다() {
 
-        // then - 이제 mailSender가 아니라 emailService의 메서드가 호출됐는지 확인합니다
-        verify(emailService, times(1)).sendEmail(eq("test@test.com"), anyString(), anyString());
+        String to = "test@example.com";
+        String subject = "테스트 제목";
+        String content = "<p>테스트 내용</p>";
+
+        assertDoesNotThrow(() -> commonService.sendEmail(to, subject, content));
+
+        verify(mailSender).send(mimeMessage);
     }
 
     @Test
-    @DisplayName("문의 답변 알림 - 이메일 주소 null 시 예외 발생")
-    void sendCounselAnswerNotification_이메일_null_예외() {
-        // given - emailService.sendEmail에 null이 들어오면 예외를 던지도록 설정
-        doThrow(new EmailSendException()).when(emailService).sendEmail(eq(null), anyString(), anyString());
+    @DisplayName("이메일 발송 실패 시 EmailSendException이 발생한다")
+    void 이메일_발송_실패시_EmailSendException이_발생한다() {
 
-        // when & then
+        String to = "test@example.com";
+        String subject = "테스트 제목";
+        String content = "<p>테스트 내용</p>";
+
+        doThrow(new MailSendException("발송 실패"))
+                .when(mailSender).send(any(MimeMessage.class));
+
         assertThrows(EmailSendException.class,
-                () -> commonservice.sendCounselAnswerNotification(null, "로그인 후 홈 이동 여부"));
+                () -> commonService.sendEmail(to, subject, content));
+
+        verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // ── sendNoticeNotification 테스트 ────────────────────────────
+    // ── sendCounselAnswerNotification ────────────────────────────
 
     @Test
-    @DisplayName("공지사항 알림 이메일 발송 성공")
-    void sendNoticeNotification_성공() {
-        // when
-        commonservice.sendNoticeNotification("test@test.com", "4월 업데이트 안내");
+    @DisplayName("문의 답변 알림 이메일 발송에 성공한다")
+    void 문의_답변_알림_이메일_발송에_성공한다() {
 
-        // then
-        verify(emailService, times(1)).sendEmail(eq("test@test.com"), anyString(), anyString());
+        String to = "test@example.com";
+        String counselName = "학습 기록 문의";
+
+        assertDoesNotThrow(() ->
+                commonService.sendCounselAnswerNotification(to, counselName));
+
+        verify(mailSender).send(mimeMessage);
     }
 
     @Test
-    @DisplayName("공지사항 알림 - 이메일 주소 null 시 예외 발생")
-    void sendNoticeNotification_이메일_null_예외() {
-        // given
-        doThrow(new EmailSendException()).when(emailService).sendEmail(eq(null), anyString(), anyString());
+    @DisplayName("문의 답변 알림 이메일 발송 실패 시 EmailSendException이 발생한다")
+    void 문의_답변_알림_이메일_발송_실패시_EmailSendException이_발생한다() {
 
-        // when & then
+        String to = "test@example.com";
+        String counselName = "학습 기록 문의";
+
+        doThrow(new MailSendException("발송 실패"))
+                .when(mailSender).send(any(MimeMessage.class));
+
         assertThrows(EmailSendException.class,
-                () -> commonservice.sendNoticeNotification(null, "4월 업데이트 안내"));
+                () -> commonService.sendCounselAnswerNotification(to, counselName));
+
+        verify(mailSender).send(any(MimeMessage.class));
+    }
+
+    // ── sendNoticeNotification ────────────────────────────
+
+    @Test
+    @DisplayName("공지사항 알림 이메일 발송에 성공한다")
+    void 공지사항_알림_이메일_발송에_성공한다() {
+
+        String to = "test@example.com";
+        String noticeTitle = "8월 점검 공지";
+
+        assertDoesNotThrow(() ->
+                commonService.sendNoticeNotification(to, noticeTitle));
+
+        verify(mailSender).send(mimeMessage);
+    }
+
+    @Test
+    @DisplayName("공지사항 알림 이메일 발송 실패 시 EmailSendException이 발생한다")
+    void 공지사항_알림_이메일_발송_실패시_EmailSendException이_발생한다() {
+
+        String to = "test@example.com";
+        String noticeTitle = "8월 점검 공지";
+
+        doThrow(new MailSendException("발송 실패"))
+                .when(mailSender).send(any(MimeMessage.class));
+
+        assertThrows(EmailSendException.class,
+                () -> commonService.sendNoticeNotification(to, noticeTitle));
+
+        verify(mailSender).send(any(MimeMessage.class));
     }
 }

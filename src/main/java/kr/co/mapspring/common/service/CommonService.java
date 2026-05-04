@@ -1,14 +1,43 @@
 package kr.co.mapspring.common.service;
 
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import kr.co.mapspring.global.exception.common.EmailSendException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommonService {
 
 	
-	private final EmailService emailService;
+	private final JavaMailSender mailSender;
+	 
+    /**
+     * 이메일 발송 공통 메서드
+     * "emailTaskExecutor" - AsyncConfig에서 설정한 ThreadPoolTaskExecutor 사용
+     */
+    @Async("emailTaskExecutor")
+    public void sendEmail(String to, String subject, String content) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+ 
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true); // true = HTML 형식
+ 
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new EmailSendException();
+        }
+    }
  
     // ── 문의 답변 등록 알림 ────────────────────────────
  
@@ -31,7 +60,7 @@ public class CommonService {
                 </div>
                 """.formatted(counselName);
  
-        emailService.sendEmail(to, subject, content);
+        sendEmail(to, subject, content);
     }
  
     // ── 공지사항 등록 알림 ────────────────────────────
@@ -54,6 +83,6 @@ public class CommonService {
                 </div>
                 """.formatted(noticeTitle);
  
-        emailService.sendEmail(to, subject, content);
+        sendEmail(to, subject, content);
     }
 }
