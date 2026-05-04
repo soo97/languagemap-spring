@@ -38,16 +38,6 @@ public class FastApiOpenAiClient {
         );
     }
 
-    public FastApiOpenAiDto.ResponseRecommendSentences recommendSentences(
-            FastApiOpenAiDto.RequestRecommendSentences request
-    ) {
-        return postJson(
-                "/api/ai-coaching/recommend-sentences",
-                request,
-                FastApiOpenAiDto.ResponseRecommendSentences.class
-        );
-    }
-
     public FastApiOpenAiDto.ResponseYoutubeKeywords createYoutubeKeywords(
             FastApiOpenAiDto.RequestYoutubeKeywords request
     ) {
@@ -80,7 +70,6 @@ public class FastApiOpenAiClient {
         if (fastApiBaseUrl.endsWith("/")) {
             return fastApiBaseUrl.substring(0, fastApiBaseUrl.length() - 1) + path;
         }
-
         return fastApiBaseUrl + path;
     }
 }
