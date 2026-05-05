@@ -108,19 +108,19 @@ public class SecurityConfig {
                          * 추후 전체 API 경로 정리 후 authenticated()로 전환합니다.
                          */
                         .anyRequest().permitAll()
-//                )
+                )
 
                 /*
                  * Google OAuth2 Login 설정입니다.
                  * Google 사용자 정보 조회 후 OauthUserService에서
                  * User 생성/조회 및 oauth_account 연결을 처리합니다.
                  */
-//                .oauth2Login(oauth2 -> oauth2
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(oauthUserService)
-//                        )
-//                        .successHandler(oauthLoginSuccessHandler)
-//                        .failureHandler(oauthLoginFailureHandler)
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oauthUserService)
+                        )
+                        .successHandler(oauthLoginSuccessHandler)
+                        .failureHandler(oauthLoginFailureHandler)
                 )
 
                 // JWT 인증 필터 등록

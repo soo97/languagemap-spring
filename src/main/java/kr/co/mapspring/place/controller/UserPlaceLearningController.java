@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.place.controller.Docs.UserPlaceLearningControllerDocs;
+import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
@@ -26,7 +28,8 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	
 	@Override
 	@GetMapping("/{placeId}")
-	public ResponseEntity<ApiResponseDTO<UserReadPlaceDto.ResponseRead>> clickPlace(@PathVariable("placeId") Long placeId) {
+	public ResponseEntity<ApiResponseDTO<UserReadPlaceDto.ResponseRead>> clickPlace(
+			@PathVariable("placeId") Long placeId) {
 		
 		UserReadPlaceDto.ResponseRead response = userPlaceLearningService.markerDetail(placeId);
 		
@@ -46,12 +49,37 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	
 	@Override
 	@PatchMapping("learningSessions/{sessionId}/missions/{missionId}")
-	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(@PathVariable("sessionId") Long sessionId, 
-														     @PathVariable("missionId") Long missionId) {
+	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
+			@PathVariable("sessionId") Long sessionId,
+			@PathVariable("missionId") Long missionId) {
 		
 		UserMissionStartDto.ResponseMissionStart response = userPlaceLearningService.missionStart(sessionId, missionId);
 		
 		return ResponseEntity.ok(ApiResponseDTO.success("미션 시작 완료", response));
 	}
+	
+	@Override
+	@PostMapping("/chat")
+	public ResponseEntity<ApiResponseDTO<UserChatDto.ResponseChat>> chat(@RequestBody UserChatDto.RequestChat request) {
+	    
+		UserChatDto.ResponseChat response = userPlaceLearningService.chat(request);
+
+	    return ResponseEntity.ok(ApiResponseDTO.success("AI 채팅 응답 성공", response));
+	}
+	
+	@PatchMapping("/learning-sessions/{sessionId}/missions/{missionId}/complete")
+	public ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
+	        @PathVariable("sessionId") Long sessionId,
+	        @PathVariable("missionId") Long missionId
+	) {
+
+	    UserMissionCompleteDto.ResponseComplete response = userPlaceLearningService.missionComplete(sessionId, missionId);
+
+	    return ResponseEntity.ok(
+	            ApiResponseDTO.success("미션 완료 처리 성공", response)
+	    );
+	}
+	
+	
 
 }

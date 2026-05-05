@@ -30,5 +30,15 @@ public class SessionEvaluation {
 	
 	@Column(name = "evaluation", nullable = false, columnDefinition = "TEXT")
 	private String evaluation;
+	
+	public static SessionEvaluation create (LearningSession learningSession, 
+											String evaluation) 
+	{
+		SessionEvaluation sessionEvaluation = new SessionEvaluation();
+		sessionEvaluation.session = learningSession;
+		sessionEvaluation.evaluation = evaluation;
+		
+		return sessionEvaluation;
+	}
 
 }

@@ -69,11 +69,19 @@ VALUES
 (3, 2, 2, 'COMPLETED', NOW() - INTERVAL 20 MINUTE, NOW()),
 (4, 3, 3, 'COMPLETED', NOW() - INTERVAL 15 MINUTE, NOW());
 
--- SESSION MESSAGE
-INSERT INTO session_message (session_id, message, role, created_at)
+-- MISSION SESSION
+INSERT INTO mission_session (mission_session_id, session_id, mission_id, mission_status, started_at, completed_at)
 VALUES
-(1, 'Good morning. What would you like to order?', 'ASSISTANT', NOW()),
-(1, 'I would like a latte with almond milk, please.', 'USER', NOW());
+(1, 1, 1, 'COMPLETED', NOW() - INTERVAL 10 MINUTE, NOW()),
+(2, 2, 2, 'COMPLETED', NOW() - INTERVAL 25 MINUTE, NOW()),
+(3, 3, 2, 'COMPLETED', NOW() - INTERVAL 20 MINUTE, NOW()),
+(4, 4, 4, 'COMPLETED', NOW() - INTERVAL 15 MINUTE, NOW());
+
+-- SESSION MESSAGE
+INSERT INTO session_message (session_id, mission_session_id, message, role, created_at)
+VALUES
+(1, 1, 'Good morning. What would you like to order?', 'ASSISTANT', NOW()),
+(1, 1, 'I would like a latte with almond milk, please.', 'USER', NOW());
 
 -- SESSION EVALUATION
 INSERT INTO session_evaluation (session_id, evaluation)
