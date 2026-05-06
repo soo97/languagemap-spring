@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -33,7 +32,7 @@ public class SignUpDto {
         @Schema(description = "사용자 이름", example = "홍길동")
         private String name;
     	
-    	@NotNull(message = "생년월일은 필수입니다.")
+    	@NotBlank(message = "생년월일은 필수입니다.")
     	@Past(message = "미래 날짜는 생년월일로 사용할 수 없습니다.") 
     	@DateTimeFormat(pattern = "yyyy-MM-dd")
         @Schema(description = "생년월일", example = "2000-01-01")

@@ -1,4 +1,7 @@
 -- USER
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 INSERT INTO user (user_id, email, name, birth_date, address, phone_number, password_hash, status, role, last_login_at, created_at, updated_at)
 VALUES
 (1, 'ai-coaching-test@naver.com', 'AI코칭테스트', '2000-01-01', '서울시 강남구', '010-1111-2222', 'test', 'ACTIVE', 'USER', NULL, NOW(), NOW()),
@@ -135,3 +138,5 @@ VALUES
 (1, 1, 2, '욕설 및 부적절한 행동', 'PENDING', NOW(), NULL, NULL),
 (2, 2, 3, '스팸성 메시지', 'RESOLVED', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 1 DAY, '처리 완료'),
 (3, 3, 1, '신고 사유 부족', 'REJECTED', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY, '반려');
+
+SET FOREIGN_KEY_CHECKS = 1;
