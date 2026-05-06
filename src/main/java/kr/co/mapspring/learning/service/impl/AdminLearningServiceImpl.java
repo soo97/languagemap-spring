@@ -83,6 +83,6 @@ public class AdminLearningServiceImpl implements AdminLearningService {
         GoalMaster goalMaster = goalMasterRepository.findById(goalMasterId)
                 .orElseThrow(GoalMasterNotFoundException::new);
 
-        goalMaster.updateActive(false);
+        goalMasterRepository.delete(goalMaster);
     }
 }
