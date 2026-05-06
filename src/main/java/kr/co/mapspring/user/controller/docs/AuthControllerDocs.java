@@ -117,7 +117,7 @@ public interface AuthControllerDocs {
                                     value = """
                                             {
                                               "email": "user2@test.com",
-                                              "password": "1234!"
+                                              "password": "1234"
                                             }
                                             """
                             )
