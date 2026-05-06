@@ -9,6 +9,7 @@ import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.jwt.JwtTokenProvider;
+import kr.co.mapspring.user.controller.docs.UserControllerDocs;
 import kr.co.mapspring.user.dto.UserDto;
 import kr.co.mapspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserControllerDocs{
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -25,6 +26,7 @@ public class UserController {
      * 현재 로그인한 유저의 정보를 조회합니다.
      * Authorization 헤더의 accessToken에서 userId를 추출합니다.
      */
+    @Override
     @GetMapping("/me")
     public ApiResponseDTO<UserDto.ResponseMe> getMe(HttpServletRequest request) {
 
