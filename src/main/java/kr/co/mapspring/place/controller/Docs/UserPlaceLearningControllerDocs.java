@@ -40,7 +40,7 @@ public interface UserPlaceLearningControllerDocs {
 	                    description = "장소를 찾을 수 없음"
 	            )
 	    })
-	ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMaker();
+	ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker();
 
     @Operation(
     		summary = "마커 상세 정보 조회",

@@ -31,7 +31,7 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	
 	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMaker() {
+	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker() {
 		
 		List<UserPlaceListDto.ResponseList> response = userPlaceLearningService.readPlaceMarkers();
 

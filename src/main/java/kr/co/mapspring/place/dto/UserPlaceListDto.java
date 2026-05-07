@@ -11,7 +11,7 @@ public class UserPlaceListDto {
 
 	@Getter
 	@Builder
-	 @Schema(name = "UserPlaceListResponse", description = "마커 조회용 DTO")
+	@Schema(name = "UserPlaceListResponse", description = "마커 조회용 DTO")
 	public static class ResponseList {
 		@Schema(
 				description = "장소 ID", 
