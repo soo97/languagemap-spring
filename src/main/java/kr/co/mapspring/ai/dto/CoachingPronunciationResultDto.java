@@ -81,6 +81,9 @@ public class CoachingPronunciationResultDto {
         @Schema(description = "기준 문장이 저장된 스크립트 턴 ID", example = "1")
         private Long coachingScriptTurnId;
 
+        @Schema(description = "사용자가 말해야 하는 기준 문장", example = "I would like a latte with almond milk, please.")
+        private String expectedText;
+
         @Schema(description = "음성 인식 결과 문장", example = "I would like a latte with almond milk please.")
         private String recognizedText;
 
@@ -110,6 +113,7 @@ public class CoachingPronunciationResultDto {
                     .pronunciationResultId(result.getPronunciationResultId())
                     .coachingMessageId(result.getCoachingMessage().getCoachingMessageId())
                     .coachingScriptTurnId(result.getCoachingScriptTurn().getCoachingScriptTurnId())
+                    .expectedText(result.getCoachingScriptTurn().getExpectedText())
                     .recognizedText(result.getRecognizedText())
                     .accuracyScore(result.getAccuracyScore())
                     .fluencyScore(result.getFluencyScore())
