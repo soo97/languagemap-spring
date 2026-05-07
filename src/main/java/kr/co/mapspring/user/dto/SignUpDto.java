@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -32,7 +33,7 @@ public class SignUpDto {
         @Schema(description = "사용자 이름", example = "홍길동")
         private String name;
     	
-    	@NotBlank(message = "생년월일은 필수입니다.")
+    	@NotNull(message = "생년월일은 필수입니다.")
     	@Past(message = "미래 날짜는 생년월일로 사용할 수 없습니다.") 
     	@DateTimeFormat(pattern = "yyyy-MM-dd")
         @Schema(description = "생년월일", example = "2000-01-01")
@@ -63,7 +64,7 @@ public class SignUpDto {
     	@Size(min = 7, message = "비밀번호는 최소 7자리 이상이어야 합니다.")
     	@Pattern(
     	    regexp = "^[A-Z](?=.*[!@#$%^&*(),.?\":{}|<>]).*$",
-    	    message = "첫 글자는 대문자여야 하며, 특수문자를 최소 1개 포함해야 합니다."
+    	    message = "비밀번호의 첫 글자는 대문자여야 하며, 특수문자를 최소 1개 포함해야 합니다."
     	)
     	@Schema(description = "비밀번호", example = "1234")
         private String password;
