@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 
@@ -115,4 +117,37 @@ public interface UserPlaceLearningControllerDocs {
             )
     })
     ResponseEntity<ApiResponseDTO<UserChatDto.ResponseChat>> chat(@RequestBody UserChatDto.RequestChat request);
+    
+    @Operation(
+            summary = "미션 완료",
+            description = """
+                    현재 진행 중인 미션을 완료 처리합니다.
+                    
+                    - MissionSession 상태를 COMPLETED로 변경합니다.
+                    - 모든 MissionSession이 COMPLETED 상태가 되면 LearningSession도 COMPLETED로 변경합니다.
+                    - 마지막 미션 완료 시 세션 평가(SessionEvaluation)를 생성합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "미션 완료 처리 성공",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = UserMissionCompleteDto.ResponseComplete.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 미션 세션을 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiResponseDTO.class)
+                    )
+            )
+    })
+    ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("missionId") Long missionId
+    );
 }

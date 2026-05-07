@@ -8,15 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.mapspring.global.exception.place.MissionSessionNotFoundException;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
+import kr.co.mapspring.place.client.FastApiClient;
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.fastapi.FastApiChatDto;
+import kr.co.mapspring.place.dto.fastapi.FastApiEvaluationDto;
+import kr.co.mapspring.place.dto.fastapi.FastApiMissionStartDto;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.MissionSession;
 import kr.co.mapspring.place.entity.Place;
+import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.entity.SessionEvaluation;
 import kr.co.mapspring.place.entity.SessionMessage;
 import kr.co.mapspring.place.enums.MissionSessionStatus;
@@ -43,6 +48,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	private final MissionSessionRepository missionSessionRepository;
 	private final SessionMessageRepository sessionMessageRepository;
 	private final SessionEvaluationRepository sessionEvaluationRepository;
+	private final FastApiClient fastApiClient;
 	
 	// 마커 상세 정보 조회
 	@Override
@@ -93,33 +99,45 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	}
 	
 	// 미션 시작
-	@Override
-	@Transactional
-	public UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId) {
-		
-		MissionSession missionSession = missionSessionRepository.findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId)
-				.orElseThrow(MissionSessionNotFoundException::new);
-		
-		missionSession.start();
-		
-		// FastApi 연결 전 임시 데이터
-		String aiMessage = "Hello! Let's start this mission.";
-		
-		SessionMessage aiStartMessage = SessionMessage.create(
-		        missionSession.getLearningSession(),
-		        missionSession,
-		        aiMessage,
-		        SessionMessageRole.ASSISTANT
-		);
-		
-		sessionMessageRepository.save(aiStartMessage);
-		
-		Mission mission = missionSession.getMission();
-		
-		UserMissionStartDto.ResponseMissionStart response = UserMissionStartDto.ResponseMissionStart.of(mission, missionSession, aiMessage);
-		
-		return response;
-	}
+		@Override
+		@Transactional
+		public UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId) {
+			
+			MissionSession missionSession = missionSessionRepository.findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId)
+					.orElseThrow(MissionSessionNotFoundException::new);
+			
+			missionSession.start();
+			
+			LearningSession learningSession = missionSession.getLearningSession();
+		    Mission mission = missionSession.getMission();
+		    Scenario scenario = learningSession.getPlace().getScenario();
+
+		    FastApiMissionStartDto.RequestMissionStart fastApiRequest =
+		            FastApiMissionStartDto.RequestMissionStart.builder()
+		                    .level(learningSession.getLevel().name())
+		                    .scenarioPrompt(scenario.getPrompt())
+		                    .scenarioCategory(scenario.getCategory())
+		                    .missionTitle(mission.getMissionTitle())
+		                    .missionDescription(mission.getMissionDescription())
+		                    .build();
+
+		    FastApiMissionStartDto.ResponseMissionStart fastApiResponse = fastApiClient.missionStart(fastApiRequest);
+		     
+			String aiMessage = fastApiResponse.getAiMessage();
+			
+			SessionMessage aiStartMessage = SessionMessage.create(
+			        missionSession.getLearningSession(),
+			        missionSession,
+			        aiMessage,
+			        SessionMessageRole.ASSISTANT
+			);
+			
+			sessionMessageRepository.save(aiStartMessage);
+			
+			UserMissionStartDto.ResponseMissionStart response = UserMissionStartDto.ResponseMissionStart.of(mission, missionSession, aiMessage);
+			
+			return response;
+		}
 	
 	// 채팅 기능
 	@Override
@@ -142,20 +160,33 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 
 	    sessionMessageRepository.save(userMessage);
 	    
-//      TODO: FastApi 연결 후 모델에 보내 줄 데이터
-//	    List<SessionMessage> messageHistory =
-//	            sessionMessageRepository
-//	                    .findByMissionSession_MissionSessionIdOrderByCreatedAtAsc(
-//	                            runningMissionSession.getMissionSessionId()
-//	                    );
-//
-//	    Mission mission = runningMissionSession.getMission();
-//	    Scenario scenario = runningMissionSession.getLearningSession()
-//	            .getPlace()
-//	            .getScenario();
+	    List<SessionMessage> messageHistory =
+	            sessionMessageRepository
+	                    .findByMissionSession_MissionSessionIdOrderByCreatedAtAsc(
+	                            runningMissionSession.getMissionSessionId()
+	                    );
 
-	    // TODO: FastApi 연결 전 임시 데이터
-	    String aiMessage = "임시 AI 응답입니다.";
+	    Mission mission = runningMissionSession.getMission();
+	    Scenario scenario = runningMissionSession.getLearningSession().getPlace().getScenario();
+
+	    FastApiChatDto.RequestChat fastApiRequest = FastApiChatDto.RequestChat.builder()
+	                    .userMessage(request.getMessage())
+	                    .messages(messageHistory.stream()
+	                    		.map(message -> FastApiChatDto.MessageHistory.builder()
+	                    				.role(message.getRole().name().toLowerCase())
+	                    				.message(message.getMessage())
+	                    				.build())
+	                                    .toList())
+	                    .missionTitle(mission.getMissionTitle())
+	                    .missionDescription(mission.getMissionDescription())
+	                    .scenarioPrompt(scenario.getPrompt())
+	                    .scenarioCategory(scenario.getCategory())
+	                    .build();
+
+	    // 5. FastAPI 호출
+	    FastApiChatDto.ResponseChat fastApiResponse = fastApiClient.chat(fastApiRequest);
+	    
+	    String aiMessage = fastApiResponse.getAiMessage();
 
 	    SessionMessage assistantMessage = SessionMessage.create(
 	            runningMissionSession.getLearningSession(),
@@ -193,10 +224,32 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	    String evaluation = null;
 
 	    if (!hasNotCompletedMission) {
+	    	
 	        learningSession.complete();
 	        
-	        // TODO: FastApi 연결 전 임시 데이터
-	        evaluation = "평가 임시 데이터 입니다.";
+	        List<SessionMessage> messageHistory = sessionMessageRepository.findBySession_SessionIdOrderByCreatedAtAsc(sessionId);
+
+	        Scenario scenario = learningSession
+	                .getPlace()
+	                .getScenario();
+
+	        FastApiEvaluationDto.RequestEvaluation fastApiRequest = FastApiEvaluationDto.RequestEvaluation.builder()
+	                        .scenarioPrompt(scenario.getPrompt())
+	                        .scenarioCategory(scenario.getCategory())
+	                        .messages(messageHistory.stream()
+	                                .map(message -> FastApiEvaluationDto.MessageHistory.builder()
+	                                		.role(message.getRole().name().toLowerCase())
+	                                		.message(message.getMessage())
+	                                		.build())
+	                                        .toList())
+	                        .build();
+
+	        FastApiEvaluationDto.ResponseEvaluation fastApiResponse =
+	                fastApiClient.evaluate(fastApiRequest);
+
+	        evaluation = fastApiResponse.getEvaluation();
+	        
+	      
 	        
 	        SessionEvaluation sessionEvaluation =
 	                SessionEvaluation.create(learningSession, evaluation);

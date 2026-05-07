@@ -11,4 +11,5 @@ public interface SessionMessageRepository extends JpaRepository<SessionMessage, 
     List<SessionMessage> findBySession_SessionIdOrderByCreatedAtAsc(Long sessionId);
     
     List<SessionMessage> findByMissionSession_MissionSessionIdOrderByCreatedAtAsc(Long missionSessionId);
+    
 }
