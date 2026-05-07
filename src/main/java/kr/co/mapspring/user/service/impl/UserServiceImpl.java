@@ -20,12 +20,33 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserDto.ResponseMe getMe(Long userId) {
         /*
-         * userId로 유저를 조회합니다.
-         * 존재하지 않으면 USER_NOT_FOUND 예외를 발생시킵니다.
+         * userId로 유저를 조회합니다..
          */
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return UserDto.ResponseMe.from(user);
     }
+    
+    
+    @Override
+    @Transactional
+    public UserDto.ResponseProfileSetup setupProfile(Long userId, UserDto.RequestProfileSetup request) {
+        /*
+         * userId로 유저를 조회합니다.
+         */
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        /*
+         * 소셜 유저 프로필을 저장합니다.
+         */
+        user.setupProfile(
+                request.getBirthDate(),
+                request.getAddress(),
+                request.getPhoneNumber()
+        );
+
+        return UserDto.ResponseProfileSetup.from(user);
+    }    
 }

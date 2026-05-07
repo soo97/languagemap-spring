@@ -74,4 +74,49 @@ class UserServiceTest {
         ReflectionTestUtils.setField(user, "userId", 1L);
         return user;
     }
+    
+    @Test
+    @DisplayName("유효한 userId면 프로필 입력에 성공한다")
+    void setupProfileSuccess() {
+        // given
+        User user = createUser();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+
+        UserDto.RequestProfileSetup request = new UserDto.RequestProfileSetup(
+                LocalDate.of(2000, 1, 1),
+                "서울시 강남구",
+                "010-9999-8888"
+        );
+
+        // when
+        UserDto.ResponseProfileSetup response = userService.setupProfile(1L, request);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getUserId()).isEqualTo(1L);
+        assertThat(response.getEmail()).isEqualTo("test@naver.com");
+        assertThat(response.getName()).isEqualTo("홍길동");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 userId면 프로필 입력 시 예외가 발생한다")
+    void setupProfileFailWhenUserNotFound() {
+        // given
+        given(userRepository.findById(999L))
+                .willReturn(Optional.empty());
+
+        UserDto.RequestProfileSetup request = new UserDto.RequestProfileSetup(
+                LocalDate.of(2000, 1, 1),
+                "서울시 강남구",
+                "010-9999-8888"
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.setupProfile(999L, request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 이메일입니다.");
+    }
+    
+    
 }
