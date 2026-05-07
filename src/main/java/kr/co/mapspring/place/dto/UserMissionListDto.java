@@ -11,6 +11,12 @@ public class UserMissionListDto {
     @Getter
     @Schema(name = "UserMissionListResponse", description = "미션 리스트 조회 DTO")
     public static class ResponseList {
+    	
+    	@Schema(
+				description = "미션 ID", 
+				example = "1"
+				)
+    	private Long missionId;
 
         @Schema(
                 description = "미션 제목",
@@ -26,6 +32,7 @@ public class UserMissionListDto {
 
         public static ResponseList from(Mission mission) {
             return ResponseList.builder()
+            		.missionId(mission.getMissionId())
                     .missionTitle(mission.getMissionTitle())
                     .missionDescription(mission.getMissionDescription())
                     .build();
