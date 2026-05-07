@@ -1,5 +1,7 @@
 package kr.co.mapspring.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -50,8 +52,10 @@ public class LoginDto {
         @Schema(description = "JWT Access Token", example = "eyJhbGciOiJIUzI1NiJ9...")
         private String accessToken;
         
-        @Schema(description = "JWT Refresh Token", example = "eyJhbGciOiJIUzI1NiJ9...")
+        @JsonIgnore
+        @Schema(hidden = true)
         private String refreshToken;
+
 
         // Entity -> Response DTO 변환
         // 기존 테스트나 다른 코드에서 사용 할 수 있으므로 유지

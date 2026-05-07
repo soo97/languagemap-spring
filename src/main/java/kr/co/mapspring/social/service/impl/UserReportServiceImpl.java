@@ -1,9 +1,6 @@
 package kr.co.mapspring.social.service.impl;
 
-import kr.co.mapspring.global.exception.social.InvalidReportReasonException;
-import kr.co.mapspring.global.exception.social.InvalidReportUserException;
-import kr.co.mapspring.global.exception.social.SelfReportNotAllowedException;
-import kr.co.mapspring.global.exception.social.UserNotFoundForSocialException;
+import kr.co.mapspring.global.exception.social.*;
 import kr.co.mapspring.social.entity.UserReport;
 import kr.co.mapspring.social.repository.UserReportRepository;
 import kr.co.mapspring.social.service.UserReportService;
@@ -37,6 +34,10 @@ public class UserReportServiceImpl implements UserReportService {
 
         if (reason == null || reason.isBlank()) {
             throw new InvalidReportReasonException();
+        }
+
+        if (userReportRepository.existsByReporter_UserIdAndReportedUser_UserId(reporterId, reportedUserId)) {
+            throw new DuplicateUserReportException();
         }
 
         User reporter = userRepository.findById(reporterId)

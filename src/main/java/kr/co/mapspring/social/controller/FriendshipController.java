@@ -27,9 +27,10 @@ public class FriendshipController implements FriendshipControllerDocs {
 
     @Override
     @PostMapping("/requests")
-    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequest(@RequestBody FriendshipDto.RequestSendFriendRequest request) {
+    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequest(@RequestParam("loginUserId") Long loginUserId,
+                                                                  @RequestBody FriendshipDto.RequestSendFriendRequest request) {
         friendshipService.sendFriendRequest(
-                request.getRequesterId(),
+                loginUserId,
                 request.getAddresseeId()
         );
 
@@ -38,10 +39,11 @@ public class FriendshipController implements FriendshipControllerDocs {
 
     @Override
     @PostMapping("/requests/email")
-    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequestByEmail(@RequestBody FriendshipDto.RequestSendFriendRequestByEmail request) {
+    public ResponseEntity<ApiResponseDTO<Void>> sendFriendRequestByEmail(@RequestParam("loginUserId") Long loginUserId,
+                                                                         @RequestBody FriendshipDto.RequestSendFriendRequestByEmail request) {
 
         friendshipService.sendFriendRequestByEmail(
-                request.getRequesterId(),
+                loginUserId,
                 request.getEmail()
         );
 
@@ -51,10 +53,10 @@ public class FriendshipController implements FriendshipControllerDocs {
     @Override
     @PatchMapping("/requests/{friendshipId}/accept")
     public ResponseEntity<ApiResponseDTO<Void>> acceptFriendRequest(@PathVariable("friendshipId") Long friendshipId,
-                                                                    @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
+                                                                    @RequestParam("loginUserId") Long loginUserId) {
         friendshipService.acceptFriendRequest(
                 friendshipId,
-                request.getUserId()
+                loginUserId
         );
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구 요청을 수락했습니다.", null));
@@ -63,10 +65,10 @@ public class FriendshipController implements FriendshipControllerDocs {
     @Override
     @PatchMapping("/requests/{friendshipId}/reject")
     public ResponseEntity<ApiResponseDTO<Void>> rejectFriendRequest(@PathVariable("friendshipId") Long friendshipId,
-                                                                    @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
+                                                                    @RequestParam("loginUserId") Long loginUserId) {
         friendshipService.rejectFriendRequest(
                 friendshipId,
-                request.getUserId()
+                loginUserId
         );
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구 요청을 거절했습니다.", null));
@@ -85,10 +87,10 @@ public class FriendshipController implements FriendshipControllerDocs {
     @Override
     @DeleteMapping("/{friendshipId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteFriend(@PathVariable("friendshipId") Long friendshipId,
-                                                             @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
+                                                             @RequestParam("loginUserId") Long loginUserId) {
         friendshipService.deleteFriend(
                 friendshipId,
-                request.getUserId()
+                loginUserId
         );
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구를 삭제했습니다.", null));
@@ -117,8 +119,10 @@ public class FriendshipController implements FriendshipControllerDocs {
     @Override
     @PatchMapping("/{friendshipId}/block")
     public ResponseEntity<ApiResponseDTO<Void>> blockFriend(@PathVariable("friendshipId") Long friendshipId,
-                                                            @RequestBody FriendshipDto.RequestHandleFriendRequest request) {
-        friendshipService.blockFriend(friendshipId, request.getUserId());
+                                                            @RequestParam("loginUserId") Long loginUserId) {
+        friendshipService.blockFriend(
+                friendshipId,
+                loginUserId);
 
         return ResponseEntity.ok(ApiResponseDTO.success("친구를 차단했습니다.", null));
     }

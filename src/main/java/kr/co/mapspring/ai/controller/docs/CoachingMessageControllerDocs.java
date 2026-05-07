@@ -50,5 +50,5 @@ public interface CoachingMessageControllerDocs {
                     content = @Content(schema = @Schema(implementation = ApiResponseDTO.class)))})
     ResponseEntity<ApiResponseDTO<CoachingMessageDto.ResponseGetCoachingMessages>> getCoachingMessages(
             @Parameter(description = "AI 코칭 세션 ID", example = "100")
-            @PathVariable ("CoachingSessionId") Long coachingSessionId);
+            @PathVariable ("coachingSessionId") Long coachingSessionId);
 }

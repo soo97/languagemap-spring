@@ -10,4 +10,6 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
     List<UserReport> findByReporter_UserId(Long userId);
 
     List<UserReport> findAllByOrderByCreatedAtDesc();
+
+    boolean existsByReporter_UserIdAndReportedUser_UserId(Long reporterId, Long reportedUserId);
 }

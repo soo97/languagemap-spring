@@ -20,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Table(name = "user")
 @Entity
 @Getter
@@ -163,4 +164,12 @@ public class User {
     public void deactivate() {
         this.status = UserStatus.INACTIVE;
     }
+    
+    // 소셜 유저 프로필 저장
+    public void setupProfile(LocalDate birthDate, String address, String phoneNumber) {
+        this.birthDate = birthDate;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+    
 }

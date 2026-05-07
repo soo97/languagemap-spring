@@ -26,7 +26,7 @@ public class OauthLoginCodeService {
     private final ObjectMapper objectMapper;
 
     /*
-     * OAuth 로그인 성공 후 accessToken/refreshToken을 직접 URL에 싣지 않기 위해
+     * OAuth 로그인 성공 후 실제 토큰을 URL에 직접 싣지 않기 위해
      * Redis에 1회용 code 기준으로 임시 저장합니다.
      */
     public String saveToken(
@@ -37,14 +37,14 @@ public class OauthLoginCodeService {
         String code = UUID.randomUUID().toString();
         String key = OAUTH_LOGIN_CODE_PREFIX + code;
 
-        OauthLoginDto.ResponseToken response = OauthLoginDto.ResponseToken.of(
+        OauthLoginDto.TokenResult tokenResult = OauthLoginDto.TokenResult.of(
                 accessToken,
                 refreshToken,
                 profileRequired
         );
 
         try {
-            String value = objectMapper.writeValueAsString(response);
+            String value = objectMapper.writeValueAsString(tokenResult);
 
             stringRedisTemplate.opsForValue()
                     .set(key, value, OAUTH_LOGIN_CODE_TTL);
@@ -60,18 +60,21 @@ public class OauthLoginCodeService {
      * 조회 후 즉시 삭제하여 1회용으로만 사용되게 합니다.
      */
     @Transactional
-    public OauthLoginDto.ResponseToken consumeToken(String code) {
+    public OauthLoginDto.TokenResult consumeToken(String code) {
         String key = OAUTH_LOGIN_CODE_PREFIX + code;
         String value = stringRedisTemplate.opsForValue().get(key);
 
         if (value == null) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "유효하지 않거나 만료된 OAuth 로그인 코드입니다.");
+        	 throw new CustomException(ErrorCode.INVALID_OAUTH_LOGIN_CODE);
         }
 
+        /*
+         * code 재사용을 막기 위해 조회 직후 삭제합니다.
+         */
         stringRedisTemplate.delete(key);
 
         try {
-            return objectMapper.readValue(value, OauthLoginDto.ResponseToken.class);
+            return objectMapper.readValue(value, OauthLoginDto.TokenResult.class);
         } catch (JsonProcessingException e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }

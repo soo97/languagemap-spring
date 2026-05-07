@@ -15,9 +15,6 @@ public class FriendshipDto {
     @Schema(description = "친구 요청 전송 요청 DTO")
     public static class RequestSendFriendRequest {
 
-        @Schema(description = "요청 보내는 사용자 ID", example = "1")
-        private Long requesterId;
-
         @Schema(description = "요청 받는 사용자 ID", example = "2")
         private Long addresseeId;
     }
@@ -27,20 +24,8 @@ public class FriendshipDto {
     @Schema(description = "이메일 친구 요청 DTO")
     public static class RequestSendFriendRequestByEmail {
 
-        @Schema(description = "요청 보내는 사용자 ID", example = "1")
-        private Long requesterId;
-
         @Schema(description = "요청 받는 사용자 이메일", example = "user2@test.com")
         private String email;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @Schema(description = "친구 요청 처리 요청 DTO")
-    public static class RequestHandleFriendRequest {
-
-        @Schema(description = "사용자 ID", example = "2")
-        private Long userId;
     }
 
     @Getter

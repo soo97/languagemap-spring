@@ -26,34 +26,54 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CoachingSession {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "coaching_session_id", nullable = false, updatable = false)
-	private Long coachingSessionId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coaching_session_id", nullable = false, updatable = false)
+    private Long coachingSessionId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "session_id", nullable = false)
-	private LearningSession learningSession;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id", nullable = false)
+    private LearningSession learningSession;
 
-	@Column(name = "coaching_session_status", nullable = false, length = 20)
-	@Enumerated(EnumType.STRING)
-	private CoachingSessionStatus coachingSessionStatus = CoachingSessionStatus.READY;
+    @Column(name = "coaching_session_status", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private CoachingSessionStatus coachingSessionStatus = CoachingSessionStatus.READY;
 
-	@Column(name = "final_feedback", columnDefinition = "TEXT")
-	private String finalFeedback;
+    @Column(name = "selected_option", length = 30)
+    private String selectedOption;
 
-	@Column(name = "studied_at", nullable = false, updatable = false)
-	private LocalDateTime studiedAt;
+    @Column(name = "current_turn_order", nullable = false)
+    private Integer currentTurnOrder = 0;
 
-	@PrePersist
-	public void prePersist() {
-		this.studiedAt = LocalDateTime.now();
-	}
-	
-	public static CoachingSession start(LearningSession learningSession) {
-	    CoachingSession coachingSession = new CoachingSession();
-	    coachingSession.learningSession = learningSession;
-	    coachingSession.coachingSessionStatus = CoachingSessionStatus.RUNNING;
-	    return coachingSession;
-	}
+    @Column(name = "studied_at", nullable = false, updatable = false)
+    private LocalDateTime studiedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.studiedAt = LocalDateTime.now();
+    }
+
+    public static CoachingSession start(
+            LearningSession learningSession,
+            String selectedOption
+    ) {
+        CoachingSession coachingSession = new CoachingSession();
+        coachingSession.learningSession = learningSession;
+        coachingSession.coachingSessionStatus = CoachingSessionStatus.RUNNING;
+        coachingSession.selectedOption = selectedOption;
+        coachingSession.currentTurnOrder = 0;
+        return coachingSession;
+    }
+
+    public void updateSelectedOption(String selectedOption) {
+        this.selectedOption = selectedOption;
+    }
+
+    public void updateCurrentTurnOrder(Integer currentTurnOrder) {
+        this.currentTurnOrder = currentTurnOrder;
+    }
+
+    public void complete() {
+        this.coachingSessionStatus = CoachingSessionStatus.COMPLETED;
+    }
 }

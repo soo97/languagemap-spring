@@ -1,9 +1,18 @@
 -- USER
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 INSERT INTO user (user_id, email, name, birth_date, address, phone_number, password_hash, status, role, last_login_at, created_at, updated_at)
 VALUES
-(1, 'ai-coaching-test@naver.com', 'AI코칭테스트', '2000-01-01', '서울시 강남구', '010-1111-2222', 'test', 'ACTIVE', 'USER', NULL, NOW(), NOW()),
-(2, 'user2@test.com', '이민수', '2001-02-02', '서울시 마포구', '010-2222-2222', 'test-password', 'ACTIVE', 'USER', NULL, NOW(), NOW()),
-(3, 'user3@test.com', '박지은', '2002-03-03', '서울시 서초구', '010-3333-3333', 'test-password', 'ACTIVE', 'USER', NULL, NOW(), NOW());
+(1, 'ai-coaching-test@naver.com', 'AI코칭테스트', '2000-01-01', '서울시 강남구', '010-1111-2222', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW()),
+(2, 'user2@test.com', '이민수', '2001-02-02', '서울시 마포구', '010-2222-2222', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW()),
+(3, 'user3@test.com', '박지은', '2002-03-03', '서울시 서초구', '010-3333-3333', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW());
 
 -- TERMS
 INSERT INTO terms (title, content, version, term_type, is_required, is_active, created_at, updated_at)
@@ -143,3 +152,5 @@ VALUES
 (1, 1, 2, '욕설 및 부적절한 행동', 'PENDING', NOW(), NULL, NULL),
 (2, 2, 3, '스팸성 메시지', 'RESOLVED', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 1 DAY, '처리 완료'),
 (3, 3, 1, '신고 사유 부족', 'REJECTED', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY, '반려');
+
+SET FOREIGN_KEY_CHECKS = 1;
