@@ -17,4 +17,11 @@ public interface CoachingScriptTurnRepository extends JpaRepository<CoachingScri
     List<CoachingScriptTurn> findByCoachingSession_CoachingSessionIdOrderByTurnOrderAsc(
             Long coachingSessionId
     );
+
+    boolean existsByCoachingSession_CoachingSessionId(Long coachingSessionId);
+    
+    boolean existsByCoachingSession_CoachingSessionIdAndTurnOrder(
+            Long coachingSessionId,
+            Integer turnOrder
+    );
 }
