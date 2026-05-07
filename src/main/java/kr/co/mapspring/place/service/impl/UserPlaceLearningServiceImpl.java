@@ -13,6 +13,7 @@ import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiChatDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiEvaluationDto;
@@ -49,6 +50,18 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	private final SessionMessageRepository sessionMessageRepository;
 	private final SessionEvaluationRepository sessionEvaluationRepository;
 	private final FastApiClient fastApiClient;
+	
+	// 마커 조회
+	@Override
+	@Transactional(readOnly = true)
+	public List<UserPlaceListDto.ResponseList> readPlaceMarkers() {
+
+		List<Place> places = placeRepository.findAll();
+		
+		return places.stream()
+				.map(UserPlaceListDto.ResponseList::from)
+				.toList();
+	}
 	
 	// 마커 상세 정보 조회
 	@Override
@@ -93,7 +106,6 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 				.toList();
 		
 		missionSessionRepository.saveAll(missionSessionList);
-		
 		
 		return UserCreateLearningSessionDto.ResponseCreate.from(saveLearningSession);
 	}

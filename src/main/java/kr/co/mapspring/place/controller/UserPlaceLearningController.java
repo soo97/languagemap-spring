@@ -1,5 +1,7 @@
 package kr.co.mapspring.place.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,6 +17,7 @@ import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,15 @@ import lombok.RequiredArgsConstructor;
 public class UserPlaceLearningController implements UserPlaceLearningControllerDocs {
 	
 	private final UserPlaceLearningService userPlaceLearningService;
+	
+	@Override
+	@GetMapping
+	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker() {
+		
+		List<UserPlaceListDto.ResponseList> response = userPlaceLearningService.readPlaceMarkers();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("장소 마커 목록 조회 성공", response));
+	}
 	
 	@Override
 	@GetMapping("/{placeId}")
@@ -48,7 +60,7 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	}
 	
 	@Override
-	@PatchMapping("learningSessions/{sessionId}/missions/{missionId}")
+	@PatchMapping("/learningSessions/{sessionId}/missions/{missionId}")
 	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
 			@PathVariable("sessionId") Long sessionId,
 			@PathVariable("missionId") Long missionId) {
@@ -67,7 +79,7 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	    return ResponseEntity.ok(ApiResponseDTO.success("AI 채팅 응답 성공", response));
 	}
 	
-	@PatchMapping("/learning-sessions/{sessionId}/missions/{missionId}/complete")
+	@PatchMapping("/missionSessions/{sessionId}/missions/{missionId}")
 	public ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
 	        @PathVariable("sessionId") Long sessionId,
 	        @PathVariable("missionId") Long missionId

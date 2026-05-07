@@ -1,12 +1,23 @@
 package kr.co.mapspring.place.service;
 
+import java.util.List;
+
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 
 public interface UserPlaceLearningService {
+	
+	
+	/**
+	 * 사용자에게 보여줄 마커 조회
+	 * 
+	 * @return 마커의 장소 id, 위도, 경도
+	 */
+	List<UserPlaceListDto.ResponseList> readPlaceMarkers();
 	
 	/**
 	 * 사용자 마커 클릭시 상세 정보, 미션 정보 조회

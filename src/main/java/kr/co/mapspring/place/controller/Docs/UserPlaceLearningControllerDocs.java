@@ -1,11 +1,12 @@
 package kr.co.mapspring.place.controller.Docs;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,10 +17,30 @@ import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 
 @Tag(name = "User Place Learning", description = "사용자 장소 학습 및 세션 API")
 public interface UserPlaceLearningControllerDocs {
+	
+	 @Operation(
+	    		summary = "마커 리스트 조회",
+	    		description = "placeId, 위도, 경도를 기준으로 구글 맵에 마커를 찍는다."
+	    		)
+	    @ApiResponses({
+	            @ApiResponse(
+	            		responseCode = "200",
+	            		description = "조회 성공",
+	            		content = @Content(
+	                            schema = @Schema(implementation = UserReadPlaceDto.ResponseRead.class)
+	                    )
+	),
+	            @ApiResponse(
+	                    responseCode = "404",
+	                    description = "장소를 찾을 수 없음"
+	            )
+	    })
+	ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker();
 
     @Operation(
     		summary = "마커 상세 정보 조회",
@@ -32,11 +53,7 @@ public interface UserPlaceLearningControllerDocs {
             		content = @Content(
                             schema = @Schema(implementation = UserReadPlaceDto.ResponseRead.class)
                     )
-),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "장소를 찾을 수 없음"
-            )
+)
     })
     ResponseEntity<ApiResponseDTO<UserReadPlaceDto.ResponseRead>> clickPlace(
             @PathVariable Long placeId
