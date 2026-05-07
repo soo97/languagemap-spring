@@ -116,8 +116,8 @@ public interface AuthControllerDocs {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "email": "test@naver.com",
-                                              "password": "Password123!"
+                                              "email": "user2@test.com",
+                                              "password": "1234"
                                             }
                                             """
                             )
