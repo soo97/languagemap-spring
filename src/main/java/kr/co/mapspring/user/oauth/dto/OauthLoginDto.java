@@ -49,6 +49,7 @@ public class OauthLoginDto {
             return ResponseToken.builder()
                     .accessToken(tokenResult.getAccessToken())
                     .profileRequired(tokenResult.getProfileRequired())
+                    .isNewUser(tokenResult.getIsNewUser())
                     .build();
         }
     }
