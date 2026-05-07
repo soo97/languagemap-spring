@@ -57,11 +57,13 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
          * 실제 토큰은 URL에 싣지 않고 Redis에 1회용 code로 임시 저장합니다.
          */
         boolean profileRequired = user.isProfileIncomplete();
+        boolean isNewUser = principal.isNewUser();
 
         String code = oauthLoginCodeService.saveToken(
                 accessToken,
                 refreshToken,
-                profileRequired
+                profileRequired,
+                isNewUser
         );
 
         /*
