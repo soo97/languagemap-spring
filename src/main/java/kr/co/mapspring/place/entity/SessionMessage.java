@@ -34,6 +34,10 @@ public class SessionMessage {
 	@JoinColumn(name = "session_id", nullable = false)
 	private LearningSession session;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "mission_session_id", nullable = false)
+	private MissionSession missionSession;
+	
 	@Column(name = "message", nullable = false, columnDefinition = "TEXT")
 	private String message;
 	
@@ -50,12 +54,14 @@ public class SessionMessage {
 	}
 	
 	public static SessionMessage create(LearningSession session,
-								 String message,
-								 SessionMessageRole role
+										MissionSession runningMissionSession,
+										String message,
+										SessionMessageRole role
 								 ) 
 	{
 		SessionMessage sessionMessage = new SessionMessage();
 		sessionMessage.session = session;
+		sessionMessage.missionSession = runningMissionSession;
 		sessionMessage.message = message;
 		sessionMessage.role = role;
 		

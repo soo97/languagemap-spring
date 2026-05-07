@@ -25,6 +25,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import kr.co.mapspring.global.exception.place.MissionSessionNotFoundException;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
+import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
@@ -36,6 +37,7 @@ import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.entity.SessionMessage;
 import kr.co.mapspring.place.enums.LearningSessionLevel;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
+import kr.co.mapspring.place.enums.MissionSessionStatus;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.MissionRepository;
 import kr.co.mapspring.place.repository.MissionSessionRepository;
@@ -220,7 +222,7 @@ class UserPlaceLearningServiceTest {
     }
     
     @Test
-    @DisplayName("학습 세션 생성 실패 - 존재하지 않는 사용자")
+    @DisplayName("학습 세션 생성 실패 존재하지 않는 사용자")
     void 학습_세션_생성_실패_존재하지_않는_사용자() {
         // given
         Long placeId = 1L;
@@ -291,7 +293,7 @@ class UserPlaceLearningServiceTest {
     }
     
     @Test
-    @DisplayName("미션 시작 실패 - 존재하지 않는 미션 세션")
+    @DisplayName("미션 시작 실패 존재하지 않는 미션 세션")
     void 미션_시작_실패_존재하지_않는_미션_세션() {
         // given
         Long sessionId = 999L;
@@ -306,6 +308,74 @@ class UserPlaceLearningServiceTest {
 
         verify(missionSessionRepository, times(1))
                 .findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId);
+
+        verify(sessionMessageRepository, never())
+                .save(any(SessionMessage.class));
+    }
+    
+    @Test
+    @DisplayName("채팅 성공 사용자 메시지와 AI 메시지를 저장하고 응답을 반환한다")
+    void 채팅_성공() {
+        // given
+        Long sessionId = 1L;
+
+        UserChatDto.RequestChat request = UserChatDto.RequestChat.builder()
+                .sessionId(sessionId)
+                .message("How can I get to exit 3?")
+                .build();
+        
+        LearningSession learningSession = mock(LearningSession.class);
+        MissionSession runningMissionSession = mock(MissionSession.class);
+
+        when(runningMissionSession.getLearningSession())
+                .thenReturn(learningSession);
+
+        when(missionSessionRepository.findByLearningSession_SessionIdAndMissionStatus(
+                sessionId,
+                MissionSessionStatus.RUNNING
+        )).thenReturn(Optional.of(runningMissionSession));
+
+        // when
+        UserChatDto.ResponseChat response =
+                userPlaceLearningService.chat(request);
+
+        // then
+        assertEquals("임시 AI 응답입니다.", response.getAiMessage());
+
+        verify(missionSessionRepository, times(1))
+                .findByLearningSession_SessionIdAndMissionStatus(
+                        sessionId,
+                        MissionSessionStatus.RUNNING
+                );
+
+        verify(sessionMessageRepository, times(2))
+                .save(any(SessionMessage.class));
+    }
+
+    @Test
+    @DisplayName("채팅 실패 진행 중인 미션 세션이 없음")
+    void 채팅_실패_진행중인_미션_세션_없음() {
+        // given
+        Long sessionId = 999L;
+
+        UserChatDto.RequestChat request = new UserChatDto.RequestChat();
+        org.springframework.test.util.ReflectionTestUtils.setField(request, "sessionId", sessionId);
+        org.springframework.test.util.ReflectionTestUtils.setField(request, "message", "Hello");
+
+        when(missionSessionRepository.findByLearningSession_SessionIdAndMissionStatus(
+                sessionId,
+                MissionSessionStatus.RUNNING
+        )).thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(MissionSessionNotFoundException.class,
+                () -> userPlaceLearningService.chat(request));
+
+        verify(missionSessionRepository, times(1))
+                .findByLearningSession_SessionIdAndMissionStatus(
+                        sessionId,
+                        MissionSessionStatus.RUNNING
+                );
 
         verify(sessionMessageRepository, never())
                 .save(any(SessionMessage.class));
