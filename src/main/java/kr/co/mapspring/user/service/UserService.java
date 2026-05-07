@@ -8,4 +8,7 @@ public interface UserService {
      * 현재 로그인한 유저의 정보를 조회합니다.
      */
     UserDto.ResponseMe getMe(Long userId);
+    
+    
+    UserDto.ResponseProfileSetup setupProfile(Long userId, UserDto.RequestProfileSetup request);
 }

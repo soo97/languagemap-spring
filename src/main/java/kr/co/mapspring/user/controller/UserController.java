@@ -1,10 +1,13 @@
 package kr.co.mapspring.user.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
@@ -43,4 +46,30 @@ public class UserController implements UserControllerDocs{
 
     	    return ApiResponseDTO.success("내 정보 조회 성공", response);
     	}
+    
+    
+    @Override
+    @PatchMapping("/profile")
+    public ApiResponseDTO<UserDto.ResponseProfileSetup> setupProfile(
+            HttpServletRequest request,
+            @Valid @RequestBody UserDto.RequestProfileSetup profileRequest
+    ) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+        Long userId = jwtTokenProvider.getUserId(token);
+
+        UserDto.ResponseProfileSetup response = userService.setupProfile(userId, profileRequest);
+
+        return ApiResponseDTO.success("프로필 입력 성공", response);
+    }
+    
+    
+    
+    
+    
 }
