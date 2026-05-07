@@ -36,6 +36,8 @@ import kr.co.mapspring.ai.service.StartCoachingSessionService;
 import kr.co.mapspring.global.exception.ai.CoachingScriptTurnNotFoundException;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 import lombok.RequiredArgsConstructor;
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -335,6 +337,7 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                 continue;
             }
 
+            String assistantText = assistant.getMessage();
             String expectedText = null;
 
             if (i + 1 < messages.size()
@@ -342,11 +345,19 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                 expectedText = messages.get(i + 1).getMessage();
             }
 
+            if (assistantText == null || assistantText.isBlank()
+                    || expectedText == null || expectedText.isBlank()) {
+                throw new CustomException(
+                        ErrorCode.BAD_REQUEST,
+                        "AI 코칭 스크립트 생성 결과가 올바르지 않습니다."
+                );
+            }
+
             turns.add(
                     CoachingScriptTurnDto.RequestSaveCoachingScriptTurn.builder()
                             .coachingSessionId(coachingSessionId)
                             .turnOrder(turnOrder)
-                            .assistantText(assistant.getMessage())
+                            .assistantText(assistantText)
                             .expectedText(expectedText)
                             .build()
             );
