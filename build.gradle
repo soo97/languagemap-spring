@@ -18,6 +18,12 @@ repositories {
     mavenCentral()     
 }
 
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -53,10 +59,7 @@ dependencies {
 	// 포트원 결제 연동
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 	
-	repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-}
+	
 	
 }
 
