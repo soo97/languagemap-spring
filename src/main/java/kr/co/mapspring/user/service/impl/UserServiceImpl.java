@@ -37,6 +37,14 @@ public class UserServiceImpl implements UserService {
          */
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        
+        /*
+         * 전화번호 중복 체크
+         */
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new CustomException(ErrorCode.PHONE_NUMBER_ALREADY_EXISTS);
+        }
+        
 
         /*
          * 소셜 유저 프로필을 저장합니다.
