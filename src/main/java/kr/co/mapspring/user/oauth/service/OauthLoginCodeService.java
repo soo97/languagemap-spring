@@ -32,7 +32,8 @@ public class OauthLoginCodeService {
     public String saveToken(
             String accessToken,
             String refreshToken,
-            boolean profileRequired
+            boolean profileRequired,
+            boolean isNewUser
     ) {
         String code = UUID.randomUUID().toString();
         String key = OAUTH_LOGIN_CODE_PREFIX + code;
@@ -40,7 +41,8 @@ public class OauthLoginCodeService {
         OauthLoginDto.TokenResult tokenResult = OauthLoginDto.TokenResult.of(
                 accessToken,
                 refreshToken,
-                profileRequired
+                profileRequired,
+                isNewUser
         );
 
         try {

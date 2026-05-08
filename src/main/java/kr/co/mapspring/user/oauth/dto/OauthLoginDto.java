@@ -42,11 +42,14 @@ public class OauthLoginDto {
          */
         @Schema(description = "추가 프로필 입력 필요 여부", example = "true")
         private Boolean profileRequired;
+        
+        private Boolean isNewUser;
 
         public static ResponseToken from(TokenResult tokenResult) {
             return ResponseToken.builder()
                     .accessToken(tokenResult.getAccessToken())
                     .profileRequired(tokenResult.getProfileRequired())
+                    .isNewUser(tokenResult.getIsNewUser())
                     .build();
         }
     }
@@ -66,16 +69,20 @@ public class OauthLoginDto {
         private String refreshToken;
 
         private Boolean profileRequired;
+        
+        private Boolean isNewUser;
 
         public static TokenResult of(
                 String accessToken,
                 String refreshToken,
-                Boolean profileRequired
+                Boolean profileRequired,
+                Boolean isNewUser
         ) {
             return TokenResult.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .profileRequired(profileRequired)
+                    .isNewUser(isNewUser)
                     .build();
         }
     }

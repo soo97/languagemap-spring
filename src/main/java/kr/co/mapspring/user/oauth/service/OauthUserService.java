@@ -89,7 +89,9 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         /*
          * 7. Spring Security 인증 객체에 들어갈 DTO를 반환합니다.
          */
-        return new OauthUserDto(user, attributes, authorities);
+        
+        boolean isNewUser = user.isProfileIncomplete();
+        return new OauthUserDto(user, attributes, authorities,isNewUser);
     }
 
     private User findOrCreateUser(

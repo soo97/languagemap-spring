@@ -36,6 +36,8 @@ public class OauthController implements OauthControllerDocs {
         // ✅ 로그 추가 - 여기서 null이면 쿠키 내용이 비어서 세팅 안 됨
         System.out.println("=== OAuth Cookie Debug ===");
         System.out.println("refreshToken = " + tokenResult.getRefreshToken());
+        System.out.println("isNewUser = " + tokenResult.getIsNewUser());  // ✅ 추가
+        System.out.println("profileRequired = " + tokenResult.getProfileRequired());  // ✅ 추가
 
         String cookieValue = authCookieService
                 .createRefreshTokenCookie(tokenResult.getRefreshToken())
