@@ -41,9 +41,9 @@ public class SignUpDto {
     	
     	@NotBlank(message = "주소를 입력해주세요.")
     	@Pattern(
-    	    regexp = "^[가-힣\\s]+$", 
-    	    message = "주소는 한글과 띄어쓰기만 입력 가능합니다."
-    	)
+    		    regexp = "^[가-힣a-zA-Z0-9\\s\\-\\.\\,]+$",
+    		    message = "주소 형식이 올바르지 않습니다."
+    		)
         @Schema(description = "주소", example = "서울시 강남구")
         private String address;
     	
@@ -64,7 +64,7 @@ public class SignUpDto {
     	@Size(min = 7, message = "비밀번호는 최소 7자리 이상이어야 합니다.")
     	@Pattern(
     	    regexp = "^[A-Z](?=.*[!@#$%^&*(),.?\":{}|<>]).*$",
-    	    message = "첫 글자는 대문자여야 하며, 특수문자를 최소 1개 포함해야 합니다."
+    	    message = "비밀번호의 첫 글자는 대문자여야 하며, 특수문자를 최소 1개 포함해야 합니다."
     	)
     	@Schema(description = "비밀번호", example = "1234")
         private String password;

@@ -29,10 +29,10 @@ public class AdminRankingServiceTest {
     void 관리자는_전체_랭킹을_조회한다() {
 
         RankingDto.ResponseRanking ranking1 =
-                RankingDto.ResponseRanking.from(1, 1L, 300L);
+                RankingDto.ResponseRanking.from(1, 1L, "AI코칭테스트", 300L);
 
         RankingDto.ResponseRanking ranking2 =
-                RankingDto.ResponseRanking.from(2, 2L, 250L);
+                RankingDto.ResponseRanking.from(2, 2L, "이민수", 250L);
 
         given(rankingService.getRankings())
                 .willReturn(List.of(ranking1, ranking2));
@@ -45,6 +45,7 @@ public class AdminRankingServiceTest {
         assertEquals(2, result.size());
         assertEquals(1, result.get(0).getRank());
         assertEquals(1L, result.get(0).getUserId());
+        assertEquals("AI코칭테스트", result.get(0).getUserName());
         assertEquals(300L, result.get(0).getTotalScore());
     }
 
@@ -53,10 +54,10 @@ public class AdminRankingServiceTest {
     void 관리자는_주간_랭킹을_조회한다() {
 
         RankingDto.ResponseRanking ranking1 =
-                RankingDto.ResponseRanking.from(1, 1L, 150L);
+                RankingDto.ResponseRanking.from(1, 1L, "AI코칭테스트", 150L);
 
         RankingDto.ResponseRanking ranking2 =
-                RankingDto.ResponseRanking.from(2, 2L, 100L);
+                RankingDto.ResponseRanking.from(2, 2L, "이민수", 100L);
 
         given(rankingService.getWeeklyRankings())
                 .willReturn(List.of(ranking1, ranking2));
@@ -68,6 +69,7 @@ public class AdminRankingServiceTest {
 
         assertEquals(2, result.size());
         assertEquals(1, result.get(0).getRank());
+        assertEquals("AI코칭테스트", result.get(0).getUserName());
         assertEquals(150L, result.get(0).getTotalScore());
     }
 

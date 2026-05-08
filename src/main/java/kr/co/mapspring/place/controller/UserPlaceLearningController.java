@@ -1,5 +1,7 @@
 package kr.co.mapspring.place.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.place.controller.Docs.UserPlaceLearningControllerDocs;
+import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +30,18 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	private final UserPlaceLearningService userPlaceLearningService;
 	
 	@Override
+	@GetMapping
+	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker() {
+		
+		List<UserPlaceListDto.ResponseList> response = userPlaceLearningService.readPlaceMarkers();
+
+        return ResponseEntity.ok(ApiResponseDTO.success("장소 마커 목록 조회 성공", response));
+	}
+	
+	@Override
 	@GetMapping("/{placeId}")
-	public ResponseEntity<ApiResponseDTO<UserReadPlaceDto.ResponseRead>> clickPlace(@PathVariable("placeId") Long placeId) {
+	public ResponseEntity<ApiResponseDTO<UserReadPlaceDto.ResponseRead>> clickPlace(
+			@PathVariable("placeId") Long placeId) {
 		
 		UserReadPlaceDto.ResponseRead response = userPlaceLearningService.markerDetail(placeId);
 		
@@ -45,13 +60,38 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	}
 	
 	@Override
-	@PatchMapping("learningSessions/{sessionId}/missions/{missionId}")
-	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(@PathVariable("sessionId") Long sessionId, 
-														     @PathVariable("missionId") Long missionId) {
+	@PatchMapping("/learningSessions/{sessionId}/missions/{missionId}")
+	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
+			@PathVariable("sessionId") Long sessionId,
+			@PathVariable("missionId") Long missionId) {
 		
 		UserMissionStartDto.ResponseMissionStart response = userPlaceLearningService.missionStart(sessionId, missionId);
 		
 		return ResponseEntity.ok(ApiResponseDTO.success("미션 시작 완료", response));
 	}
+	
+	@Override
+	@PostMapping("/chat")
+	public ResponseEntity<ApiResponseDTO<UserChatDto.ResponseChat>> chat(@RequestBody UserChatDto.RequestChat request) {
+	    
+		UserChatDto.ResponseChat response = userPlaceLearningService.chat(request);
+
+	    return ResponseEntity.ok(ApiResponseDTO.success("AI 채팅 응답 성공", response));
+	}
+	
+	@PatchMapping("/missionSessions/{sessionId}/missions/{missionId}")
+	public ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
+	        @PathVariable("sessionId") Long sessionId,
+	        @PathVariable("missionId") Long missionId
+	) {
+
+	    UserMissionCompleteDto.ResponseComplete response = userPlaceLearningService.missionComplete(sessionId, missionId);
+
+	    return ResponseEntity.ok(
+	            ApiResponseDTO.success("미션 완료 처리 성공", response)
+	    );
+	}
+	
+	
 
 }

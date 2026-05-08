@@ -36,6 +36,11 @@ public class OauthUserDto implements OAuth2User {
      * Spring Security에서 OAuth 사용자 식별자로 사용하는 값입니다.
      * 우리 서비스 기준에서는 userId를 사용합니다.
      */
+    
+    private final boolean newUser;
+
+    
+    
     @Override
     public String getName() {
         return String.valueOf(user.getUserId());

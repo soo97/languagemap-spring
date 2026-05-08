@@ -31,20 +31,7 @@ public class RankingServiceImpl implements RankingService {
 
         List<Object[]> rankingResult = rankingRepository.findRanking();
 
-        return IntStream.range(0, rankingResult.size())
-                .mapToObj(index -> {
-                    Object[] row = rankingResult.get(index);
-
-                    Long userId = (Long) row[0];
-                    Long totalScore = (Long) row[1];
-
-                    return RankingDto.ResponseRanking.from(
-                            index + 1,
-                            userId,
-                            totalScore
-                    );
-                })
-                .toList();
+        return convertToRankingResponse(rankingResult);
     }
 
     @Override
@@ -136,11 +123,13 @@ public class RankingServiceImpl implements RankingService {
                     Object[] row = rankingResult.get(index);
 
                     Long userId = (Long) row[0];
-                    Long totalScore = (Long) row[1];
+                    String userName = (String) row[1];
+                    Long totalScore = (Long) row[2];
 
                     return RankingDto.ResponseRanking.from(
                             index + 1,
                             userId,
+                            userName,
                             totalScore
                     );
                 })

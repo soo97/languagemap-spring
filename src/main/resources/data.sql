@@ -1,9 +1,18 @@
 -- USER
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 INSERT INTO user (user_id, email, name, birth_date, address, phone_number, password_hash, status, role, last_login_at, created_at, updated_at)
 VALUES
-(1, 'ai-coaching-test@naver.com', 'AI코칭테스트', '2000-01-01', '서울시 강남구', '010-1111-2222', 'test', 'ACTIVE', 'USER', NULL, NOW(), NOW()),
-(2, 'user2@test.com', '이민수', '2001-02-02', '서울시 마포구', '010-2222-2222', 'test-password', 'ACTIVE', 'USER', NULL, NOW(), NOW()),
-(3, 'user3@test.com', '박지은', '2002-03-03', '서울시 서초구', '010-3333-3333', 'test-password', 'ACTIVE', 'USER', NULL, NOW(), NOW());
+(1, 'ai-coaching-test@naver.com', 'AI코칭테스트', '2000-01-01', '서울시 강남구', '010-1111-2222', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW()),
+(2, 'user2@test.com', '이민수', '2001-02-02', '서울시 마포구', '010-2222-2222', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW()),
+(3, 'user3@test.com', '박지은', '2002-03-03', '서울시 서초구', '010-3333-3333', 
+ '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
+ 'ACTIVE', 'USER', NULL, NOW(), NOW());
 
 -- TERMS
 INSERT INTO terms (title, content, version, term_type, is_required, is_active, created_at, updated_at)
@@ -69,11 +78,19 @@ VALUES
 (3, 2, 2, 'COMPLETED', NOW() - INTERVAL 20 MINUTE, NOW()),
 (4, 3, 3, 'COMPLETED', NOW() - INTERVAL 15 MINUTE, NOW());
 
--- SESSION MESSAGE
-INSERT INTO session_message (session_id, message, role, created_at)
+-- MISSION SESSION
+INSERT INTO mission_session (mission_session_id, session_id, mission_id, mission_status, started_at, completed_at)
 VALUES
-(1, 'Good morning. What would you like to order?', 'ASSISTANT', NOW()),
-(1, 'I would like a latte with almond milk, please.', 'USER', NOW());
+(1, 1, 1, 'COMPLETED', NOW() - INTERVAL 10 MINUTE, NOW()),
+(2, 2, 2, 'COMPLETED', NOW() - INTERVAL 25 MINUTE, NOW()),
+(3, 3, 2, 'COMPLETED', NOW() - INTERVAL 20 MINUTE, NOW()),
+(4, 4, 4, 'COMPLETED', NOW() - INTERVAL 15 MINUTE, NOW());
+
+-- SESSION MESSAGE
+INSERT INTO session_message (session_id, mission_session_id, message, role, created_at)
+VALUES
+(1, 1, 'Good morning. What would you like to order?', 'ASSISTANT', NOW()),
+(1, 1, 'I would like a latte with almond milk, please.', 'USER', NOW());
 
 -- SESSION EVALUATION
 INSERT INTO session_evaluation (session_id, evaluation)
@@ -135,3 +152,5 @@ VALUES
 (1, 1, 2, '욕설 및 부적절한 행동', 'PENDING', NOW(), NULL, NULL),
 (2, 2, 3, '스팸성 메시지', 'RESOLVED', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 1 DAY, '처리 완료'),
 (3, 3, 1, '신고 사유 부족', 'REJECTED', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY, '반려');
+
+SET FOREIGN_KEY_CHECKS = 1;

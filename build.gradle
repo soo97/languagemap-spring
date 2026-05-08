@@ -46,6 +46,9 @@ dependencies {
 	
 	// Google OAuth2 Login 연동을 위한 Spring Security OAuth2 Client
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	
+	// Spring에서 FastAPI로 HTTP 요청을 보내기 위한 WebClient 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

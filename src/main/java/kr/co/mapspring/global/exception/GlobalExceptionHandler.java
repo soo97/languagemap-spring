@@ -7,6 +7,7 @@ import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
 import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -32,7 +33,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.fail(errorCode.getStatus(), e.getMessage()));
     }
 
-    // Learning 목표 관련 예외 처리
     @ExceptionHandler({
             GoalSelectionLimitExceededException.class
     })
@@ -56,14 +56,14 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    @ExceptionHandler(GoalAlreadySelectedException.class)
-    public ResponseEntity<ApiResponseDTO<Object>> handleGoalAlreadySelectedException(
-            GoalAlreadySelectedException e
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleDataIntegrityViolationException(
+            DataIntegrityViolationException e
     ) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponseDTO.fail(
                         HttpStatus.CONFLICT,
-                        e.getMessage()
+                        "사용 중인 학습 목표는 삭제할 수 없습니다. 비활성화를 이용해주세요."
                 ));
     }
 

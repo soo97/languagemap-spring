@@ -68,4 +68,9 @@ public class LearningSession {
 		
 		return learningSession;
 	}
+	
+	public void complete() {
+	    this.studyStatus = LearningSessionStatus.COMPLETED;
+	    this.endTime = LocalDateTime.now();
+	}
 }
