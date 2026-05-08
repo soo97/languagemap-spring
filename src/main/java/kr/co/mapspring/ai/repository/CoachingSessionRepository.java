@@ -1,5 +1,6 @@
 package kr.co.mapspring.ai.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import kr.co.mapspring.ai.entity.CoachingSession;
@@ -10,5 +11,11 @@ public interface CoachingSessionRepository extends JpaRepository<CoachingSession
     Optional<CoachingSession> findByLearningSession_SessionIdAndCoachingSessionStatus(
             Long sessionId,
             CoachingSessionStatus coachingSessionStatus
+    );
+    
+    long countByLearningSession_User_UserIdAndStudiedAtBetween(
+            Long userId,
+            LocalDateTime start,
+            LocalDateTime end
     );
 }
