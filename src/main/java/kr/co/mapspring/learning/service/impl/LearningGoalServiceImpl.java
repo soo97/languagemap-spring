@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LearningGoalServiceImpl implements LearningGoalService {
+
     private static final int MAX_GOAL_COUNT = 3;
 
     private final GoalMasterRepository goalMasterRepository;
@@ -43,13 +44,20 @@ public class LearningGoalServiceImpl implements LearningGoalService {
                 .orElseThrow(GoalMasterNotFoundException::new);
 
         boolean alreadySelected =
-                userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+                userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                        userId,
+                        goalMasterId,
+                        UserGoalStatus.ACTIVE
+                );
 
         if (alreadySelected) {
             throw new GoalAlreadySelectedException();
         }
 
-        int selectedCount = userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        int selectedCount = userGoalRepository.countByUser_UserIdAndStatus(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
 
         if (selectedCount >= MAX_GOAL_COUNT) {
             throw new GoalSelectionLimitExceededException();
@@ -74,22 +82,47 @@ public class LearningGoalServiceImpl implements LearningGoalService {
 
     @Override
     public List<UserGoal> getActiveGoals(Long userId) {
-        return userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        return userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
     }
 
-    private LocalDate calculateEndDate(LocalDate startDate, GoalMaster goalMaster) {
-        return switch (goalMaster.getPeriodType()) {
-            case DAILY -> startDate;
-            case WEEKLY -> startDate.plusWeeks(1);
-            case MONTHLY -> startDate.plusMonths(1);
-            case NONE -> null;
-        };
+    @Override
+    public List<UserGoal> getCompletedGoals(Long userId) {
+        return userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.COMPLETED
+        );
+    }
+
+    @Override
+    public List<GoalMaster> getAvailableGoals(Long userId) {
+        List<GoalMaster> activeGoalMasters = goalMasterRepository.findAllByIsActiveTrue();
+
+        List<UserGoal> activeUserGoals =
+                userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                        userId,
+                        UserGoalStatus.ACTIVE
+                );
+
+        Set<Long> selectedGoalIds = activeUserGoals.stream()
+                .map(userGoal -> userGoal.getGoalMaster().getGoalMasterId())
+                .collect(Collectors.toSet());
+
+        return activeGoalMasters.stream()
+                .filter(goalMaster -> !selectedGoalIds.contains(goalMaster.getGoalMasterId()))
+                .toList();
     }
 
     @Override
     @Transactional
     public void updateGoalProgress(Long userId, GoalType goalType, Integer amount) {
-        List<UserGoal> activeGoals = userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        List<UserGoal> activeGoals =
+                userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                        userId,
+                        UserGoalStatus.ACTIVE
+                );
 
         for (UserGoal userGoal : activeGoals) {
             if (userGoal.getGoalMaster().getGoalType() != goalType) {
@@ -105,22 +138,12 @@ public class LearningGoalServiceImpl implements LearningGoalService {
         }
     }
 
-    @Override
-    public List<UserGoal> getCompletedGoals(Long userId) {
-        return userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.COMPLETED);
-    }
-
-    @Override
-    public List<GoalMaster> getAvailableGoals(Long userId) {
-        List<GoalMaster> activeGoalMasters = goalMasterRepository.findAllByIsActiveTrue();
-        List<UserGoal> activeUserGoals = userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
-
-        Set<Long> selectedGoalIds = activeUserGoals.stream()
-                .map(userGoal -> userGoal.getGoalMaster().getGoalMasterId())
-                .collect(Collectors.toSet());
-
-        return activeGoalMasters.stream()
-                .filter(goalMaster -> !selectedGoalIds.contains(goalMaster.getGoalMasterId()))
-                .toList();
+    private LocalDate calculateEndDate(LocalDate startDate, GoalMaster goalMaster) {
+        return switch (goalMaster.getPeriodType()) {
+            case DAILY -> startDate;
+            case WEEKLY -> startDate.plusWeeks(1);
+            case MONTHLY -> startDate.plusMonths(1);
+            case NONE -> null;
+        };
     }
 }
