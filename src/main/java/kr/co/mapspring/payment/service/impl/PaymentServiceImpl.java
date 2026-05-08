@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.response.IamportResponse;
-import com.siot.IamportRestClient.response.Payment.PaymentResponse;
-
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.payment.dto.PaymentDto;
@@ -33,7 +31,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
 
-    // application.yml에서 포트원 키 주입
     @Value("${portone.imp-key}")
     private String impKey;
 
@@ -57,13 +54,15 @@ public class PaymentServiceImpl implements PaymentService {
         // 프론트에서 받은 imp_uid로 포트원 서버에 실제 결제 정보를 조회해 위변조 방지
         try {
             IamportClient iamportClient = new IamportClient(impKey, impSecret);
-            IamportResponse<PaymentResponse> iamportResponse =
+
+            // << 변경: 풀네임으로 사용해서 우리 Payment 엔티티와 충돌 방지
+            IamportResponse<com.siot.IamportRestClient.response.Payment> iamportResponse =
                     iamportClient.paymentByImpUid(request.getImpUid());
 
-            PaymentResponse iamportPayment = iamportResponse.getResponse();
+            com.siot.IamportRestClient.response.Payment iamportPayment =
+                    iamportResponse.getResponse();
 
             // 4. 결제 금액 위변조 검증
-            // 프론트에서 보낸 금액과 포트원 실제 결제 금액 비교
             BigDecimal requestAmount = new BigDecimal(request.getPaymentAmount());
             if (iamportPayment.getAmount().compareTo(requestAmount) != 0) {
                 throw new CustomException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
@@ -82,7 +81,6 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // 6. 기존 활성 구독 만료 처리
-        // 새로운 구독 전 기존 구독이 있으면 만료 처리
         subscriptionRepository
                 .findByPayment_UserAndPlanStatus(user, SubscriptionStatus.ACTIVE)
                 .ifPresent(Subscription::expire);
