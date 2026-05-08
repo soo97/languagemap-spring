@@ -47,6 +47,7 @@ public class StartCoachingSessionServiceImpl implements StartCoachingSessionServ
         return StartCoachingSessionDto.ResponseStartCoachingSession.builder()
                 .coachingSessionId(coachingSession.getCoachingSessionId())
                 .sessionId(coachingSession.getLearningSession().getSessionId())
+                .userId(coachingSession.getLearningSession().getUser().getUserId())
                 .coachingSessionStatus(coachingSession.getCoachingSessionStatus().name())
                 .selectedOption(coachingSession.getSelectedOption())
                 .currentTurnOrder(coachingSession.getCurrentTurnOrder())
