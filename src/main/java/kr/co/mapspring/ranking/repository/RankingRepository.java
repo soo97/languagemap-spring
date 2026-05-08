@@ -10,18 +10,18 @@ import java.util.List;
 public interface RankingRepository extends JpaRepository<StudyScore, Long> {
 
     @Query("""
-           SELECT ss.studyLog.user.userId, SUM(ss.totalScore)
+           SELECT ss.studyLog.user.userId, ss.studyLog.user.name, SUM(ss.totalScore)
            FROM StudyScore ss
-           GROUP BY ss.studyLog.user.userId
+           GROUP BY ss.studyLog.user.userId, ss.studyLog.user.name
            ORDER BY SUM(ss.totalScore) DESC    
            """)
     List<Object[]> findRanking();
 
     @Query("""
-           SELECT ss.studyLog.user.userId, SUM(ss.totalScore)
+           SELECT ss.studyLog.user.userId, ss.studyLog.user.name, SUM(ss.totalScore)
            FROM StudyScore ss
            WHERE ss.studyLog.user.userId IN :friendIds
-           GROUP BY ss.studyLog.user.userId
+           GROUP BY ss.studyLog.user.userId, ss.studyLog.user.name
            ORDER BY SUM(ss.totalScore) DESC
            """)
     List<Object[]> findFriendRanking(List<Long> friendIds);
@@ -41,10 +41,10 @@ public interface RankingRepository extends JpaRepository<StudyScore, Long> {
     Double findFriendAverageScore(List<Long> friendIds);
 
     @Query("""
-       SELECT ss.studyLog.user.userId, SUM(ss.totalScore)
+       SELECT ss.studyLog.user.userId, ss.studyLog.user.name, SUM(ss.totalScore)
        FROM StudyScore ss
        WHERE ss.studyLog.learningSession.endTime >= :startDateTime
-       GROUP BY ss.studyLog.user.userId
+       GROUP BY ss.studyLog.user.userId, ss.studyLog.user.name
        ORDER BY SUM(ss.totalScore) DESC
        """)
     List<Object[]> findWeeklyRanking(LocalDateTime startDateTime);

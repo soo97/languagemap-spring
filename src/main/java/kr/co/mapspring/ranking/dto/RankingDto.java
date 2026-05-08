@@ -18,20 +18,25 @@ public class RankingDto {
         @Schema(description = "사용자 ID", example = "3")
         private Long userId;
 
+        @Schema(description = "사용자 이름", example = "홍길동")
+        private String userName;
+
         @Schema(description = "총 점수", example = "950")
         private Long totalScore;
 
         @Builder
-        public ResponseRanking(int rank, Long userId, Long totalScore) {
+        public ResponseRanking(int rank, Long userId, String userName, Long totalScore) {
             this.rank = rank;
             this.userId = userId;
+            this.userName = userName;
             this.totalScore = totalScore;
         }
 
-        public static ResponseRanking from(int rank, Long userId, Long totalScore) {
+        public static ResponseRanking from(int rank, Long userId, String userName, Long totalScore) {
             return ResponseRanking.builder()
                     .rank(rank)
                     .userId(userId)
+                    .userName(userName)
                     .totalScore(totalScore)
                     .build();
         }
