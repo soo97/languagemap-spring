@@ -36,11 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${portone.imp-secret}")
     private String impSecret;
+    
+    
+    
 
     @Override
     @Transactional
     public PaymentDto.ResponseVerify verifyAndSave(Long userId, PaymentDto.RequestVerify request) {
-
         // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
