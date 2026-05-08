@@ -73,7 +73,10 @@ public class CoachingScriptTurnServiceImpl implements CoachingScriptTurnService 
             Integer turnOrder
     ) {
         CoachingScriptTurn scriptTurn = coachingScriptTurnRepository
-                .findByCoachingSession_CoachingSessionIdAndTurnOrder(coachingSessionId, turnOrder)
+                .findByCoachingSession_CoachingSessionIdAndTurnOrder(
+                        coachingSessionId,
+                        turnOrder
+                )
                 .orElseThrow(CoachingScriptTurnNotFoundException::new);
 
         return CoachingScriptTurnDto.ResponseCoachingScriptTurn.from(scriptTurn);
@@ -95,5 +98,20 @@ public class CoachingScriptTurnServiceImpl implements CoachingScriptTurnService 
                 .coachingSessionId(coachingSessionId)
                 .turns(turns)
                 .build();
+    }
+
+    @Override
+    public boolean existsScriptTurns(Long coachingSessionId) {
+        return coachingScriptTurnRepository
+                .existsByCoachingSession_CoachingSessionId(coachingSessionId);
+    }
+
+    @Override
+    public boolean existsScriptTurn(Long coachingSessionId, Integer turnOrder) {
+        return coachingScriptTurnRepository
+                .existsByCoachingSession_CoachingSessionIdAndTurnOrder(
+                        coachingSessionId,
+                        turnOrder
+                );
     }
 }

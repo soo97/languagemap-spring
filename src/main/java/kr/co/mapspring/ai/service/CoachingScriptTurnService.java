@@ -11,7 +11,7 @@ public interface CoachingScriptTurnService {
             CoachingScriptTurnDto.RequestSaveCoachingScriptTurn request
     );
 
-    // FastAPI에서 받은 코칭 스크립트 턴 목록을 한 번에 저장 
+    // FastAPI에서 받은 코칭 스크립트 턴 목록을 한 번에 저장
     List<CoachingScriptTurnDto.ResponseCoachingScriptTurn> saveScriptTurns(
             Long coachingSessionId,
             List<CoachingScriptTurnDto.RequestSaveCoachingScriptTurn> requests
@@ -25,4 +25,10 @@ public interface CoachingScriptTurnService {
 
     // 코칭 세션 ID를 기준으로 전체 스크립트 턴을 턴 순서 오름차순으로 조회
     CoachingScriptTurnDto.ResponseGetCoachingScriptTurns getScriptTurns(Long coachingSessionId);
+
+    // 코칭 세션 ID에 저장된 스크립트 턴 존재 여부 확인
+    boolean existsScriptTurns(Long coachingSessionId);
+    
+    // 특정 turnOrder의 스크립트 turn이 존재하는지 확인
+    boolean existsScriptTurn(Long coachingSessionId, Integer turnOrder);
 }

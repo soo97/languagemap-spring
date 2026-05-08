@@ -33,7 +33,6 @@ import kr.co.mapspring.ai.service.CoachingPronunciationResultService;
 import kr.co.mapspring.ai.service.CoachingScriptTurnService;
 import kr.co.mapspring.ai.service.ContentService;
 import kr.co.mapspring.ai.service.StartCoachingSessionService;
-import kr.co.mapspring.global.exception.ai.CoachingScriptTurnNotFoundException;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import kr.co.mapspring.global.exception.CustomException;
@@ -71,6 +70,22 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                                 .build()
                 );
 
+        Long coachingSessionId = sessionResponse.getCoachingSessionId();
+
+        if (coachingScriptTurnService.existsScriptTurns(coachingSessionId)) {
+            CoachingScriptTurnDto.ResponseGetCoachingScriptTurns existingTurns =
+                    coachingScriptTurnService.getScriptTurns(coachingSessionId);
+
+            return CoachingConversationDto.ResponsePrepareScript.builder()
+                    .coachingSessionId(coachingSessionId)
+                    .sessionId(sessionResponse.getSessionId())
+                    .coachingSessionStatus(sessionResponse.getCoachingSessionStatus())
+                    .selectedOption(sessionResponse.getSelectedOption())
+                    .currentTurnOrder(sessionResponse.getCurrentTurnOrder())
+                    .turns(existingTurns.getTurns())
+                    .build();
+        }
+
         FastApiOpenAiDto.ResponseCoachingScript scriptResponse =
                 fastApiOpenAiClient.createCoachingScript(
                         FastApiOpenAiDto.RequestCoachingScript.builder()
@@ -86,18 +101,18 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
 
         List<CoachingScriptTurnDto.RequestSaveCoachingScriptTurn> turnRequests =
                 convertMessagesToScriptTurns(
-                        sessionResponse.getCoachingSessionId(),
+                        coachingSessionId,
                         scriptResponse.getMessages()
                 );
 
         List<CoachingScriptTurnDto.ResponseCoachingScriptTurn> savedTurns =
                 coachingScriptTurnService.saveScriptTurns(
-                        sessionResponse.getCoachingSessionId(),
+                        coachingSessionId,
                         turnRequests
                 );
 
         return CoachingConversationDto.ResponsePrepareScript.builder()
-                .coachingSessionId(sessionResponse.getCoachingSessionId())
+                .coachingSessionId(coachingSessionId)
                 .sessionId(sessionResponse.getSessionId())
                 .coachingSessionStatus(sessionResponse.getCoachingSessionStatus())
                 .selectedOption(sessionResponse.getSelectedOption())
@@ -187,47 +202,7 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
 
         int nextTurnOrder = currentTurnOrder + 1;
 
-        try {
-            CoachingScriptTurnDto.ResponseCoachingScriptTurn nextTurn =
-                    coachingScriptTurnService.getScriptTurn(
-                            coachingSessionId,
-                            nextTurnOrder
-                    );
-
-            FastApiSpeechDto.ResponseTts nextTts =
-                    fastApiSpeechClient.createTts(
-                            FastApiSpeechDto.RequestTts.builder()
-                                    .text(nextTurn.getAssistantText())
-                                    .build()
-                    );
-
-            coachingMessageService.saveAssistantMessage(
-                    coachingSessionId,
-                    nextTurn.getCoachingScriptTurnId(),
-                    nextTurn.getAssistantText(),
-                    nextTts.getAudioUrl()
-            );
-
-            session.updateCurrentTurnOrder(nextTurnOrder);
-
-            return CoachingConversationDto.ResponseConversationTurn.builder()
-                    .coachingSessionId(coachingSessionId)
-                    .userMessageId(savedUserMessage.getCoachingMessageId())
-                    .recognizedText(pronunciation.getRecognizedText())
-                    .userFeedback(pronunciation.getFeedback())
-                    .problemWords(pronunciation.getProblemWords())
-                    .accuracyScore(pronunciation.getAccuracyScore())
-                    .fluencyScore(pronunciation.getFluencyScore())
-                    .completenessScore(pronunciation.getCompletenessScore())
-                    .pronunciationScore(pronunciation.getPronunciationScore())
-                    .conversationEnded(false)
-                    .nextScriptTurnId(nextTurn.getCoachingScriptTurnId())
-                    .nextTurnOrder(nextTurn.getTurnOrder())
-                    .nextAssistantText(nextTurn.getAssistantText())
-                    .nextAssistantAudioUrl(nextTts.getAudioUrl())
-                    .build();
-
-        } catch (CoachingScriptTurnNotFoundException e) {
+        if (!coachingScriptTurnService.existsScriptTurn(coachingSessionId, nextTurnOrder)) {
             return CoachingConversationDto.ResponseConversationTurn.builder()
                     .coachingSessionId(coachingSessionId)
                     .userMessageId(savedUserMessage.getCoachingMessageId())
@@ -241,7 +216,46 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                     .conversationEnded(true)
                     .build();
         }
-    }
+
+        CoachingScriptTurnDto.ResponseCoachingScriptTurn nextTurn =
+                coachingScriptTurnService.getScriptTurn(
+                        coachingSessionId,
+                        nextTurnOrder
+                );
+
+        FastApiSpeechDto.ResponseTts nextTts =
+                fastApiSpeechClient.createTts(
+                        FastApiSpeechDto.RequestTts.builder()
+                                .text(nextTurn.getAssistantText())
+                                .build()
+                );
+
+        coachingMessageService.saveAssistantMessage(
+                coachingSessionId,
+                nextTurn.getCoachingScriptTurnId(),
+                nextTurn.getAssistantText(),
+                nextTts.getAudioUrl()
+        );
+
+        session.updateCurrentTurnOrder(nextTurnOrder);
+
+        return CoachingConversationDto.ResponseConversationTurn.builder()
+                .coachingSessionId(coachingSessionId)
+                .userMessageId(savedUserMessage.getCoachingMessageId())
+                .recognizedText(pronunciation.getRecognizedText())
+                .userFeedback(pronunciation.getFeedback())
+                .problemWords(pronunciation.getProblemWords())
+                .accuracyScore(pronunciation.getAccuracyScore())
+                .fluencyScore(pronunciation.getFluencyScore())
+                .completenessScore(pronunciation.getCompletenessScore())
+                .pronunciationScore(pronunciation.getPronunciationScore())
+                .conversationEnded(false)
+                .nextScriptTurnId(nextTurn.getCoachingScriptTurnId())
+                .nextTurnOrder(nextTurn.getTurnOrder())
+                .nextAssistantText(nextTurn.getAssistantText())
+                .nextAssistantAudioUrl(nextTts.getAudioUrl())
+                .build();
+        }
 
     @Override
     @Transactional
@@ -326,43 +340,81 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
             Long coachingSessionId,
             List<FastApiOpenAiDto.MessageItem> messages
     ) {
+        if (messages == null || messages.isEmpty()) {
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST,
+                    "AI 코칭 스크립트 생성 결과가 비어 있습니다."
+            );
+        }
+
         List<CoachingScriptTurnDto.RequestSaveCoachingScriptTurn> turns = new ArrayList<>();
 
         int turnOrder = 1;
+        String pendingAssistantText = null;
 
-        for (int i = 0; i < messages.size(); i++) {
-            FastApiOpenAiDto.MessageItem assistant = messages.get(i);
-
-            if (assistant.getRole() != CoachingMessageRole.ASSISTANT) {
-                continue;
-            }
-
-            String assistantText = assistant.getMessage();
-            String expectedText = null;
-
-            if (i + 1 < messages.size()
-                    && messages.get(i + 1).getRole() == CoachingMessageRole.USER) {
-                expectedText = messages.get(i + 1).getMessage();
-            }
-
-            if (assistantText == null || assistantText.isBlank()
-                    || expectedText == null || expectedText.isBlank()) {
+        for (FastApiOpenAiDto.MessageItem item : messages) {
+            if (item == null || item.getRole() == null) {
                 throw new CustomException(
                         ErrorCode.BAD_REQUEST,
-                        "AI 코칭 스크립트 생성 결과가 올바르지 않습니다."
+                        "AI 코칭 스크립트 메시지 형식이 올바르지 않습니다."
                 );
             }
 
-            turns.add(
-                    CoachingScriptTurnDto.RequestSaveCoachingScriptTurn.builder()
-                            .coachingSessionId(coachingSessionId)
-                            .turnOrder(turnOrder)
-                            .assistantText(assistantText)
-                            .expectedText(expectedText)
-                            .build()
-            );
+            String message = item.getMessage();
 
-            turnOrder++;
+            if (message == null || message.isBlank()) {
+                throw new CustomException(
+                        ErrorCode.BAD_REQUEST,
+                        "AI 코칭 스크립트 메시지가 비어 있습니다."
+                );
+            }
+
+            if (item.getRole() == CoachingMessageRole.ASSISTANT) {
+                if (pendingAssistantText != null) {
+                    throw new CustomException(
+                            ErrorCode.BAD_REQUEST,
+                            "AI 코칭 스크립트의 ASSISTANT/USER 순서가 올바르지 않습니다."
+                    );
+                }
+
+                pendingAssistantText = message;
+                continue;
+            }
+
+            if (item.getRole() == CoachingMessageRole.USER) {
+                if (pendingAssistantText == null) {
+                    throw new CustomException(
+                            ErrorCode.BAD_REQUEST,
+                            "AI 코칭 스크립트의 USER 메시지에 대응하는 ASSISTANT 메시지가 없습니다."
+                    );
+                }
+
+                turns.add(
+                        CoachingScriptTurnDto.RequestSaveCoachingScriptTurn.builder()
+                                .coachingSessionId(coachingSessionId)
+                                .turnOrder(turnOrder)
+                                .assistantText(pendingAssistantText)
+                                .expectedText(message)
+                                .build()
+                );
+
+                turnOrder++;
+                pendingAssistantText = null;
+                continue;
+            }
+
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST,
+                    "AI 코칭 스크립트 role 값이 올바르지 않습니다."
+            );
+        }
+
+
+        if (turns.isEmpty()) {
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST,
+                    "AI 코칭 스크립트 생성 결과가 올바르지 않습니다."
+            );
         }
 
         return turns;
