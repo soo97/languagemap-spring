@@ -38,6 +38,7 @@ import kr.co.mapspring.ai.service.CoachingPronunciationResultService;
 import kr.co.mapspring.ai.service.CoachingScriptTurnService;
 import kr.co.mapspring.ai.service.ContentService;
 import kr.co.mapspring.ai.service.StartCoachingSessionService;
+import kr.co.mapspring.global.exception.ai.AiCoachingAccessDeniedException;
 import kr.co.mapspring.global.exception.ai.AiMonthlySessionLimitExceededException;
 import kr.co.mapspring.global.exception.ai.AiMonthlyTurnLimitExceededException;
 import kr.co.mapspring.global.exception.ai.AiSessionTurnLimitExceededException;
@@ -93,11 +94,10 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
         Long coachingSessionId = sessionResponse.getCoachingSessionId();
         Long userId = sessionResponse.getUserId();
 
-        if (!hasRunningSession) {
-            LocalDateTime startOfMonth = LocalDate.now()
-                    .withDayOfMonth(1)
-                    .atStartOfDay();
+        validateAiCoachingAccess(userId);
 
+        if (!hasRunningSession && !AiUsageLimitPolicy.shouldSkipUsageLimit(userId)) {
+            LocalDateTime startOfMonth = getStartOfMonth();
             LocalDateTime startOfNextMonth = startOfMonth.plusMonths(1);
 
             long monthlySessionCount =
@@ -168,6 +168,9 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
             Long coachingSessionId
     ) {
         CoachingSession session = getSession(coachingSessionId);
+        Long userId = getUserId(session);
+
+        validateAiCoachingAccess(userId);
 
         CoachingScriptTurnDto.ResponseCoachingScriptTurn firstTurn =
                 coachingScriptTurnService.getScriptTurn(coachingSessionId, 1);
@@ -204,34 +207,33 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
             MultipartFile audioFile
     ) {
         CoachingSession session = getSession(coachingSessionId);
+        Long userId = getUserId(session);
+
+        validateAiCoachingAccess(userId);
 
         Integer currentTurnOrder = session.getCurrentTurnOrder();
 
-        if (currentTurnOrder >= AiUsageLimitPolicy.MAX_TURN_PER_SESSION) {
+        if (!AiUsageLimitPolicy.shouldSkipUsageLimit(userId)
+                && currentTurnOrder >= AiUsageLimitPolicy.MAX_TURN_PER_SESSION) {
             throw new AiSessionTurnLimitExceededException();
         }
 
-        LocalDateTime startOfMonth = LocalDate.now()
-                .withDayOfMonth(1)
-                .atStartOfDay();
+        if (!AiUsageLimitPolicy.shouldSkipUsageLimit(userId)) {
+            LocalDateTime startOfMonth = getStartOfMonth();
+            LocalDateTime startOfNextMonth = startOfMonth.plusMonths(1);
 
-        LocalDateTime startOfNextMonth = startOfMonth.plusMonths(1);
+            long monthlyTurnCount =
+                    coachingMessageRepository
+                            .countByCoachingSession_LearningSession_User_UserIdAndRoleAndCreatedAtBetween(
+                                    userId,
+                                    CoachingMessageRole.USER,
+                                    startOfMonth,
+                                    startOfNextMonth
+                            );
 
-        Long userId = session.getLearningSession()
-                .getUser()
-                .getUserId();
-
-        long monthlyTurnCount =
-                coachingMessageRepository
-                        .countByCoachingSession_LearningSession_User_UserIdAndRoleAndCreatedAtBetween(
-                                userId,
-                                CoachingMessageRole.USER,
-                                startOfMonth,
-                                startOfNextMonth
-                        );
-
-        if (monthlyTurnCount >= AiUsageLimitPolicy.MONTHLY_TOTAL_TURN_LIMIT) {
-            throw new AiMonthlyTurnLimitExceededException();
+            if (monthlyTurnCount >= AiUsageLimitPolicy.MONTHLY_TOTAL_TURN_LIMIT) {
+                throw new AiMonthlyTurnLimitExceededException();
+            }
         }
 
         CoachingScriptTurnDto.ResponseCoachingScriptTurn currentTurn =
@@ -331,6 +333,9 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
             Long coachingSessionId
     ) {
         CoachingSession session = getSession(coachingSessionId);
+        Long userId = getUserId(session);
+
+        validateAiCoachingAccess(userId);
 
         CoachingMessageDto.ResponseGetCoachingMessages messagesResponse =
                 coachingMessageService.getCoachingMessages(coachingSessionId);
@@ -399,6 +404,24 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                 .pronunciationResults(pronunciationResponse)
                 .contents(contents)
                 .build();
+    }
+
+    private void validateAiCoachingAccess(Long userId) {
+        if (!AiUsageLimitPolicy.hasValidAiCoachingAccess(userId)) {
+            throw new AiCoachingAccessDeniedException();
+        }
+    }
+
+    private Long getUserId(CoachingSession session) {
+        return session.getLearningSession()
+                .getUser()
+                .getUserId();
+    }
+
+    private LocalDateTime getStartOfMonth() {
+        return LocalDate.now()
+                .withDayOfMonth(1)
+                .atStartOfDay();
     }
 
     private CoachingSession getSession(Long coachingSessionId) {

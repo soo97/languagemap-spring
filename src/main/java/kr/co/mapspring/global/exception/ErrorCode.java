@@ -96,7 +96,11 @@ public enum ErrorCode {
 	AI_MONTHLY_SESSION_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS,"이번 달 AI 코칭 사용 횟수를 모두 사용했습니다."),
 	AI_MONTHLY_TURN_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS,"이번 달 AI 대화 사용 횟수를 모두 사용했습니다."),
 	AI_SESSION_TURN_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS,"이번 코칭 세션의 최대 대화 횟수를 초과했습니다."),
-	AI_YOUTUBE_CONTENT_ALREADY_EXISTS(HttpStatus.CONFLICT,"이미 추천 콘텐츠가 생성된 세션입니다.");
+	AI_YOUTUBE_CONTENT_ALREADY_EXISTS(HttpStatus.CONFLICT,"이미 추천 콘텐츠가 생성된 세션입니다."),
+	
+	// ai coaching 기능 사용 가능하는 계정 검증
+	AI_COACHING_ACCESS_DENIED(HttpStatus.FORBIDDEN,"AI 코칭 이용 권한이 없습니다."),
+	AI_COACHING_SUBSCRIPTION_EXPIRED(HttpStatus.FORBIDDEN,"AI 코칭 이용 기간이 만료되었습니다.");
 
     private final HttpStatus status;
     private final String message;
