@@ -71,8 +71,8 @@ public class UserDto {
 
     	@NotBlank
     	@Pattern(
-    		    regexp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$",
-    		    message = "전화번호 형식(010-0000-0000)이 올바르지 않습니다."
+    		    regexp = "^01(?:0|1|[6-9])\\d{7,8}$",
+    		    message = "전화번호 형식이 올바르지 않습니다. (예: 01012345678)"
     		)
         @Schema(description = "전화번호", example = "010-1234-5678")
         private String phoneNumber;
