@@ -11,6 +11,12 @@ public class AdminScenarioListDto {
     @Builder
     @Schema(name = "AdminScenarioListResponse", description = "시나리오 리스트 응답 DTO")
     public static class ResponseList {
+    	
+    	@Schema(
+                description = "시나리오 ID",
+                example = "1"
+        		)
+    	private Long scenarioId;
 
         @Schema(
                 description = "시나리오 설명",
@@ -23,11 +29,19 @@ public class AdminScenarioListDto {
                 example = "CAFE"
         		)
         private String category;
-
+        
+        @Schema(
+                description = "시나리오 경험치",
+                example = "120"
+        		)
+        private Integer completeExp;
+        
         public static AdminScenarioListDto.ResponseList from(Scenario scenario) {
             return AdminScenarioListDto.ResponseList.builder()
+            		.scenarioId(scenario.getScenarioId())
                     .scenarioDescription(scenario.getScenarioDescription())
                     .category(scenario.getCategory())
+                    .completeExp(scenario.getCompleteExp())
                     .build();
         }
     }

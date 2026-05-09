@@ -1,5 +1,7 @@
 package kr.co.mapspring.place.dto;
 
+import java.math.BigDecimal;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.place.entity.Region;
 import lombok.Builder;
@@ -29,12 +31,26 @@ public class AdminRegionListDto {
                 example = "서울"
         		)
         private String city;
+        
+        @Schema(
+                description = "위도",
+                example = "42.1555"
+        		)
+        private BigDecimal latitude;
+        
+        @Schema(
+                description = "경도",
+                example = "32.6667"
+        		)
+        private BigDecimal longitude;
 
         public static ResponseList from(Region region) {
             return ResponseList.builder()
                     .regionId(region.getRegionId())
                     .country(region.getCountry())
                     .city(region.getCity())
+                    .latitude(region.getLatitude())
+                    .longitude(region.getLongitude())
                     .build();
         }
     }
