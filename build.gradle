@@ -18,6 +18,12 @@ repositories {
     mavenCentral()     
 }
 
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -49,6 +55,12 @@ dependencies {
 	
 	// Spring에서 FastAPI로 HTTP 요청을 보내기 위한 WebClient 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
+	// 포트원 결제 연동
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+	
+	
+	
 }
 
 tasks.named('test') {

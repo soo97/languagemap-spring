@@ -40,3 +40,6 @@ out/
 .metadata/
 
 .env
+
+# 포트원 시크릿 키 (깃에 올라가면 안 됨)
+src/main/resources/application-secret.yml
