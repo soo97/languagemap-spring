@@ -92,8 +92,11 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
-                .willReturn(false);
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(false);
 
         given(userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
                 .willReturn(2);
@@ -102,7 +105,11 @@ class LearningGoalServiceTest {
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        );
         verify(userGoalRepository).countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
 
         ArgumentCaptor<UserGoal> captor = ArgumentCaptor.forClass(UserGoal.class);
@@ -127,12 +134,18 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.empty());
 
-        assertThrows(GoalMasterNotFoundException.class,
-                () -> learningGoalService.selectGoal(userId, goalMasterId));
+        assertThrows(
+                GoalMasterNotFoundException.class,
+                () -> learningGoalService.selectGoal(userId, goalMasterId)
+        );
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository, never()).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(any(), any(), any());
+        verify(userGoalRepository, never()).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                any(),
+                any(),
+                any()
+        );
         verify(userGoalRepository, never()).countByUser_UserIdAndStatus(any(), any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
@@ -146,15 +159,24 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
-                .willReturn(true);
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(true);
 
-        assertThrows(GoalAlreadySelectedException.class,
-                () -> learningGoalService.selectGoal(userId, goalMasterId));
+        assertThrows(
+                GoalAlreadySelectedException.class,
+                () -> learningGoalService.selectGoal(userId, goalMasterId)
+        );
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        );
         verify(userGoalRepository, never()).countByUser_UserIdAndStatus(any(), any());
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
@@ -168,18 +190,27 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findById(goalMasterId))
                 .willReturn(Optional.of(goalMaster));
 
-        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE))
-                .willReturn(false);
+        given(userGoalRepository.existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(false);
 
         given(userGoalRepository.countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
                 .willReturn(3);
 
-        assertThrows(GoalSelectionLimitExceededException.class,
-                () -> learningGoalService.selectGoal(userId, goalMasterId));
+        assertThrows(
+                GoalSelectionLimitExceededException.class,
+                () -> learningGoalService.selectGoal(userId, goalMasterId)
+        );
 
         verify(userRepository).findById(userId);
         verify(goalMasterRepository).findById(goalMasterId);
-        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(userId, goalMasterId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).existsByUser_UserIdAndGoalMaster_GoalMasterIdAndStatus(
+                userId,
+                goalMasterId,
+                UserGoalStatus.ACTIVE
+        );
         verify(userGoalRepository).countByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
         verify(userGoalRepository, never()).save(any(UserGoal.class));
     }
@@ -216,8 +247,10 @@ class LearningGoalServiceTest {
         given(userGoalRepository.findById(userGoalId))
                 .willReturn(Optional.empty());
 
-        assertThrows(UserGoalNotFoundException.class,
-                () -> learningGoalService.cancelGoal(userGoalId));
+        assertThrows(
+                UserGoalNotFoundException.class,
+                () -> learningGoalService.cancelGoal(userGoalId)
+        );
 
         verify(userGoalRepository).findById(userGoalId);
     }
@@ -245,12 +278,17 @@ class LearningGoalServiceTest {
                 LocalDate.now()
         );
 
-        given(userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
-                .willReturn(List.of(activeGoal1, activeGoal2));
+        given(userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(List.of(activeGoal1, activeGoal2));
 
         List<UserGoal> result = learningGoalService.getActiveGoals(userId);
 
-        verify(userGoalRepository).findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
         assertEquals(2, result.size());
         assertEquals(UserGoalStatus.ACTIVE, result.get(0).getStatus());
         assertEquals(UserGoalStatus.ACTIVE, result.get(1).getStatus());
@@ -277,12 +315,17 @@ class LearningGoalServiceTest {
                 LocalDate.now()
         );
 
-        given(userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
-                .willReturn(List.of(userGoal));
+        given(userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(List.of(userGoal));
 
         learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
 
-        verify(userGoalRepository).findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
         assertEquals(2, userGoal.getCurrentValue());
         assertEquals(UserGoalStatus.ACTIVE, userGoal.getStatus());
     }
@@ -308,12 +351,17 @@ class LearningGoalServiceTest {
                 LocalDate.now()
         );
 
-        given(userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
-                .willReturn(List.of(userGoal));
+        given(userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(List.of(userGoal));
 
         learningGoalService.updateGoalProgress(userId, GoalType.STUDY_COUNT, 1);
 
-        verify(userGoalRepository).findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
         assertEquals(3, userGoal.getCurrentValue());
         assertEquals(UserGoalStatus.COMPLETED, userGoal.getStatus());
     }
@@ -341,12 +389,17 @@ class LearningGoalServiceTest {
                 LocalDate.now()
         );
 
-        given(userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.COMPLETED))
-                .willReturn(List.of(completedGoal1, completedGoal2));
+        given(userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.COMPLETED
+        )).willReturn(List.of(completedGoal1, completedGoal2));
 
         List<UserGoal> result = learningGoalService.getCompletedGoals(userId);
 
-        verify(userGoalRepository).findAllByUser_UserIdAndStatus(userId, UserGoalStatus.COMPLETED);
+        verify(userGoalRepository).findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.COMPLETED
+        );
         assertEquals(2, result.size());
         assertEquals(UserGoalStatus.COMPLETED, result.get(0).getStatus());
         assertEquals(UserGoalStatus.COMPLETED, result.get(1).getStatus());
@@ -355,9 +408,29 @@ class LearningGoalServiceTest {
     @Test
     @DisplayName("사용자가 아직 선택하지 않은 목표 목록을 조회한다")
     void 사용자가_아직_선택하지_않은_목표_목록을_조회한다() {
-        GoalMaster goal1 = GoalMaster.of(1L, "하루 1회 학습", GoalPeriodType.DAILY, GoalType.STUDY_COUNT, 1);
-        GoalMaster goal2 = GoalMaster.of(2L, "하루 3회 학습", GoalPeriodType.DAILY, GoalType.STUDY_COUNT, 3);
-        GoalMaster goal3 = GoalMaster.of(3L, "주간 말하기 5회", GoalPeriodType.WEEKLY, GoalType.SPEAKING_COUNT, 5);
+        GoalMaster goal1 = GoalMaster.of(
+                1L,
+                "하루 1회 학습",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                1
+        );
+
+        GoalMaster goal2 = GoalMaster.of(
+                2L,
+                "하루 3회 학습",
+                GoalPeriodType.DAILY,
+                GoalType.STUDY_COUNT,
+                3
+        );
+
+        GoalMaster goal3 = GoalMaster.of(
+                3L,
+                "주간 말하기 5회",
+                GoalPeriodType.WEEKLY,
+                GoalType.SPEAKING_COUNT,
+                5
+        );
 
         UserGoal selectedGoal = UserGoal.of(
                 10L,
@@ -372,13 +445,18 @@ class LearningGoalServiceTest {
         given(goalMasterRepository.findAllByIsActiveTrue())
                 .willReturn(List.of(goal1, goal2, goal3));
 
-        given(userGoalRepository.findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE))
-                .willReturn(List.of(selectedGoal));
+        given(userGoalRepository.findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        )).willReturn(List.of(selectedGoal));
 
         List<GoalMaster> result = learningGoalService.getAvailableGoals(userId);
 
         verify(goalMasterRepository).findAllByIsActiveTrue();
-        verify(userGoalRepository).findAllByUser_UserIdAndStatus(userId, UserGoalStatus.ACTIVE);
+        verify(userGoalRepository).findByUserIdAndStatusWithGoalMaster(
+                userId,
+                UserGoalStatus.ACTIVE
+        );
 
         assertEquals(2, result.size());
         assertEquals(2L, result.get(0).getGoalMasterId());

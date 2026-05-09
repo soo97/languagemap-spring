@@ -9,4 +9,8 @@ import kr.co.mapspring.ai.entity.Content;
 public interface ContentRepository extends JpaRepository<Content, Long> {
 
     List<Content> findByCoachingSession_CoachingSessionId(Long coachingSessionId);
+    
+    boolean existsByCoachingSession_CoachingSessionId(
+            Long coachingSessionId
+    );
 }
