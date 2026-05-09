@@ -36,6 +36,9 @@ public class StartCoachingSessionDto {
         @Schema(description = "지도 학습 세션 ID", example = "1")
         private Long sessionId;
 
+        @Schema(description = "사용자 ID", example = "1")
+        private Long userId;
+
         @Schema(description = "AI 코칭 세션 상태", example = "RUNNING")
         private String coachingSessionStatus;
 
