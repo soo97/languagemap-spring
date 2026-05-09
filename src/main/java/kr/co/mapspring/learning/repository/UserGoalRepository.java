@@ -3,6 +3,8 @@ package kr.co.mapspring.learning.repository;
 import kr.co.mapspring.learning.entity.UserGoal;
 import kr.co.mapspring.learning.enums.UserGoalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -14,4 +16,15 @@ public interface UserGoalRepository extends JpaRepository<UserGoal, Long> {
 
     List<UserGoal> findAllByUser_UserIdAndStatus(Long userId, UserGoalStatus status);
 
+    @Query("""
+           SELECT ug
+           FROM UserGoal ug
+           JOIN FETCH ug.goalMaster
+           WHERE ug.user.userId = :userId
+             AND ug.status = :status
+           """)
+    List<UserGoal> findByUserIdAndStatusWithGoalMaster(
+            @Param("userId") Long userId,
+            @Param("status") UserGoalStatus status
+    );
 }
