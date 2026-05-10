@@ -29,6 +29,7 @@ public enum ErrorCode {
 	EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
 	PASSWORD_CONFIRM_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
 	PHONE_NUMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 전화번호입니다."),
+	DUPLICATE_PHONE_NUMBER(HttpStatus.CONFLICT, "이미 사용 중인 전화번호입니다."),
 	
 	//User 약관동의용
 	SERVICE_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "서비스 이용약관 동의는 필수입니다."),

@@ -52,6 +52,61 @@ public class UserDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(description = "내 정보 수정 요청 DTO")
+    public static class RequestUpdateMe {
+        @Schema(description = "이름", example = "홍길동")
+        private String name;
+
+        @Past(message = "미래 날짜는 생년월일로 사용할 수 없습니다.")
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        @Schema(description = "생년월일", example = "2000-01-01")
+        private LocalDate birthDate;
+
+        @Pattern(
+            regexp = "^[가-힣a-zA-Z0-9\\s\\-\\.\\,]+$",
+            message = "주소 형식이 올바르지 않습니다."
+        )
+        @Schema(description = "주소", example = "서울시 강남구")
+        private String address;
+
+        @Pattern(
+            regexp = "^01(?:0|1|[6-9])\\d{7,8}$",
+            message = "전화번호 형식이 올바르지 않습니다."
+        )
+        @Schema(description = "전화번호", example = "01012345678")
+        private String phoneNumber;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Schema(description = "내 정보 수정 응답 DTO")
+    public static class ResponseUpdateMe {
+        private Long userId;
+        private String email;
+        private String name;
+        private LocalDate birthDate;
+        private String address;
+        private String phoneNumber;
+
+        public static ResponseUpdateMe from(User user) {
+            return ResponseUpdateMe.builder()
+                    .userId(user.getUserId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .birthDate(user.getBirthDate())
+                    .address(user.getAddress())
+                    .phoneNumber(user.getPhoneNumber())
+                    .build();
+        }
+    }
+    
+    
+    
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "소셜 유저 프로필 입력 요청 DTO")
     public static class RequestProfileSetup {
 

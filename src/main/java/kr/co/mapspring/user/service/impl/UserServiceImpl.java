@@ -57,4 +57,31 @@ public class UserServiceImpl implements UserService {
 
         return UserDto.ResponseProfileSetup.from(user);
     }    
+    
+    @Override
+    @Transactional
+    public UserDto.ResponseUpdateMe updateMe(Long userId, UserDto.RequestUpdateMe request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 전화번호 중복 체크 (변경하는 경우에만)
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isBlank()) {
+            if (userRepository.existsByPhoneNumberAndUserIdNot(request.getPhoneNumber(), userId)) {
+                throw new CustomException(ErrorCode.DUPLICATE_PHONE_NUMBER);
+            }
+        }
+
+        user.updateProfile(
+                request.getName(),
+                request.getBirthDate(),
+                request.getAddress(),
+                request.getPhoneNumber()
+        );
+
+        return UserDto.ResponseUpdateMe.from(user);
+    }
+    
+    
+    
+    
 }

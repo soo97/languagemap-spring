@@ -9,6 +9,7 @@ public interface UserService {
      */
     UserDto.ResponseMe getMe(Long userId);
     
-    
     UserDto.ResponseProfileSetup setupProfile(Long userId, UserDto.RequestProfileSetup request);
+    
+    UserDto.ResponseUpdateMe updateMe(Long userId, UserDto.RequestUpdateMe request);
 }

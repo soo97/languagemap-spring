@@ -118,5 +118,96 @@ class UserServiceTest {
                 .hasMessage("존재하지 않는 이메일입니다.");
     }
     
+    @Test
+    @DisplayName("유효한 userId면 내 정보 수정에 성공한다")
+    void updateMeSuccess() {
+        // given
+        User user = createUser();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+        given(userRepository.existsByPhoneNumberAndUserIdNot("01099998888", 1L))
+                .willReturn(false);
+
+        UserDto.RequestUpdateMe request = new UserDto.RequestUpdateMe(
+                "김철수",
+                LocalDate.of(1995, 5, 5),
+                "서울시 서초구",
+                "01099998888"
+        );
+
+        // when
+        UserDto.ResponseUpdateMe response = userService.updateMe(1L, request);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getName()).isEqualTo("김철수");
+        assertThat(response.getBirthDate()).isEqualTo(LocalDate.of(1995, 5, 5));
+        assertThat(response.getAddress()).isEqualTo("서울시 서초구");
+        assertThat(response.getPhoneNumber()).isEqualTo("01099998888");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 userId면 내 정보 수정 시 예외가 발생한다")
+    void updateMeFailWhenUserNotFound() {
+        // given
+        given(userRepository.findById(999L))
+                .willReturn(Optional.empty());
+
+        UserDto.RequestUpdateMe request = new UserDto.RequestUpdateMe(
+                "김철수",
+                LocalDate.of(1995, 5, 5),
+                "서울시 서초구",
+                "01099998888"
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.updateMe(999L, request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 이메일입니다.");
+    }
+
+    @Test
+    @DisplayName("이미 사용 중인 전화번호로 수정 시 예외가 발생한다")
+    void updateMeFailWhenDuplicatePhoneNumber() {
+        // given
+        User user = createUser();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+        given(userRepository.existsByPhoneNumberAndUserIdNot("01099998888", 1L))
+                .willReturn(true);
+
+        UserDto.RequestUpdateMe request = new UserDto.RequestUpdateMe(
+                "김철수",
+                LocalDate.of(1995, 5, 5),
+                "서울시 서초구",
+                "01099998888"
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.updateMe(1L, request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("이미 사용 중인 전화번호입니다.");
+    }
+
+    @Test
+    @DisplayName("null 필드는 수정하지 않는다")
+    void updateMeWithNullFields() {
+        // given
+        User user = createUser();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+
+        UserDto.RequestUpdateMe request = new UserDto.RequestUpdateMe(
+                null, null, null, null
+        );
+
+        // when
+        UserDto.ResponseUpdateMe response = userService.updateMe(1L, request);
+
+        // then
+        assertThat(response.getName()).isEqualTo("홍길동");
+        assertThat(response.getAddress()).isEqualTo("서울시 강남구");
+    }
+    
     
 }

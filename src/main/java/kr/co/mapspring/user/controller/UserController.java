@@ -68,8 +68,19 @@ public class UserController implements UserControllerDocs{
         return ApiResponseDTO.success("프로필 입력 성공", response);
     }
     
-    
-    
+    @Override
+    @PatchMapping("/me")
+    public ApiResponseDTO<UserDto.ResponseUpdateMe> updateMe(
+            HttpServletRequest request,
+            @Valid @RequestBody UserDto.RequestUpdateMe updateRequest) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        String token = authHeader.substring(7);
+        Long userId = jwtTokenProvider.getUserId(token);
+        return ApiResponseDTO.success("내 정보 수정 성공", userService.updateMe(userId, updateRequest));
+    }
     
     
 }
