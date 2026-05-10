@@ -333,4 +333,111 @@ public interface UserControllerDocs {
             )
             UserDto.RequestUpdateMe updateRequest
     );
+
+
+    @Operation(
+            summary = "비밀번호 변경",
+            description = """
+                    현재 비밀번호 확인 후 새 비밀번호로 변경합니다.
+                    소셜 로그인 유저는 비밀번호 변경이 불가합니다.
+                    Authorization 헤더에 Bearer Access Token이 필요합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "비밀번호 변경 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "비밀번호 변경 성공",
+                                    value = """
+                                            {
+                                              "success": true,
+                                              "status": 200,
+                                              "message": "비밀번호 변경 성공",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "새 비밀번호 불일치 또는 소셜 유저",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "새 비밀번호 불일치",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 400,
+                                              "message": "비밀번호와 비밀번호 확인이 일치하지 않습니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "현재 비밀번호 불일치",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "현재 비밀번호 불일치",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 401,
+                                              "message": "현재 비밀번호가 일치하지 않습니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 유저",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "유저 없음",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 404,
+                                              "message": "존재하지 않는 이메일입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ApiResponseDTO<Void> changePassword(
+            @Parameter(hidden = true)
+            HttpServletRequest request,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "비밀번호 변경 요청",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.RequestChangePassword.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "currentPassword": "1234",
+                                              "newPassword": "Qwer1234!",
+                                              "newPasswordConfirm": "Qwer1234!"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            UserDto.RequestChangePassword passwordRequest
+    );
 }

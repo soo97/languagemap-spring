@@ -82,5 +82,21 @@ public class UserController implements UserControllerDocs{
         return ApiResponseDTO.success("내 정보 수정 성공", userService.updateMe(userId, updateRequest));
     }
     
+    @Override
+    @PatchMapping("/me/password")
+    public ApiResponseDTO<Void> changePassword(
+            HttpServletRequest request,
+            @Valid @RequestBody UserDto.RequestChangePassword passwordRequest) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        String token = authHeader.substring(7);
+        Long userId = jwtTokenProvider.getUserId(token);
+        userService.changePassword(userId, passwordRequest);
+        return ApiResponseDTO.success("비밀번호 변경 성공", null);
+    }
+    
+    
     
 }

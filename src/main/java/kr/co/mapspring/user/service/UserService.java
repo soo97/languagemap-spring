@@ -12,4 +12,6 @@ public interface UserService {
     UserDto.ResponseProfileSetup setupProfile(Long userId, UserDto.RequestProfileSetup request);
     
     UserDto.ResponseUpdateMe updateMe(Long userId, UserDto.RequestUpdateMe request);
+    
+    void changePassword(Long userId, UserDto.RequestChangePassword request);
 }

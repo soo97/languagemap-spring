@@ -172,7 +172,7 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
     
- // 유저프로필 업데이트
+    // 유저프로필 업데이트
     public void updateProfile(String name, LocalDate birthDate, String address, String phoneNumber) {
         if (name != null && !name.isBlank()) this.name = name;
         if (birthDate != null) this.birthDate = birthDate;
@@ -180,6 +180,9 @@ public class User {
         if (phoneNumber != null && !phoneNumber.isBlank()) this.phoneNumber = phoneNumber;
     }
     
-    
+    // 비밀번호 변경
+    public void changePassword(String encodedPassword) {
+        this.passwordHash = encodedPassword;
+    }
     
 }
