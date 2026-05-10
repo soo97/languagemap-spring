@@ -1,5 +1,6 @@
 package kr.co.mapspring.user.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,6 +82,21 @@ public class UserController implements UserControllerDocs{
         Long userId = jwtTokenProvider.getUserId(token);
         return ApiResponseDTO.success("내 정보 수정 성공", userService.updateMe(userId, updateRequest));
     }
+    
+    @Override
+    @DeleteMapping("/me")
+    public ApiResponseDTO<Void> deleteMe(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        String token = authHeader.substring(7);
+        Long userId = jwtTokenProvider.getUserId(token);
+        userService.deleteMe(userId);
+        return ApiResponseDTO.success("회원 탈퇴 성공", null);
+    }
+    
+    
     
     @Override
     @PatchMapping("/me/password")

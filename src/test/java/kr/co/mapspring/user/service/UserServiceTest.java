@@ -326,4 +326,46 @@ class UserServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessage("존재하지 않는 이메일입니다.");
     }
+    @Test
+    @DisplayName("유효한 userId면 회원 탈퇴에 성공한다")
+    void deleteMeSuccess() {
+        // given
+        User user = createUser();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+
+        // when & then
+        assertThatCode(() -> userService.deleteMe(1L))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("이미 탈퇴한 유저면 예외가 발생한다")
+    void deleteMeFailWhenAlreadyDeleted() {
+        // given
+        User user = createUser();
+        user.delete();
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(user));
+
+        // when & then
+        assertThatThrownBy(() -> userService.deleteMe(1L))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("이미 탈퇴한 회원입니다.");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 userId면 회원 탈퇴 시 예외가 발생한다")
+    void deleteMeFailWhenUserNotFound() {
+        // given
+        given(userRepository.findById(999L))
+                .willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userService.deleteMe(999L))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 이메일입니다.");
+    }
+    
+    
 }

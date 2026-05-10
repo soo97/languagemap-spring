@@ -430,14 +430,102 @@ public interface UserControllerDocs {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "currentPassword": "1234",
-                                              "newPassword": "Qwer1234!",
-                                              "newPasswordConfirm": "Qwer1234!"
+                                              "currentPassword": "currentPassword1!",
+                                              "newPassword": "newPassword1!",
+                                              "newPasswordConfirm": "newPassword1!"
                                             }
                                             """
                             )
                     )
             )
             UserDto.RequestChangePassword passwordRequest
+    );
+
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = """
+                    현재 로그인한 유저를 탈퇴 처리합니다.
+                    실제 삭제가 아닌 status를 DELETED로 변경합니다.
+                    Authorization 헤더에 Bearer Access Token이 필요합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "회원 탈퇴 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "회원 탈퇴 성공",
+                                    value = """
+                                            {
+                                              "success": true,
+                                              "status": 200,
+                                              "message": "회원 탈퇴 성공",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "이미 탈퇴한 회원",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "이미 탈퇴한 회원",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 400,
+                                              "message": "이미 탈퇴한 회원입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "인증 실패",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 401,
+                                              "message": "인증이 필요합니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 유저",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "유저 없음",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "status": 404,
+                                              "message": "존재하지 않는 이메일입니다.",
+                                              "data": null
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ApiResponseDTO<Void> deleteMe(
+            @Parameter(hidden = true)
+            HttpServletRequest request
     );
 }

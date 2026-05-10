@@ -185,4 +185,9 @@ public class User {
         this.passwordHash = encodedPassword;
     }
     
+    // 회원 탈퇴
+    public void delete() {
+        this.status = UserStatus.DELETED;
+    }
+    
 }

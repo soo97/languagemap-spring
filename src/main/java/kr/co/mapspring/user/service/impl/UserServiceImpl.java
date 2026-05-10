@@ -8,6 +8,7 @@ import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.user.dto.UserDto;
 import kr.co.mapspring.user.entity.User;
+import kr.co.mapspring.user.enums.UserStatus;
 import kr.co.mapspring.user.repository.UserRepository;
 import kr.co.mapspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +109,18 @@ public class UserServiceImpl implements UserService {
 
         user.changePassword(passwordEncoder.encode(request.getNewPassword()));
     }
-    
+	    @Override
+	    @Transactional
+	    public void deleteMe(Long userId) {
+	        User user = userRepository.findById(userId)
+	                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+	
+	        if (user.getStatus() == UserStatus.DELETED) {
+	            throw new CustomException(ErrorCode.ALREADY_DELETED_USER);
+	        }
+	
+	        user.delete();
+    }
     
     
 }
