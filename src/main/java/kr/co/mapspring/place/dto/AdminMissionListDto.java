@@ -1,5 +1,7 @@
 package kr.co.mapspring.place.dto;
 
+import java.util.Optional;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.place.entity.Mission;
 import lombok.Builder;
@@ -11,6 +13,12 @@ public class AdminMissionListDto {
     @Builder
     @Schema(name = "AdminMissionListResponse", description = "미션 리스트 응답 DTO")
     public static class ResponseList {
+    	
+    	@Schema(
+                description = "미션 ID",
+                example = "1"
+        )
+        private Long missionId;
 
         @Schema(
                 description = "미션 제목",
@@ -23,11 +31,23 @@ public class AdminMissionListDto {
                 example = "커피를 주문하는 상황을 연습한다."
         		)
         private String missionDescription;
+        
+        @Schema(
+                description = "연결된 시나리오 ID",
+                example = "1"
+        )
+        private Long scenarioId;
 
-        public static AdminMissionListDto.ResponseList from(Mission mission) {
+        public static ResponseList from(Mission mission) {
             return ResponseList.builder()
+                    .missionId(mission.getMissionId())
                     .missionTitle(mission.getMissionTitle())
                     .missionDescription(mission.getMissionDescription())
+                    .scenarioId(
+                            Optional.ofNullable(mission.getScenario())
+                                    .map(scenario -> scenario.getScenarioId())
+                                    .orElse(null)
+                    )
                     .build();
         }
     }

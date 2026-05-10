@@ -12,7 +12,7 @@ VALUES
  'ACTIVE', 'USER', NULL, NOW(), NOW()),
 (3, 'user3@test.com', '박지은', '2002-03-03', '서울시 서초구', '010-3333-3333', 
  '$2a$10$3iIiVWk5lGjvRd/6r.HIXu8sbJog9.Gtvm/Z2nzEsqr2sVoUUx1me', 
- 'ACTIVE', 'USER', NULL, NOW(), NOW());
+ 'ACTIVE', 'ADMIN', NULL, NOW(), NOW());
 
 -- TERMS
 INSERT INTO terms (title, content, version, term_type, is_required, is_active, created_at, updated_at)

@@ -15,6 +15,12 @@ public class AdminReadPlaceDto {
     @Schema(name = "AdminReadPlaceResponse", description = "장소 상세 조회 응답 DTO")
     public static class ResponseRead {
 
+    	@Schema(
+                description = "구글 장소 ID",
+                example = "S8DSaedDE3265Sd"
+        		)
+    	private String googlePlaceId;
+    	
         @Schema(
                 description = "장소 이름",
                 example = "스타벅스 강남점"
@@ -56,9 +62,22 @@ public class AdminReadPlaceDto {
                 example = "Seoul"
         		)
         private String city;
+        
+        @Schema(
+                description = "시나리오 ID",
+                example = "1"
+        		)
+        private Long scenarioId;
+        
+        @Schema(
+                description = "지역 Id",
+                example = "1"
+        		)
+        private Long regionId;
 
         public static AdminReadPlaceDto.ResponseRead from(Place place) {
             return AdminReadPlaceDto.ResponseRead.builder()
+            		.googlePlaceId(place.getGooglePlaceId())
                     .placeName(place.getPlaceName())
                     .placeDescription(place.getPlaceDescription())
                     .latitude(place.getLatitude())
@@ -69,6 +88,12 @@ public class AdminReadPlaceDto {
                             .orElse(null))
                     .scenarioDescription(Optional.ofNullable(place.getScenario())
                             .map(scenario -> scenario.getScenarioDescription())
+                            .orElse(null))
+                    .scenarioId(Optional.ofNullable(place.getScenario())
+                            .map(scenario -> scenario.getScenarioId())
+                            .orElse(null))
+                    .regionId(Optional.ofNullable(place.getRegion())
+                            .map(region -> region.getRegionId())
                             .orElse(null))
                     .build();
         }

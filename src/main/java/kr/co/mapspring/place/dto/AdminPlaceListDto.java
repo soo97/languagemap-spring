@@ -14,6 +14,12 @@ public class AdminPlaceListDto {
     @Builder
     @Schema(name = "AdminPlaceListResponse", description = "장소 리스트 응답 DTO")
     public static class ResponseList {
+    	
+    	@Schema(
+                description = "장소 ID",
+                example = "1"
+        		)
+    	private Long placeId;
 
         @Schema(
         		description = "장소 이름",
@@ -59,6 +65,7 @@ public class AdminPlaceListDto {
 
         public static AdminPlaceListDto.ResponseList from(Place place) {
             return AdminPlaceListDto.ResponseList.builder()
+            		.placeId(place.getPlaceId())
                     .placeName(place.getPlaceName())
                     .placeAddress(place.getPlaceAddress())
                     .googlePlaceId(place.getGooglePlaceId())
