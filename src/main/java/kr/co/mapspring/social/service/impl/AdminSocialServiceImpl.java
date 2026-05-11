@@ -53,6 +53,7 @@ public class AdminSocialServiceImpl implements AdminSocialService {
 
         if (request.getStatus() == ReportStatus.REJECTED) {
             userReport.reject(request.getAdminMemo());
+            userReport.getReportedUser().activate();
         }
     }
 

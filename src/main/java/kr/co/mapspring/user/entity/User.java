@@ -164,6 +164,11 @@ public class User {
     public void deactivate() {
         this.status = UserStatus.INACTIVE;
     }
+
+    // 신고 반려 또는 제재 해제 시 사용자 계정을 다시 활성화
+    public void activate() {
+        this.status = UserStatus.ACTIVE;
+    }
     
     // 소셜 유저 프로필 저장
     public void setupProfile(LocalDate birthDate, String address, String phoneNumber) {
