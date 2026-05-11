@@ -47,6 +47,7 @@ public class AdminSocialServiceImpl implements AdminSocialService {
 
         if (request.getStatus() == ReportStatus.RESOLVED) {
             userReport.resolve(request.getAdminMemo());
+            userReport.getReportedUser().deactivate();
             return;
         }
 

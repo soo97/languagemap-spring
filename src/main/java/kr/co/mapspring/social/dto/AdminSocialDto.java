@@ -26,8 +26,14 @@ public class AdminSocialDto {
         @Schema(description = "신고자 ID", example = "1")
         private Long reporterId;
 
+        @Schema(description = "신고자 이름", example = "신고자")
+        private String reporterName;
+
         @Schema(description = "신고 대상 사용자 ID", example = "2")
         private Long reportedUserId;
+
+        @Schema(description = "신고 대상 사용자 이름", example = "신고대상")
+        private String reportedUserName;
 
         @Schema(description = "신고 사유", example = "욕설")
         private String reason;
@@ -48,7 +54,9 @@ public class AdminSocialDto {
             return ResponseReport.builder()
                     .reportId(userReport.getReportId())
                     .reporterId(userReport.getReporter().getUserId())
+                    .reporterName(userReport.getReporter().getName())
                     .reportedUserId(userReport.getReportedUser().getUserId())
+                    .reportedUserName(userReport.getReportedUser().getName())
                     .reason(userReport.getReason())
                     .status(userReport.getStatus())
                     .createdAt(userReport.getCreatedAt())
@@ -83,8 +91,14 @@ public class AdminSocialDto {
         @Schema(description = "요청 보낸 사용자 ID", example = "1")
         private Long requesterId;
 
+        @Schema(description = "요청 보낸 사용자 이름", example = "신고자")
+        private String requesterName;
+
         @Schema(description = "요청 받은 사용자 ID", example = "2")
         private Long addresseeId;
+
+        @Schema(description = "요청 받은 사용자 이름", example = "신고대상")
+        private String addresseeName;
 
         @Schema(description = "친구 상태", example = "BLOCKED")
         private FriendshipStatus status;
@@ -99,7 +113,9 @@ public class AdminSocialDto {
             return ResponseFriendshipHistory.builder()
                     .friendshipId(friendship.getFriendshipId())
                     .requesterId(friendship.getRequester().getUserId())
+                    .requesterName(friendship.getRequester().getName())
                     .addresseeId(friendship.getAddressee().getUserId())
+                    .addresseeName(friendship.getAddressee().getName())
                     .status(friendship.getStatus())
                     .requestedAt(friendship.getRequestedAt())
                     .respondedAt(friendship.getRespondedAt())

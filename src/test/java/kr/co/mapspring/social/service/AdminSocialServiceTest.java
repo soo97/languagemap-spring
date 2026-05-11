@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -129,8 +130,8 @@ public class AdminSocialServiceTest {
     }
 
     @Test
-    @DisplayName("관리자는 신고를 처리 완료 상태로 변경한다")
-    void 관리자는_신고를_처리_완료_상태로_변경한다() {
+    @DisplayName("관리자는 신고를 처리 완료 상태로 변경하고 신고당한 사용자를 비활성화한다")
+    void 관리자는_신고를_처리_완료_상태로_변경하고_신고당한_사용자를_비활성화한다() {
 
         Long reportId = 1L;
         String adminMemo = "신고 내용 확인 후 처리 완료";
@@ -158,6 +159,7 @@ public class AdminSocialServiceTest {
         adminSocialService.updateReportStatus(reportId, request);
 
         verify(userReportRepository).findById(reportId);
+        verify(reportedUser).deactivate();
 
         assertEquals(ReportStatus.RESOLVED, report.getStatus());
         assertEquals(adminMemo, report.getAdminMemo());
@@ -194,6 +196,7 @@ public class AdminSocialServiceTest {
         adminSocialService.updateReportStatus(reportId, request);
 
         verify(userReportRepository).findById(reportId);
+        verify(reportedUser, never()).deactivate();
 
         assertEquals(ReportStatus.REJECTED, report.getStatus());
         assertEquals(adminMemo, report.getAdminMemo());
