@@ -23,6 +23,7 @@ import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto.RequsetMissionStart;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
 import kr.co.mapspring.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -109,6 +110,7 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	    );
 	}
 	
+	@Override
 	@GetMapping("/me/progress")
 	public ResponseEntity<ApiResponseDTO<List<UserLearningProgressDto.Response>>> readMyProgress(
 	        @AuthenticationPrincipal User user
@@ -125,6 +127,16 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	    return ResponseEntity.ok(
 	            ApiResponseDTO.success("내 학습 진행 상황 조회 성공", response)
 	    );
+	}
+	
+	// 사용자 지역 리스트 조회
+	@Override
+	@GetMapping("/regions")
+	public ResponseEntity<ApiResponseDTO<List<UserRegionListDto.ResponseList>>> readUserRegionList() {
+
+	    List<UserRegionListDto.ResponseList> result = userPlaceLearningService.readRegionList();
+
+	    return ResponseEntity.ok(ApiResponseDTO.success("사용자 지역 리스트 조회 완료", result));
 	}
 	
 	

@@ -257,6 +257,7 @@ class UserPlaceLearningServiceTest {
     @DisplayName("미션 시작 성공")
     void 미션_시작_성공() {
         // given
+    	Long userId = 1L;
         Long sessionId = 100L;
         Long missionId = 1L;
 
@@ -275,7 +276,7 @@ class UserPlaceLearningServiceTest {
 
         // when
         UserMissionStartDto.ResponseMissionStart response =
-                userPlaceLearningService.missionStart(sessionId, missionId);
+                userPlaceLearningService.missionStart(userId, sessionId, missionId);
 
         // then
         assertNotNull(response);
@@ -296,6 +297,7 @@ class UserPlaceLearningServiceTest {
     @DisplayName("미션 시작 실패 존재하지 않는 미션 세션")
     void 미션_시작_실패_존재하지_않는_미션_세션() {
         // given
+    	Long userId = 999L;
         Long sessionId = 999L;
         Long missionId = 999L;
 
@@ -304,7 +306,7 @@ class UserPlaceLearningServiceTest {
 
         // when & then
         assertThrows(MissionSessionNotFoundException.class,
-                () -> userPlaceLearningService.missionStart(sessionId, missionId));
+                () -> userPlaceLearningService.missionStart(userId, sessionId, missionId));
 
         verify(missionSessionRepository, times(1))
                 .findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId);
