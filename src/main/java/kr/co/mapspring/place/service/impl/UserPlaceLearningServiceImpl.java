@@ -2,10 +2,13 @@ package kr.co.mapspring.place.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
+import kr.co.mapspring.global.exception.place.ChatLimitExceededException;
 import kr.co.mapspring.global.exception.place.MissionSessionNotFoundException;
 import kr.co.mapspring.global.exception.place.PlaceNotFoundException;
 import kr.co.mapspring.global.exception.user.UserNotFoundException;
@@ -83,110 +86,153 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	// 학습하기 클릭 시 학습 세션 생성
 	@Override
 	@Transactional
-	public UserCreateLearningSessionDto.ResponseCreate learningStart(Long placeId, UserCreateLearningSessionDto.RequestCreate request) {
-		
-		// 학습 세션 생성
-		Place place = placeRepository.findById(placeId)
-				.orElseThrow(PlaceNotFoundException::new);
-		
-		Long userId = request.getUserId();
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(UserNotFoundException::new);
-		
-		LearningSession learningSession = LearningSession.create(place, user, request.getLevel());
-		
-		LearningSession saveLearningSession = learningSessionRepository.save(learningSession);
-		
-		// 미션 세션 생성 미션 엔티티
-		Long scenarioId = place.getScenario().getScenarioId();
-		
-		List<Mission> missionList = missionRepository.findByScenario_ScenarioId(scenarioId);
-		
-		List<MissionSession> missionSessionList = missionList.stream()
-				.map(mission -> MissionSession.create(saveLearningSession, mission))
-				.toList();
-		
-		missionSessionRepository.saveAll(missionSessionList);
-		
-		String initialMessage =
-		        place.getPlaceName()
-		        + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요.";
+	public UserCreateLearningSessionDto.ResponseCreate learningStart(
+	        Long placeId,
+	        UserCreateLearningSessionDto.RequestCreate request
+	) {
 
-		SessionMessage startMessage = SessionMessage.create(
-		        saveLearningSession,
-		        null,
-		        initialMessage,
-		        SessionMessageRole.ASSISTANT
-		);
+	    Long userId = request.getUserId();
 
-		sessionMessageRepository.save(startMessage);
+	    Place place = placeRepository.findById(placeId)
+	            .orElseThrow(PlaceNotFoundException::new);
 
-		return UserCreateLearningSessionDto.ResponseCreate.from(saveLearningSession);
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(UserNotFoundException::new);
+
+	    Optional<LearningSession> existingSession =
+	            learningSessionRepository.findByUser_UserIdAndPlace_PlaceId(userId, placeId);
+
+	    if (existingSession.isPresent()) {
+	        return UserCreateLearningSessionDto.ResponseCreate.from(existingSession.get());
+	    }
+
+	    LearningSession learningSession =
+	            LearningSession.create(place, user, request.getLevel());
+
+	    LearningSession savedLearningSession =
+	            learningSessionRepository.save(learningSession);
+
+	    Long scenarioId = place.getScenario().getScenarioId();
+
+	    List<Mission> missionList =
+	            missionRepository.findByScenario_ScenarioId(scenarioId);
+
+	    List<MissionSession> missionSessionList = missionList.stream()
+	            .map(mission -> MissionSession.create(savedLearningSession, mission))
+	            .toList();
+
+	    missionSessionRepository.saveAll(missionSessionList);
+
+	    String initialMessage =
+	            place.getPlaceName()
+	                    + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요.";
+
+	    SessionMessage startMessage = SessionMessage.create(
+	            savedLearningSession,
+	            null,
+	            initialMessage,
+	            SessionMessageRole.ASSISTANT
+	    );
+
+	    sessionMessageRepository.save(startMessage);
+
+	    return UserCreateLearningSessionDto.ResponseCreate.from(savedLearningSession);
 	}
 	
 	// 미션 시작
-		@Override
-		@Transactional
-		public UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId) {
-			
-			MissionSession missionSession = missionSessionRepository.findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId)
-					.orElseThrow(MissionSessionNotFoundException::new);
-			
-			missionSession.start();
-			
-			LearningSession learningSession = missionSession.getLearningSession();
-		    Mission mission = missionSession.getMission();
-		    Scenario scenario = learningSession.getPlace().getScenario();
+	@Override
+	@Transactional
+	public UserMissionStartDto.ResponseMissionStart missionStart(
+	        Long userId,
+	        Long sessionId,
+	        Long missionId
+	) {
+	    LearningSession learningSession =
+	            learningSessionRepository.findBySessionIdAndUser_UserId(sessionId, userId)
+	                    .orElseThrow(LearningSessionNotFoundException::new);
 
-		    FastApiMissionStartDto.RequestMissionStart fastApiRequest =
-		            FastApiMissionStartDto.RequestMissionStart.builder()
-		                    .level(learningSession.getLevel().name())
-		                    .scenarioPrompt(scenario.getPrompt())
-		                    .scenarioCategory(scenario.getCategory())
-		                    .missionTitle(mission.getMissionTitle())
-		                    .missionDescription(mission.getMissionDescription())
-		                    .build();
+	    MissionSession missionSession =
+	            missionSessionRepository
+	                    .findByLearningSession_SessionIdAndMission_MissionId(
+	                            learningSession.getSessionId(),
+	                            missionId
+	                    )
+	                    .orElseThrow(MissionSessionNotFoundException::new);
 
-		    FastApiMissionStartDto.ResponseMissionStart fastApiResponse = fastApiClient.missionStart(fastApiRequest);
-		     
-			String aiMessage = fastApiResponse.getAiMessage();
-			
-			SessionMessage aiStartMessage = SessionMessage.create(
-			        missionSession.getLearningSession(),
-			        missionSession,
-			        aiMessage,
-			        SessionMessageRole.ASSISTANT
-			);
-			
-			sessionMessageRepository.save(aiStartMessage);
-			
-			UserMissionStartDto.ResponseMissionStart response = UserMissionStartDto.ResponseMissionStart.of(mission, missionSession, aiMessage);
-			
-			return response;
-		}
+	    missionSession.start();
+
+	    Mission mission = missionSession.getMission();
+	    Scenario scenario = learningSession.getPlace().getScenario();
+
+	    FastApiMissionStartDto.RequestMissionStart fastApiRequest =
+	            FastApiMissionStartDto.RequestMissionStart.builder()
+	                    .level(learningSession.getLevel().name())
+	                    .scenarioPrompt(scenario.getPrompt())
+	                    .scenarioCategory(scenario.getCategory())
+	                    .missionTitle(mission.getMissionTitle())
+	                    .missionDescription(mission.getMissionDescription())
+	                    .build();
+
+	    FastApiMissionStartDto.ResponseMissionStart fastApiResponse =
+	            fastApiClient.missionStart(fastApiRequest);
+
+	    String aiMessage = fastApiResponse.getAiMessage();
+
+	    SessionMessage aiStartMessage = SessionMessage.create(
+	            learningSession,
+	            missionSession,
+	            aiMessage,
+	            SessionMessageRole.ASSISTANT
+	    );
+
+	    sessionMessageRepository.save(aiStartMessage);
+
+	    return UserMissionStartDto.ResponseMissionStart.of(
+	            mission,
+	            missionSession,
+	            aiMessage
+	    );
+	}
 	
 	// 채팅 기능
 	@Override
 	@Transactional
 	public UserChatDto.ResponseChat chat(UserChatDto.RequestChat request) {
 
+	    LearningSession learningSession =
+	            learningSessionRepository
+	                    .findBySessionIdAndUser_UserId(
+	                            request.getSessionId(),
+	                            request.getUserId()
+	                    )
+	                    .orElseThrow(LearningSessionNotFoundException::new);
+
 	    MissionSession runningMissionSession = missionSessionRepository
 	            .findByLearningSession_SessionIdAndMissionStatus(
-	                    request.getSessionId(),
+	                    learningSession.getSessionId(),
 	                    MissionSessionStatus.RUNNING
 	            )
 	            .orElseThrow(MissionSessionNotFoundException::new);
 
+	    long userMessageCount = sessionMessageRepository
+	            .countByMissionSession_MissionSessionIdAndRole(
+	                    runningMissionSession.getMissionSessionId(),
+	                    SessionMessageRole.USER
+	            );
+
+	    if (userMessageCount >= 5) {
+	        throw new ChatLimitExceededException();
+	    }
+
 	    SessionMessage userMessage = SessionMessage.create(
-	            runningMissionSession.getLearningSession(),
+	            learningSession,
 	            runningMissionSession,
 	            request.getMessage(),
 	            SessionMessageRole.USER
 	    );
 
 	    sessionMessageRepository.save(userMessage);
-	    
+
 	    List<SessionMessage> messageHistory =
 	            sessionMessageRepository
 	                    .findByMissionSession_MissionSessionIdOrderByCreatedAtAsc(
@@ -194,29 +240,29 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	                    );
 
 	    Mission mission = runningMissionSession.getMission();
-	    Scenario scenario = runningMissionSession.getLearningSession().getPlace().getScenario();
+	    Scenario scenario = learningSession.getPlace().getScenario();
 
 	    FastApiChatDto.RequestChat fastApiRequest = FastApiChatDto.RequestChat.builder()
-	                    .userMessage(request.getMessage())
-	                    .messages(messageHistory.stream()
-	                    		.map(message -> FastApiChatDto.MessageHistory.builder()
-	                    				.role(message.getRole().name().toLowerCase())
-	                    				.message(message.getMessage())
-	                    				.build())
-	                                    .toList())
-	                    .missionTitle(mission.getMissionTitle())
-	                    .missionDescription(mission.getMissionDescription())
-	                    .scenarioPrompt(scenario.getPrompt())
-	                    .scenarioCategory(scenario.getCategory())
-	                    .build();
+	            .userMessage(request.getMessage())
+	            .messages(messageHistory.stream()
+	                    .map(message -> FastApiChatDto.MessageHistory.builder()
+	                            .role(message.getRole().name().toLowerCase())
+	                            .message(message.getMessage())
+	                            .build())
+	                    .toList())
+	            .missionTitle(mission.getMissionTitle())
+	            .missionDescription(mission.getMissionDescription())
+	            .scenarioPrompt(scenario.getPrompt())
+	            .scenarioCategory(scenario.getCategory())
+	            .build();
 
-	    // 5. FastAPI 호출
-	    FastApiChatDto.ResponseChat fastApiResponse = fastApiClient.chat(fastApiRequest);
-	    
+	    FastApiChatDto.ResponseChat fastApiResponse =
+	            fastApiClient.chat(fastApiRequest);
+
 	    String aiMessage = fastApiResponse.getAiMessage();
 
 	    SessionMessage assistantMessage = SessionMessage.create(
-	            runningMissionSession.getLearningSession(),
+	            learningSession,
 	            runningMissionSession,
 	            aiMessage,
 	            SessionMessageRole.ASSISTANT
@@ -232,30 +278,42 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	// 미션 완료 기능
 	@Override
 	@Transactional
-	public UserMissionCompleteDto.ResponseComplete missionComplete(Long sessionId, Long missionId) {
+	public UserMissionCompleteDto.ResponseComplete missionComplete(
+	        Long userId,
+	        Long sessionId,
+	        Long missionId
+	) {
+
+	    LearningSession learningSession =
+	            learningSessionRepository
+	                    .findBySessionIdAndUser_UserId(sessionId, userId)
+	                    .orElseThrow(LearningSessionNotFoundException::new);
 
 	    MissionSession missionSession = missionSessionRepository
-	            .findByLearningSession_SessionIdAndMission_MissionId(sessionId, missionId)
+	            .findByLearningSession_SessionIdAndMission_MissionId(
+	                    learningSession.getSessionId(),
+	                    missionId
+	            )
 	            .orElseThrow(MissionSessionNotFoundException::new);
 
 	    missionSession.complete();
 
-	    LearningSession learningSession = missionSession.getLearningSession();
-
 	    boolean hasNotCompletedMission =
 	            missionSessionRepository.existsByLearningSession_SessionIdAndMissionStatusNot(
-	                    sessionId,
+	                    learningSession.getSessionId(),
 	                    MissionSessionStatus.COMPLETED
 	            );
-	    
+
 	    String evaluation = null;
 
 	    if (!hasNotCompletedMission) {
-	    	
+
 	        learningSession.complete();
-	        
+
 	        List<SessionMessage> userMessageHistory = sessionMessageRepository
-	                .findBySession_SessionIdOrderByCreatedAtAsc(sessionId)
+	                .findBySession_SessionIdOrderByCreatedAtAsc(
+	                        learningSession.getSessionId()
+	                )
 	                .stream()
 	                .filter(message -> message.getRole() == SessionMessageRole.USER)
 	                .toList();
@@ -264,32 +322,34 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	                .getPlace()
 	                .getScenario();
 
-	        FastApiEvaluationDto.RequestEvaluation fastApiRequest = FastApiEvaluationDto.RequestEvaluation.builder()
+	        FastApiEvaluationDto.RequestEvaluation fastApiRequest =
+	                FastApiEvaluationDto.RequestEvaluation.builder()
 	                        .scenarioPrompt(scenario.getPrompt())
 	                        .scenarioCategory(scenario.getCategory())
 	                        .messages(userMessageHistory.stream()
 	                                .map(message -> FastApiEvaluationDto.MessageHistory.builder()
-	                                		.role(message.getRole().name().toLowerCase())
-	                                		.message(message.getMessage())
-	                                		.build())
-	                                        .toList())
+	                                        .role(message.getRole().name().toLowerCase())
+	                                        .message(message.getMessage())
+	                                        .build())
+	                                .toList())
 	                        .build();
 
 	        FastApiEvaluationDto.ResponseEvaluation fastApiResponse =
 	                fastApiClient.evaluate(fastApiRequest);
 
 	        evaluation = fastApiResponse.getEvaluation();
-	        
-	      
-	        
+
 	        SessionEvaluation sessionEvaluation =
 	                SessionEvaluation.create(learningSession, evaluation);
 
 	        sessionEvaluationRepository.save(sessionEvaluation);
-	        
 	    }
 
-	    return UserMissionCompleteDto.ResponseComplete.of(missionSession, learningSession, evaluation);
+	    return UserMissionCompleteDto.ResponseComplete.of(
+	            missionSession,
+	            learningSession,
+	            evaluation
+	    );
 	}
 	
 	// 사용자 진행 사항 유지

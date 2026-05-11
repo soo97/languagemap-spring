@@ -44,7 +44,7 @@ public interface UserPlaceLearningService {
 	 * @param missionId 미션 세션 조회용
 	 * @return 미션 세션 정보 및 사용자에게 보여줄 ai 메세지
 	 */
-	UserMissionStartDto.ResponseMissionStart missionStart(Long sessionId, Long missionId);
+	public UserMissionStartDto.ResponseMissionStart missionStart(Long userId, Long sessionId, Long missionId);
 	
 	/**
 	 * 대화 기능 현재 학습 중인 세션을 조회하고 유저 메세지를 저장 후 ai 답면을 저장 후 보여준다.
@@ -61,7 +61,7 @@ public interface UserPlaceLearningService {
 	 * @param missionId 완료 버튼을 누를 미션 세션을 찾을 값
 	 * @return 미션 세션 상태, 학습 세션 상태
 	 */
-	UserMissionCompleteDto.ResponseComplete missionComplete(Long sessionId, Long missionId);
+	UserMissionCompleteDto.ResponseComplete missionComplete(Long userId, Long sessionId, Long missionId);
 	
 	List<UserLearningProgressDto.Response> readMyProgress(Long userId);
 }

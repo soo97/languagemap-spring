@@ -5,10 +5,23 @@ import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.MissionSession;
 import kr.co.mapspring.place.enums.LearningSessionStatus;
 import kr.co.mapspring.place.enums.MissionSessionStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserMissionCompleteDto {
+	
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	@Schema(name = "UserMissionCompleteRequesr", description = "미션 완료 요청 DTO")
+	public static class RequestComplete {
+
+		@Schema(description = "유저 ID", example = "1")
+	    private Long userId;
+	}
 	
 	@Getter
 	@Builder

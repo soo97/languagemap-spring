@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import kr.co.mapspring.place.entity.SessionMessage;
+import kr.co.mapspring.place.enums.SessionMessageRole;
 
 public interface SessionMessageRepository extends JpaRepository<SessionMessage, Long> {
 
@@ -12,4 +13,8 @@ public interface SessionMessageRepository extends JpaRepository<SessionMessage, 
     
     List<SessionMessage> findByMissionSession_MissionSessionIdOrderByCreatedAtAsc(Long missionSessionId);
     
+    long countByMissionSession_MissionSessionIdAndRole(
+            Long missionSessionId,
+            SessionMessageRole role
+    );
 }

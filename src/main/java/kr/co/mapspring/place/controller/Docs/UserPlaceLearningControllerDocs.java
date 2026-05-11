@@ -21,6 +21,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserMissionStartDto.RequsetMissionStart;
 import kr.co.mapspring.user.entity.User;
 
 @Tag(name = "User Place Learning", description = "사용자 장소 학습 및 세션 API")
@@ -110,10 +111,11 @@ public interface UserPlaceLearningControllerDocs {
                     description = "이미 진행 중이거나 완료된 미션"
             )
     })
-    ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
-            @PathVariable Long sessionId,
-            @PathVariable Long missionId
-    );
+    public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
+	        @PathVariable("sessionId") Long sessionId,
+	        @PathVariable("missionId") Long missionId,
+	        @RequestBody RequsetMissionStart request
+	        );
     
     @Operation(
             summary = "AI 채팅",
@@ -168,7 +170,8 @@ public interface UserPlaceLearningControllerDocs {
     })
     ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
             @PathVariable("sessionId") Long sessionId,
-            @PathVariable("missionId") Long missionId
+            @PathVariable("missionId") Long missionId,
+            @RequestBody UserMissionCompleteDto.RequestComplete request
     );
     
     @Operation(
