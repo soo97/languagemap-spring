@@ -15,9 +15,7 @@ public class AiUsageLimitPolicy {
     private static final List<Long> TEST_USER_IDS = List.of(1L);
 
     // 유료 계정: AI Coaching 사용 가능 기간
-    private static final Map<Long, LocalDate> VIP_USER_EXPIRES_AT = Map.of(
-            2L, LocalDate.of(2026, 12, 31)
-    );
+    private static final Map<Long, LocalDate> VIP_USER_EXPIRES_AT = Map.of();
 
     private AiUsageLimitPolicy() {}
 
