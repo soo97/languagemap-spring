@@ -172,4 +172,22 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
     
+    // 유저프로필 업데이트
+    public void updateProfile(String name, LocalDate birthDate, String address, String phoneNumber) {
+        if (name != null && !name.isBlank()) this.name = name;
+        if (birthDate != null) this.birthDate = birthDate;
+        if (address != null && !address.isBlank()) this.address = address;
+        if (phoneNumber != null && !phoneNumber.isBlank()) this.phoneNumber = phoneNumber;
+    }
+    
+    // 비밀번호 변경
+    public void changePassword(String encodedPassword) {
+        this.passwordHash = encodedPassword;
+    }
+    
+    // 회원 탈퇴
+    public void delete() {
+        this.status = UserStatus.DELETED;
+    }
+    
 }
