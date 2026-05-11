@@ -37,7 +37,7 @@ public interface RankingRepository extends JpaRepository<StudyScore, Long> {
     @Query("""
            SELECT COALESCE(AVG(ss.totalScore), 0)
            FROM StudyScore ss
-           WHERE ss.studyLog.user.userId IN :friendIds
+           WHERE ss.studyLog.user.userId IN :friendIds 
            """)
     Double findFriendAverageScore(@Param("friendIds") List<Long> friendIds);
 
