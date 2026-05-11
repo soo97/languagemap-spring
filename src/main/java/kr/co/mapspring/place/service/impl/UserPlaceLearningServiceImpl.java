@@ -292,7 +292,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	    return UserMissionCompleteDto.ResponseComplete.of(missionSession, learningSession, evaluation);
 	}
 	
-	
+	// 사용자 진행 사항 유지
 	@Override
 	@Transactional(readOnly = true)
 	public List<UserLearningProgressDto.Response> readMyProgress(Long userId) {
