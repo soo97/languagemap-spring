@@ -100,6 +100,7 @@ public enum ErrorCode {
 	
 	// User MissionSession
 	MISSION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션 세션입니다."),
+	CHAT_LIMIT_EXCEED(HttpStatus.TOO_MANY_REQUESTS, "미션당 채팅 가능 횟수를 초과했습니다"),
 	// FastAPI 연동
 	FASTAPI_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FastAPI 연동 중 오류가 발생했습니다."),
 	

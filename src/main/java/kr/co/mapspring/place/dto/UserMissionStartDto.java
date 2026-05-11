@@ -4,10 +4,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.mapspring.place.entity.Mission;
 import kr.co.mapspring.place.entity.MissionSession;
 import kr.co.mapspring.place.enums.MissionSessionStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserMissionStartDto {
+	
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	@Schema(name = "UserMissionStartRequest", description = "미션 시작 요청 DTO")
+	public static class RequsetMissionStart {
+		
+		@Schema(
+				description = "유저 ID", 
+				example = "1"
+				)
+		private Long userId;
+	}
 	
 	@Builder
 	@Getter

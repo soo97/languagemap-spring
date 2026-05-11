@@ -20,6 +20,7 @@ import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
 import kr.co.mapspring.place.dto.UserLearningProgressDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
+import kr.co.mapspring.place.dto.UserMissionStartDto.RequsetMissionStart;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
@@ -66,12 +67,18 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	@Override
 	@PatchMapping("/learningSessions/{sessionId}/missions/{missionId}")
 	public ResponseEntity<ApiResponseDTO<UserMissionStartDto.ResponseMissionStart>> missionStart(
-			@PathVariable("sessionId") Long sessionId,
-			@PathVariable("missionId") Long missionId) {
-		
-		UserMissionStartDto.ResponseMissionStart response = userPlaceLearningService.missionStart(sessionId, missionId);
-		
-		return ResponseEntity.ok(ApiResponseDTO.success("미션 시작 완료", response));
+	        @PathVariable("sessionId") Long sessionId,
+	        @PathVariable("missionId") Long missionId,
+	        @RequestBody RequsetMissionStart request) {
+
+	    UserMissionStartDto.ResponseMissionStart response =
+	            userPlaceLearningService.missionStart(
+	                    request.getUserId(),
+	                    sessionId,
+	                    missionId
+	            );
+
+	    return ResponseEntity.ok(ApiResponseDTO.success("미션 시작 완료", response));
 	}
 	
 	@Override
@@ -86,10 +93,16 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	@PatchMapping("/missionSessions/{sessionId}/missions/{missionId}")
 	public ResponseEntity<ApiResponseDTO<UserMissionCompleteDto.ResponseComplete>> missionComplete(
 	        @PathVariable("sessionId") Long sessionId,
-	        @PathVariable("missionId") Long missionId
+	        @PathVariable("missionId") Long missionId,
+	        @RequestBody UserMissionCompleteDto.RequestComplete request
 	) {
 
-	    UserMissionCompleteDto.ResponseComplete response = userPlaceLearningService.missionComplete(sessionId, missionId);
+	    UserMissionCompleteDto.ResponseComplete response =
+	            userPlaceLearningService.missionComplete(
+	                    request.getUserId(),
+	                    sessionId,
+	                    missionId
+	            );
 
 	    return ResponseEntity.ok(
 	            ApiResponseDTO.success("미션 완료 처리 성공", response)

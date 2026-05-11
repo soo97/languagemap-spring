@@ -14,6 +14,12 @@ public class UserChatDto {
     @AllArgsConstructor
     @Schema(name = "UserChatRequest", description = "AI 채팅 요청 DTO")
     public static class RequestChat {
+		
+		 @Schema(
+	             description = "유저 ID",
+	             example = "1"
+	        	)
+		private Long userId;
 
         @Schema(
                 description = "학습 세션 ID",
