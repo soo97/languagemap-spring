@@ -18,20 +18,29 @@ public class UserPlaceListDto {
 				example = "1"
 				)
 		private Long placeId;
+		
 		@Schema(
 				description = "위도", 
 				example = "38.1155"
 				)
 		private BigDecimal latitude;
+		
 		@Schema(
 				description = "경도", 
 				example = "42.8422"
 				)
 		private BigDecimal longitude;
 		
+		@Schema(
+				description = "지역 ID", 
+				example = "1"
+				)
+		private Long regionId;
+		
 		public static UserPlaceListDto.ResponseList from(Place place) {
             return UserPlaceListDto.ResponseList.builder()
                     .placeId(place.getPlaceId())
+                    .regionId(place.getRegion().getRegionId())
                     .latitude(place.getLatitude())
                     .longitude(place.getLongitude())
                     .build();
