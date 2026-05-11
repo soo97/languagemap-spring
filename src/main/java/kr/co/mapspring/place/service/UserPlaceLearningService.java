@@ -4,6 +4,7 @@ import java.util.List;
 
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserLearningProgressDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
@@ -61,4 +62,6 @@ public interface UserPlaceLearningService {
 	 * @return 미션 세션 상태, 학습 세션 상태
 	 */
 	UserMissionCompleteDto.ResponseComplete missionComplete(Long sessionId, Long missionId);
+	
+	List<UserLearningProgressDto.Response> readMyProgress(Long userId);
 }

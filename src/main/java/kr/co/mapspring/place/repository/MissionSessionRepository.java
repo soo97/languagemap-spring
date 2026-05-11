@@ -1,5 +1,6 @@
 package kr.co.mapspring.place.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface MissionSessionRepository extends JpaRepository<MissionSession, 
 	Optional<MissionSession> findByLearningSession_SessionIdAndMissionStatus(Long sessionId, MissionSessionStatus missionStatus);
 	
 	boolean existsByLearningSession_SessionIdAndMissionStatusNot(Long sessionId, MissionSessionStatus missionStats);
+
+	List<MissionSession> findByLearningSession_SessionId(Long sessionId);
 }

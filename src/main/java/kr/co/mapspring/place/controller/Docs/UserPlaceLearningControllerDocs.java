@@ -3,6 +3,7 @@ package kr.co.mapspring.place.controller.Docs;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -15,10 +16,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserLearningProgressDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.user.entity.User;
 
 @Tag(name = "User Place Learning", description = "사용자 장소 학습 및 세션 API")
 public interface UserPlaceLearningControllerDocs {
@@ -167,4 +170,36 @@ public interface UserPlaceLearningControllerDocs {
             @PathVariable("sessionId") Long sessionId,
             @PathVariable("missionId") Long missionId
     );
+    
+    @Operation(
+            summary = "내 학습 진행 상황 조회",
+            description = """
+                    JWT 토큰에 포함된 로그인 사용자 정보를 기준으로
+                    사용자의 장소별 학습 진행 상황을 조회합니다.
+
+                    - 진행 중인 학습 세션
+                    - 진행 중인 미션 ID
+                    - 완료한 미션 ID 목록
+                    - 저장된 대화 메시지 목록
+                    - 최종 평가 메시지
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "내 학습 진행 상황 조회 성공",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = UserLearningProgressDto.Response.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자"
+            )
+    })
+    ResponseEntity<ApiResponseDTO<List<UserLearningProgressDto.Response>>> readMyProgress(
+	        @AuthenticationPrincipal User user
+	);
 }

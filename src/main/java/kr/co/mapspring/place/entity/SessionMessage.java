@@ -35,7 +35,7 @@ public class SessionMessage {
 	private LearningSession session;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "mission_session_id", nullable = false)
+	@JoinColumn(name = "mission_session_id")
 	private MissionSession missionSession;
 	
 	@Column(name = "message", nullable = false, columnDefinition = "TEXT")

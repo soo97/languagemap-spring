@@ -1,5 +1,6 @@
 package kr.co.mapspring.place.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -12,4 +13,5 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
     @EntityGraph(attributePaths = {"place", "place.region", "place.scenario"})
     Optional<LearningSession> findBySessionId(Long sessionId);
     
+    List<LearningSession> findByUser_UserId(Long userId);
 }
