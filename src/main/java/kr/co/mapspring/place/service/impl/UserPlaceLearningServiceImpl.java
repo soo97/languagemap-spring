@@ -1,5 +1,6 @@
 package kr.co.mapspring.place.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.place.client.FastApiClient;
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserLearningProgressDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
@@ -107,6 +109,19 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 		
 		missionSessionRepository.saveAll(missionSessionList);
 		
+		String initialMessage =
+		        place.getPlaceName()
+		        + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요.";
+
+		SessionMessage startMessage = SessionMessage.create(
+		        saveLearningSession,
+		        null,
+		        initialMessage,
+		        SessionMessageRole.ASSISTANT
+		);
+
+		sessionMessageRepository.save(startMessage);
+
 		return UserCreateLearningSessionDto.ResponseCreate.from(saveLearningSession);
 	}
 	
@@ -239,7 +254,11 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	    	
 	        learningSession.complete();
 	        
-	        List<SessionMessage> messageHistory = sessionMessageRepository.findBySession_SessionIdOrderByCreatedAtAsc(sessionId);
+	        List<SessionMessage> userMessageHistory = sessionMessageRepository
+	                .findBySession_SessionIdOrderByCreatedAtAsc(sessionId)
+	                .stream()
+	                .filter(message -> message.getRole() == SessionMessageRole.USER)
+	                .toList();
 
 	        Scenario scenario = learningSession
 	                .getPlace()
@@ -248,7 +267,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	        FastApiEvaluationDto.RequestEvaluation fastApiRequest = FastApiEvaluationDto.RequestEvaluation.builder()
 	                        .scenarioPrompt(scenario.getPrompt())
 	                        .scenarioCategory(scenario.getCategory())
-	                        .messages(messageHistory.stream()
+	                        .messages(userMessageHistory.stream()
 	                                .map(message -> FastApiEvaluationDto.MessageHistory.builder()
 	                                		.role(message.getRole().name().toLowerCase())
 	                                		.message(message.getMessage())
@@ -273,6 +292,51 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	    return UserMissionCompleteDto.ResponseComplete.of(missionSession, learningSession, evaluation);
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<UserLearningProgressDto.Response> readMyProgress(Long userId) {
+
+	    List<LearningSession> learningSessions =
+	            learningSessionRepository.findByUser_UserId(userId);
+
+	    return learningSessions.stream()
+	            .map(learningSession -> {
+	                Long sessionId = learningSession.getSessionId();
+
+	                List<MissionSession> missionSessions =
+	                        missionSessionRepository.findByLearningSession_SessionId(sessionId);
+
+	                List<SessionMessage> sessionMessages =
+	                        sessionMessageRepository.findBySession_SessionIdOrderByCreatedAtAsc(sessionId);
+
+	                SessionEvaluation sessionEvaluation =
+	                        sessionEvaluationRepository
+	                                .findBySession_SessionId(sessionId)
+	                                .orElse(null);
+
+	                List<SessionMessage> mergedMessages =
+	                        new ArrayList<>(sessionMessages);
+
+	                if (sessionEvaluation != null) {
+	                    SessionMessage evaluationMessage = SessionMessage.create(
+	                            learningSession,
+	                            null,
+	                            sessionEvaluation.getEvaluation(),
+	                            SessionMessageRole.ASSISTANT
+	                    );
+
+	                    mergedMessages.add(evaluationMessage);
+	                }
+
+	                return UserLearningProgressDto.Response.from(
+	                        learningSession,
+	                        missionSessions,
+	                        mergedMessages
+	                );
+	            })
+	            .toList();
+	}
 	
 
 }

@@ -9,4 +9,5 @@ import kr.co.mapspring.place.entity.SessionEvaluation;
 public interface SessionEvaluationRepository extends JpaRepository<SessionEvaluation, Long> {
 
     Optional<SessionEvaluation> findBySession_SessionId(Long sessionId);
+   
 }

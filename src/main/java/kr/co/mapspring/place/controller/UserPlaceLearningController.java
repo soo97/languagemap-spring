@@ -3,6 +3,7 @@ package kr.co.mapspring.place.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,14 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.mapspring.global.dto.ApiResponseDTO;
+import kr.co.mapspring.global.exception.user.UserNotFoundException;
 import kr.co.mapspring.place.controller.Docs.UserPlaceLearningControllerDocs;
 import kr.co.mapspring.place.dto.UserChatDto;
 import kr.co.mapspring.place.dto.UserCreateLearningSessionDto;
+import kr.co.mapspring.place.dto.UserLearningProgressDto;
 import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
+import kr.co.mapspring.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -89,6 +93,24 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 
 	    return ResponseEntity.ok(
 	            ApiResponseDTO.success("미션 완료 처리 성공", response)
+	    );
+	}
+	
+	@GetMapping("/me/progress")
+	public ResponseEntity<ApiResponseDTO<List<UserLearningProgressDto.Response>>> readMyProgress(
+	        @AuthenticationPrincipal User user
+	) {
+		
+		if (user == null) {
+	        throw new UserNotFoundException();
+	    }
+	    Long userId = user.getUserId();
+
+	    List<UserLearningProgressDto.Response> response =
+	            userPlaceLearningService.readMyProgress(userId);
+
+	    return ResponseEntity.ok(
+	            ApiResponseDTO.success("내 학습 진행 상황 조회 성공", response)
 	    );
 	}
 	
