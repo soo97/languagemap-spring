@@ -21,6 +21,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto.RequsetMissionStart;
 import kr.co.mapspring.user.entity.User;
 
@@ -205,4 +206,6 @@ public interface UserPlaceLearningControllerDocs {
     ResponseEntity<ApiResponseDTO<List<UserLearningProgressDto.Response>>> readMyProgress(
 	        @AuthenticationPrincipal User user
 	);
+    
+    ResponseEntity<ApiResponseDTO<List<UserRegionListDto.ResponseList>>> readUserRegionList();
 }

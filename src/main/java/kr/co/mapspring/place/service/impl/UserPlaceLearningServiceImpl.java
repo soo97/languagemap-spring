@@ -20,6 +20,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiChatDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiEvaluationDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiMissionStartDto;
@@ -36,6 +37,7 @@ import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.MissionRepository;
 import kr.co.mapspring.place.repository.MissionSessionRepository;
 import kr.co.mapspring.place.repository.PlaceRepository;
+import kr.co.mapspring.place.repository.RegionRepository;
 import kr.co.mapspring.place.repository.SessionEvaluationRepository;
 import kr.co.mapspring.place.repository.SessionMessageRepository;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
@@ -54,6 +56,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	private final MissionSessionRepository missionSessionRepository;
 	private final SessionMessageRepository sessionMessageRepository;
 	private final SessionEvaluationRepository sessionEvaluationRepository;
+	private final RegionRepository regionRepository;
 	private final FastApiClient fastApiClient;
 	
 	// 마커 조회
@@ -220,7 +223,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	                    SessionMessageRole.USER
 	            );
 
-	    if (userMessageCount >= 5) {
+	    if (userMessageCount >= 10) {
 	        throw new ChatLimitExceededException();
 	    }
 
@@ -398,5 +401,15 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	            .toList();
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = true)
+    public List<UserRegionListDto.ResponseList> readRegionList() {
+
+        return regionRepository.findAll()
+                .stream()
+                .map(UserRegionListDto.ResponseList::from)
+                .toList();
+    }
 
 }
