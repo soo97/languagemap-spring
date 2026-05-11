@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.mapspring.ai.dto.CoachingEntryDto;
 import kr.co.mapspring.ai.service.CoachingEntryService;
 import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
+import kr.co.mapspring.global.exception.ai.AiCoachingAccessDeniedException;
+import kr.co.mapspring.global.policy.AiUsageLimitPolicy;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -33,6 +35,12 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
         LearningSession learningSession = learningSessionRepository.findBySessionId(sessionId)
         		.orElseThrow(LearningSessionNotFoundException::new);
 
+        Long userId = learningSession.getUser().getUserId();
+
+        if (!AiUsageLimitPolicy.hasValidAiCoachingAccess(userId)) {
+            throw new AiCoachingAccessDeniedException();
+        }
+        
         Place place = learningSession.getPlace();
         Region region = place.getRegion();
 

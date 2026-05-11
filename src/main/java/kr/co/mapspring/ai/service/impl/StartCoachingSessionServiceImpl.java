@@ -9,6 +9,8 @@ import kr.co.mapspring.ai.enums.CoachingSessionStatus;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.StartCoachingSessionService;
 import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
+import kr.co.mapspring.global.exception.ai.AiCoachingAccessDeniedException;
+import kr.co.mapspring.global.policy.AiUsageLimitPolicy;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,12 @@ public class StartCoachingSessionServiceImpl implements StartCoachingSessionServ
 
         LearningSession learningSession = learningSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(LearningSessionNotFoundException::new);
+        
+        Long userId = learningSession.getUser().getUserId();
+
+        if (!AiUsageLimitPolicy.hasValidAiCoachingAccess(userId)) {
+            throw new AiCoachingAccessDeniedException();
+        }
 
         CoachingSession coachingSession = coachingSessionRepository
                 .findByLearningSession_SessionIdAndCoachingSessionStatus(
