@@ -128,7 +128,9 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 
 	    String initialMessage =
 	            place.getPlaceName()
-	                    + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요.";
+	                    + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요. "
+	                    + "미션당 대화 횟수는 10회입니다. "
+	                    + "미션 수행 후 미션 종료를 눌러 대화를 종료해주세요.";
 
 	    SessionMessage startMessage = SessionMessage.create(
 	            savedLearningSession,
