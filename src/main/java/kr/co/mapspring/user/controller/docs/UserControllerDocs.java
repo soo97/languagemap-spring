@@ -1,7 +1,13 @@
 package kr.co.mapspring.user.controller.docs;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,7 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.co.mapspring.global.dto.ApiResponseDTO;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
 import kr.co.mapspring.user.dto.UserDto;
+import kr.co.mapspring.user.entity.User;
 
 @Tag(name = "User", description = "유저 관련 API")
 public interface UserControllerDocs {
@@ -528,4 +536,28 @@ public interface UserControllerDocs {
             @Parameter(hidden = true)
             HttpServletRequest request
     );
+    
+    @Operation(
+            summary = "최근 학습 장소 리스트 조회",
+            description = """
+                    사용자가 최근 학습 완료한 장소 리스트를 조회합니다.
+                    
+                    - 학습 완료된 세션만 조회
+                    - endTime 기준 내림차순 정렬
+                    - 최근 2개 데이터 반환
+                    """
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "최근 학습 장소 조회 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(
+                            schema = @Schema(implementation = UserRecentLearningPlaceDto.class)
+                    )
+            )
+    )
+    ResponseEntity<ApiResponseDTO<List<UserRecentLearningPlaceDto.ResponseRecent>>> readRecentLearningPlaces(
+	        @AuthenticationPrincipal User user
+	);
 }

@@ -1,5 +1,6 @@
 package kr.co.mapspring.user.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhoneNumber(String phoneNumber);
     
     boolean existsByPhoneNumberAndUserIdNot(String phoneNumber, Long userId);
+    
+    List<User> findByNameContainingOrEmailContaining(String name, String email);
 }

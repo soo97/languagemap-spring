@@ -25,6 +25,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
            SELECT f
            FROM Friendship f
+           JOIN FETCH f.requester
+           JOIN FETCH f.addressee
            WHERE (f.requester.userId = :userId OR f.addressee.userId = :userId)
              AND f.status = :status
            """)
@@ -40,6 +42,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
            SELECT f
            FROM Friendship f
+           JOIN FETCH f.requester
+           JOIN FETCH f.addressee
            WHERE f.addressee.userId = :userId
              AND f.status = :status
            """)
@@ -55,6 +59,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
            SELECT f
            FROM Friendship f
+           JOIN FETCH f.requester
+           JOIN FETCH f.addressee
            WHERE f.requester.userId = :userId
              AND f.status = :status
            """)
@@ -70,6 +76,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
            SELECT f
            FROM Friendship f
+           JOIN FETCH f.requester
+           JOIN FETCH f.addressee
            WHERE (f.requester.userId = :userId OR f.addressee.userId = :userId)
              AND f.status IN (kr.co.mapspring.social.enums.FriendshipStatus.REJECTED,
                               kr.co.mapspring.social.enums.FriendshipStatus.BLOCKED)

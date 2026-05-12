@@ -20,6 +20,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
 import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiChatDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiEvaluationDto;
@@ -128,7 +129,9 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 
 	    String initialMessage =
 	            place.getPlaceName()
-	                    + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요.";
+	                    + " 학습 세션이 시작되었습니다. 이제 미션을 선택해서 대화를 시작해보세요. "
+	                    + "미션당 대화 횟수는 10회입니다. "
+	                    + "미션 수행 후 미션 종료를 눌러 대화를 종료해주세요.";
 
 	    SessionMessage startMessage = SessionMessage.create(
 	            savedLearningSession,
@@ -401,7 +404,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	            .toList();
 	}
 	
-	
+	// 지도 장소 이동 버튼 조회
 	@Override
 	@Transactional(readOnly = true)
     public List<UserRegionListDto.ResponseList> readRegionList() {
@@ -411,5 +414,15 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
                 .map(UserRegionListDto.ResponseList::from)
                 .toList();
     }
-
+	
+	// 사용자 프로필 최근 학습 기록 조회
+	@Override
+	@Transactional(readOnly = true)
+	public List<UserRecentLearningPlaceDto.ResponseRecent> readRecentLearningPlaces(Long userId) {
+	    return learningSessionRepository
+	            .findTop2ByUser_UserIdAndEndTimeIsNotNullOrderByEndTimeDesc(userId)
+	            .stream()
+	            .map(UserRecentLearningPlaceDto.ResponseRecent::of)
+	            .toList();
+	}
 }

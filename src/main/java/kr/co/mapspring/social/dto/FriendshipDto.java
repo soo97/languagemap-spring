@@ -39,20 +39,38 @@ public class FriendshipDto {
         @Schema(description = "요청 보낸 사용자 ID", example = "1")
         private Long requesterId;
 
+        @Schema(description = "요청 보낸 사용자 이름", example = "이민수")
+        private String requesterName;
+
+        @Schema(description = "요청 보낸 사용자 이메일", example = "user1@test.com")
+        private String requesterEmail;
+
         @Schema(description = "요청 받은 사용자 ID", example = "2")
         private Long addresseeId;
+
+        @Schema(description = "요청 받은 사용자 이름", example = "김가연")
+        private String addresseeName;
+
+        @Schema(description = "요청 받은 사용자 이메일", example = "user2@test.com")
+        private String addresseeEmail;
 
         @Schema(description = "친구 상태 (PENDING, ACCEPTED, REJECTED)", example = "ACCEPTED")
         private FriendshipStatus status;
 
         public static ResponseFriend from(Friendship friendship) {
+            User requester = friendship.getRequester();
+            User addressee = friendship.getAddressee();
+
             return ResponseFriend.builder()
                     .friendshipId(friendship.getFriendshipId())
                     .requesterId(friendship.getRequester().getUserId())
+                    .requesterName(requester.getName())
+                    .requesterEmail(requester.getEmail())
                     .addresseeId(friendship.getAddressee().getUserId())
+                    .addresseeName(addressee.getName())
+                    .addresseeEmail(addressee.getEmail())
                     .status(friendship.getStatus())
-                    .build();
-        }
+                    .build(); }
     }
 
     @Getter

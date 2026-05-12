@@ -39,7 +39,7 @@ public class FavoritePlaceController implements FavoritePlaceControllerDocs {
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<FavoritePlaceDto.ResponseFavoritePlace>>> getFavoritePlaces(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponseDTO<List<FavoritePlaceDto.ResponseFavoritePlace>>> getFavoritePlaces(@RequestParam("userId") Long userId) {
 
         List<FavoritePlaceDto.ResponseFavoritePlace> result =
                 favoritePlaceService.getFavoritePlaces(userId)
