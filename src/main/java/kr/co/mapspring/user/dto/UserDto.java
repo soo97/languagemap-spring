@@ -30,6 +30,15 @@ public class UserDto {
 
         @Schema(description = "이름", example = "홍길동")
         private String name;
+        
+        @Schema(description = "생년월일", example = "2000-01-01")
+        private LocalDate birthDate;  
+
+        @Schema(description = "주소", example = "서울시 강남구")
+        private String address;  
+
+        @Schema(description = "전화번호", example = "01012345678")
+        private String phoneNumber;  
 
         @Schema(description = "역할", example = "USER")
         private String role;
@@ -42,6 +51,9 @@ public class UserDto {
                     .userId(user.getUserId())
                     .email(user.getEmail())
                     .name(user.getName())
+                    .birthDate(user.getBirthDate())  
+                    .address(user.getAddress())  
+                    .phoneNumber(user.getPhoneNumber())  
                     .role(user.getRole().name())
                     .status(user.getStatus().name())
                     .build();
