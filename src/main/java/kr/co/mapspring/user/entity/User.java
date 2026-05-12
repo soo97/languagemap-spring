@@ -195,7 +195,7 @@ public class User {
         this.status = UserStatus.DELETED;
     }
     
-    // 회원 상태
+    // 상태 변경
     public void updateStatus(UserStatus status) {
         this.status = status;
     }

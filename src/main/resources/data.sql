@@ -27,7 +27,7 @@ VALUES
 (1, 'You are a barista. Take a coffee order.', '카페에서 커피를 주문하는 상황', 10, 'CAFE'),
 (2, 'You are a barista. Recommend a menu and take the order.', '카페에서 추천 메뉴를 물어보고 주문하는 상황', 15, 'CAFE'),
 (3, 'You are a barista. Handle a complicated order with customization.', '복잡한 커스터마이징 주문을 하는 상황', 25, 'CAFE'),
-(4, 'You are an airport staff. Help with check-in.', '공항에서 체크인을 하는 상황', 15, 'AIRPORT'),
+(4, 'You are an airport staff. Help with check-in.', '공항에서 체크인을 하는 상황', 15, 'AI RPORT'),
 (5, 'You are an airport staff. Handle baggage issues.', '수하물 문제를 해결하는 상황', 25, 'AIRPORT'),
 (6, 'You are a hotel receptionist. Check in a guest.', '호텔 체크인 상황', 10, 'HOTEL'),
 (7, 'You are a hotel staff. Handle a complaint.', '호텔에서 불만을 제기하는 상황', 30, 'HOTEL'),
