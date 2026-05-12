@@ -9,6 +9,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
 import kr.co.mapspring.place.dto.UserRegionListDto;
 
 public interface UserPlaceLearningService {
@@ -67,4 +68,6 @@ public interface UserPlaceLearningService {
 	List<UserLearningProgressDto.Response> readMyProgress(Long userId);
 	
 	List<UserRegionListDto.ResponseList> readRegionList();
+	
+	List<UserRecentLearningPlaceDto.ResponseRecent> readRecentLearningPlaces(Long userId);
 }

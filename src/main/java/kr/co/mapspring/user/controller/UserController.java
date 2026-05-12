@@ -1,5 +1,9 @@
 package kr.co.mapspring.user.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,8 +17,11 @@ import kr.co.mapspring.global.dto.ApiResponseDTO;
 import kr.co.mapspring.global.exception.CustomException;
 import kr.co.mapspring.global.exception.ErrorCode;
 import kr.co.mapspring.global.jwt.JwtTokenProvider;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
+import kr.co.mapspring.place.service.UserPlaceLearningService;
 import kr.co.mapspring.user.controller.docs.UserControllerDocs;
 import kr.co.mapspring.user.dto.UserDto;
+import kr.co.mapspring.user.entity.User;
 import kr.co.mapspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +32,7 @@ public class UserController implements UserControllerDocs{
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserPlaceLearningService userPlaceLearningService;
 
     /*
      * 현재 로그인한 유저의 정보를 조회합니다.
@@ -68,6 +76,20 @@ public class UserController implements UserControllerDocs{
 
         return ApiResponseDTO.success("프로필 입력 성공", response);
     }
+    
+    @GetMapping("/profile/recentLearningPlaces")
+	public ResponseEntity<ApiResponseDTO<List<UserRecentLearningPlaceDto.ResponseRecent>>> readRecentLearningPlaces(
+	        @AuthenticationPrincipal User user
+	) {
+	    Long userId = user.getUserId();
+
+	    List<UserRecentLearningPlaceDto.ResponseRecent> response =
+	            userPlaceLearningService.readRecentLearningPlaces(userId);
+
+	    return ResponseEntity.ok(
+	            ApiResponseDTO.success("최근 학습 장소 조회 성공", response)
+	    );
+	}
     
     @Override
     @PatchMapping("/me")
