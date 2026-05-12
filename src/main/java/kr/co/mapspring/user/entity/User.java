@@ -195,4 +195,9 @@ public class User {
         this.status = UserStatus.DELETED;
     }
     
+    // 상태 변경
+    public void updateStatus(UserStatus status) {
+        this.status = status;
+    }
+    
 }

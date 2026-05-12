@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import kr.co.mapspring.user.entity.User;
+import kr.co.mapspring.user.enums.UserStatus;
 import kr.co.mapspring.user.oauth.dto.OauthUserDto;
 import kr.co.mapspring.user.oauth.entity.OauthUser;
 import kr.co.mapspring.user.oauth.enums.SocialProvider;
@@ -43,19 +44,12 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
         /*
          * 2. registrationId를 확인합니다.
-         * application.properties의 registration.google에서 google에 해당합니다.
          */
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         SocialProvider provider = resolveProvider(registrationId);
 
         /*
          * 3. Google 사용자 정보를 추출합니다.
-         *
-         * Google 주요 attributes:
-         * - sub: Google 사용자 고유 ID
-         * - email: Google 이메일
-         * - name: Google 이름
-         * - email_verified: 이메일 검증 여부
          */
         Map<String, Object> attributes = oauth2User.getAttributes();
 
@@ -89,9 +83,8 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         /*
          * 7. Spring Security 인증 객체에 들어갈 DTO를 반환합니다.
          */
-        
         boolean isNewUser = user.isProfileIncomplete();
-        return new OauthUserDto(user, attributes, authorities,isNewUser);
+        return new OauthUserDto(user, attributes, authorities, isNewUser);
     }
 
     private User findOrCreateUser(
@@ -106,11 +99,20 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
          */
         return oauthUserRepository.findByProviderAndProviderUserId(provider, providerUserId)
                 .map(oauthUser -> {
-                    /*
-                     * Google 이메일이 바뀌었을 가능성을 고려해 최신 이메일로 갱신합니다.
-                     */
                     oauthUser.updateProviderEmail(email);
-                    return oauthUser.getUser();
+                    User user = oauthUser.getUser();
+
+                    /*
+                     * 탈퇴한 유저는 로그인 차단합니다.
+                     */
+                    if (user.getStatus() == UserStatus.DELETED) {
+                        throw new OAuth2AuthenticationException(
+                                new OAuth2Error("deleted_user"),
+                                "탈퇴한 계정입니다. 신규 가입을 진행해주세요."
+                        );
+                    }
+
+                    return user;
                 })
                 .orElseGet(() -> connectOrCreateUser(provider, providerUserId, email, name));
     }
@@ -124,41 +126,42 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         /*
          * 2순위:
          * oauth_account는 없지만 같은 email의 User가 이미 존재하는 경우입니다.
-         *
-         * 기존에는 같은 email이면 자동으로 Google 계정을 연결했지만,
-         * 현재 프로젝트는 일반 회원가입 email 소유 인증이 없으므로 자동 연결하지 않습니다.
-         *
-         * 기존 일반 계정과 Google 계정 연결은 추후
-         * "로그인된 사용자 본인"이 계정 설정에서 직접 연결하는 방식으로 분리하는 것이 안전합니다.
+         * DELETED 유저 및 일반 계정 모두 차단합니다.
          */
-        userRepository.findByEmail(email)
-                .ifPresent(existingUser -> {
+        User user = userRepository.findByEmail(email)
+        		.<User>map(existingUser -> {
+                    if (existingUser.getStatus() == UserStatus.DELETED) {
+                        throw new OAuth2AuthenticationException(
+                                new OAuth2Error("deleted_user"),
+                                "탈퇴한 계정입니다. 신규 가입을 진행해주세요."
+                        );
+                    }
                     throw new OAuth2AuthenticationException(
                             new OAuth2Error("oauth_link_required"),
                             "이미 가입된 이메일입니다. 일반 로그인 후 소셜 계정 연결을 진행해주세요."
                     );
+                })
+                .orElseGet(() -> {
+                    /*
+                     * 기존 User가 없으면 소셜 회원을 신규 생성합니다.
+                     */
+                    User newUser = User.createOauthUser(email, name);
+                    return userRepository.save(newUser);
                 });
 
         /*
-         * 같은 email의 기존 User가 없으면 소셜 회원을 신규 생성합니다.
-         * Google에서 제공하지 않는 birthDate/address/phoneNumber/passwordHash는 null로 저장됩니다.
+         * oauth_account가 없으면 새로 연결합니다.
          */
-        User user = User.createOauthUser(email, name);
-        User savedUser = userRepository.save(user);
+        boolean oauthExists = oauthUserRepository
+                .findByProviderAndProviderUserId(provider, providerUserId)
+                .isPresent();
 
-        /*
-         * 신규 생성된 User와 Google 계정을 oauth_account에 연결합니다.
-         */
-        OauthUser oauthUser = OauthUser.create(
-                savedUser,
-                provider,
-                providerUserId,
-                email
-        );
+        if (!oauthExists) {
+            OauthUser oauthUser = OauthUser.create(user, provider, providerUserId, email);
+            oauthUserRepository.save(oauthUser);
+        }
 
-        oauthUserRepository.save(oauthUser);
-
-        return savedUser;
+        return user;
     }
 
     private SocialProvider resolveProvider(String registrationId) {
@@ -190,9 +193,6 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
             return String.valueOf(nameAttribute);
         }
 
-        /*
-         * name이 없으면 email 앞부분을 임시 이름으로 사용합니다.
-         */
         int atIndex = email.indexOf("@");
 
         if (atIndex > 0) {
@@ -207,7 +207,6 @@ public class OauthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
         /*
          * Google에서 email_verified=false가 명시적으로 내려오면 차단합니다.
-         * 값이 없는 경우는 provider 정책 차이 가능성이 있어 일단 통과시킵니다.
          */
         if (emailVerified != null && Boolean.FALSE.equals(emailVerified)) {
             throw new OAuth2AuthenticationException(
