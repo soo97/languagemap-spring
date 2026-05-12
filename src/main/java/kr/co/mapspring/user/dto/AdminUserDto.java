@@ -26,6 +26,8 @@ public class AdminUserDto {
         private String phoneNumber;
         private String role;
         private String status;
+        private String address;        
+        private LocalDate birthDate;   
         private LocalDateTime createdAt;
 
         public static ResponseList from(User user) {
@@ -37,6 +39,8 @@ public class AdminUserDto {
                     .role(user.getRole().name())
                     .status(user.getStatus().name())
                     .createdAt(user.getCreatedAt())
+                    .birthDate(user.getBirthDate())   
+                    .address(user.getAddress())        
                     .build();
         }
     }
