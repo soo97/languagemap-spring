@@ -301,6 +301,16 @@ OAUTH_GOOGLE_SUCCESS_REDIRECT_URL=
 
 ---
 
+```yml
+portone:
+  imp-key: 
+  imp-secret: 
+  imp-code: 
+
+```
+
+---
+
 ## 보안 규칙(Secret Rules)
 
 - .env 및 application-secret.yml 업로드 금지
