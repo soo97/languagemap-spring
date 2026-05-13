@@ -25,5 +25,12 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
 
     List<LearningSession> findByUser_UserId(Long userId);
     
+    Optional<LearningSession>
+    findTopByUser_UserIdAndPlace_PlaceIdOrderBySessionIdDesc(
+            Long userId,
+            Long placeId
+    );
+
     List<LearningSession> findTop2ByUser_UserIdAndEndTimeIsNotNullOrderByEndTimeDesc(Long userId);
+
 }

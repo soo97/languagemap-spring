@@ -3,7 +3,9 @@ package kr.co.mapspring.place.dto;
 import java.math.BigDecimal;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
+import kr.co.mapspring.place.enums.LearningSessionStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -37,13 +39,42 @@ public class UserPlaceListDto {
 				)
 		private Long regionId;
 		
-		public static UserPlaceListDto.ResponseList from(Place place) {
-            return UserPlaceListDto.ResponseList.builder()
-                    .placeId(place.getPlaceId())
-                    .regionId(place.getRegion().getRegionId())
-                    .latitude(place.getLatitude())
-                    .longitude(place.getLongitude())
-                    .build();
-        }
+		@Schema(
+				description = "학습 세션 Id", 
+				example = "1"
+				)
+		private Long learningSessionId;
+		
+		@Schema(
+				description = "학습 세션 상태", 
+				example = "RUNNING"
+				)
+		private LearningSessionStatus learningStatus;
+		
+		 public static ResponseList from(
+	                Place place,
+	                LearningSession learningSession
+	        ) {
+
+	            return ResponseList.builder()
+	                    .placeId(place.getPlaceId())
+	                    .regionId(place.getRegion().getRegionId())
+	                    .latitude(place.getLatitude())
+	                    .longitude(place.getLongitude())
+
+	                    .learningSessionId(
+	                            learningSession != null
+	                                    ? learningSession.getSessionId()
+	                                    : null
+	                    )
+
+	                    .learningStatus(
+	                            learningSession != null
+	                                    ? learningSession.getStudyStatus()
+	                                    : null
+	                    )
+
+	                    .build();
+	        }
 	}
 }
