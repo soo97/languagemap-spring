@@ -1,4 +1,4 @@
--- USER
+/*-- USER
 SET FOREIGN_KEY_CHECKS = 0;
 
 
@@ -155,3 +155,4 @@ VALUES
 (3, 3, 1, '신고 사유 부족', 'REJECTED', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY, '반려');
 
 SET FOREIGN_KEY_CHECKS = 1;
+*/
