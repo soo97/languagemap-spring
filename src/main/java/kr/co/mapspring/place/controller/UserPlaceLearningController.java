@@ -23,6 +23,7 @@ import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto.RequsetMissionStart;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
 import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.service.UserPlaceLearningService;
 import kr.co.mapspring.user.entity.User;
@@ -144,6 +145,19 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	    return ResponseEntity.ok(ApiResponseDTO.success("사용자 지역 리스트 조회 완료", result));
 	}
 	
-	
+	// 프로필 최근 학습한 장소
+	@GetMapping("/recentLearningPlaces")
+	public ResponseEntity<ApiResponseDTO<List<UserRecentLearningPlaceDto.ResponseRecent>>> readRecentLearningPlaces(
+	        @AuthenticationPrincipal User user
+	) {
+	    Long userId = user.getUserId();
+
+	    List<UserRecentLearningPlaceDto.ResponseRecent> response =
+	            userPlaceLearningService.readRecentLearningPlaces(userId);
+
+	    return ResponseEntity.ok(
+	            ApiResponseDTO.success("최근 학습 장소 조회 성공", response)
+	    );
+	}
 
 }

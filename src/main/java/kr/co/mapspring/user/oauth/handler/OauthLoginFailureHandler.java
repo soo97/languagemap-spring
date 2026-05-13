@@ -34,6 +34,7 @@ public class OauthLoginFailureHandler extends SimpleUrlAuthenticationFailureHand
                 .queryParam("error", "OAUTH_LOGIN_FAILED")
                 .queryParam("message", exception.getMessage())
                 .build()
+                .encode()
                 .toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);

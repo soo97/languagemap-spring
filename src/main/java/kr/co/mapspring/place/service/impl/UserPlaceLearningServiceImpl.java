@@ -20,6 +20,7 @@ import kr.co.mapspring.place.dto.UserMissionCompleteDto;
 import kr.co.mapspring.place.dto.UserMissionStartDto;
 import kr.co.mapspring.place.dto.UserPlaceListDto;
 import kr.co.mapspring.place.dto.UserReadPlaceDto;
+import kr.co.mapspring.place.dto.UserRecentLearningPlaceDto;
 import kr.co.mapspring.place.dto.UserRegionListDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiChatDto;
 import kr.co.mapspring.place.dto.fastapi.FastApiEvaluationDto;
@@ -412,7 +413,7 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	            .toList();
 	}
 	
-	
+	// 지도 장소 이동 버튼 조회
 	@Override
 	@Transactional(readOnly = true)
     public List<UserRegionListDto.ResponseList> readRegionList() {
@@ -422,5 +423,15 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
                 .map(UserRegionListDto.ResponseList::from)
                 .toList();
     }
-
+	
+	// 사용자 프로필 최근 학습 기록 조회
+	@Override
+	@Transactional(readOnly = true)
+	public List<UserRecentLearningPlaceDto.ResponseRecent> readRecentLearningPlaces(Long userId) {
+	    return learningSessionRepository
+	            .findTop2ByUser_UserIdAndEndTimeIsNotNullOrderByEndTimeDesc(userId)
+	            .stream()
+	            .map(UserRecentLearningPlaceDto.ResponseRecent::of)
+	            .toList();
+	}
 }
