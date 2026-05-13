@@ -19,7 +19,7 @@ public interface UserPlaceLearningService {
 	 * 
 	 * @return 마커의 장소 id, 위도, 경도
 	 */
-	List<UserPlaceListDto.ResponseList> readPlaceMarkers();
+	List<UserPlaceListDto.ResponseList> readPlaceMarkers(Long userId);
 	
 	/**
 	 * 사용자 마커 클릭시 상세 정보, 미션 정보 조회

@@ -62,13 +62,22 @@ public class UserPlaceLearningServiceImpl implements UserPlaceLearningService {
 	// 마커 조회
 	@Override
 	@Transactional(readOnly = true)
-	public List<UserPlaceListDto.ResponseList> readPlaceMarkers() {
+	public List<UserPlaceListDto.ResponseList> readPlaceMarkers(Long userId) {
 
-		List<Place> places = placeRepository.findAll();
-		
-		return places.stream()
-				.map(UserPlaceListDto.ResponseList::from)
-				.toList();
+	    List<Place> places = placeRepository.findAll();
+
+	    return places.stream()
+	            .map(place -> {
+	                LearningSession learningSession = learningSessionRepository
+	                        .findTopByUser_UserIdAndPlace_PlaceIdOrderBySessionIdDesc(
+	                                userId,
+	                                place.getPlaceId()
+	                        )
+	                        .orElse(null);
+
+	                return UserPlaceListDto.ResponseList.from(place, learningSession);
+	            })
+	            .toList();
 	}
 	
 	// 마커 상세 정보 조회

@@ -37,9 +37,14 @@ public class UserPlaceLearningController implements UserPlaceLearningControllerD
 	
 	@Override
 	@GetMapping
-	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker() {
+	public ResponseEntity<ApiResponseDTO<List<UserPlaceListDto.ResponseList>>> readPlaceMarker(
+			@AuthenticationPrincipal User user) {
 		
-		List<UserPlaceListDto.ResponseList> response = userPlaceLearningService.readPlaceMarkers();
+		Long userId = user != null
+				? user.getUserId()
+				: null;
+		
+		List<UserPlaceListDto.ResponseList> response = userPlaceLearningService.readPlaceMarkers(userId);
 
         return ResponseEntity.ok(ApiResponseDTO.success("장소 마커 목록 조회 성공", response));
 	}
