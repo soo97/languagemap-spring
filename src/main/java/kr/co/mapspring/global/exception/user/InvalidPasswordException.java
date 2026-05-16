@@ -1,8 +1,11 @@
 package kr.co.mapspring.global.exception.user;
 
-public class InvalidPasswordException extends RuntimeException {
+import kr.co.mapspring.global.exception.CustomException;
+import kr.co.mapspring.global.exception.ErrorCode;
+
+public class InvalidPasswordException extends CustomException {
 
     public InvalidPasswordException() {
-        super("비밀번호가 일치하지 않습니다.");
+        super(ErrorCode.INVALID_PASSWORD);
     }
 }
