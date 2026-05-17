@@ -1,6 +1,7 @@
 package kr.co.mapspring.ai.service.impl;
 
 import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.mapspring.ai.dto.CoachingEntryDto;
 import kr.co.mapspring.ai.service.CoachingEntryService;
 import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
-import kr.co.mapspring.global.exception.ai.AiCoachingAccessDeniedException;
-import kr.co.mapspring.global.policy.AiUsageLimitPolicy;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
@@ -18,8 +17,8 @@ import kr.co.mapspring.place.entity.SessionMessage;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
 import kr.co.mapspring.place.repository.SessionEvaluationRepository;
 import kr.co.mapspring.place.repository.SessionMessageRepository;
+import kr.co.mapspring.payment.service.SubscriptionValidator;
 import lombok.RequiredArgsConstructor;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +28,19 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
     private final LearningSessionRepository learningSessionRepository;
     private final SessionMessageRepository sessionMessageRepository;
     private final SessionEvaluationRepository sessionEvaluationRepository;
+    private final SubscriptionValidator subscriptionValidator;
 
     @Override
     public CoachingEntryDto.ResponseGetCoachingEntry getCoachingEntryData(Long sessionId) {
+
         LearningSession learningSession = learningSessionRepository.findBySessionId(sessionId)
-        		.orElseThrow(LearningSessionNotFoundException::new);
+                .orElseThrow(LearningSessionNotFoundException::new);
 
         Long userId = learningSession.getUser().getUserId();
 
-        if (!AiUsageLimitPolicy.hasValidAiCoachingAccess(userId)) {
-            throw new AiCoachingAccessDeniedException();
-        }
-        
+        // 실제 구독 상태 검증
+        subscriptionValidator.validate(userId);
+
         Place place = learningSession.getPlace();
         Region region = place.getRegion();
 
@@ -66,7 +66,7 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
                 .sessionMessages(messageItems)
                 .build();
     }
-    
+
     private static final DateTimeFormatter MESSAGE_CREATED_AT_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
