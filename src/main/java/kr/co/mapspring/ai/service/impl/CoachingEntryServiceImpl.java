@@ -38,7 +38,7 @@ public class CoachingEntryServiceImpl implements CoachingEntryService {
 
         Long userId = learningSession.getUser().getUserId();
 
-        // 실제 구독 상태 검증
+        // 실제 구독 상태 검증 
         subscriptionValidator.validate(userId);
 
         Place place = learningSession.getPlace();
