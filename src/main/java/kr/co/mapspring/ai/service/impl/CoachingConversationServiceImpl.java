@@ -45,6 +45,7 @@ import kr.co.mapspring.global.exception.ai.AiSessionTurnLimitExceededException;
 import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 import kr.co.mapspring.global.exception.ai.InvalidCoachingMessageException;
 import kr.co.mapspring.global.policy.AiUsageLimitPolicy;
+import kr.co.mapspring.payment.service.SubscriptionValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,6 +69,7 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
     private final CoachingSessionRepository coachingSessionRepository;
     private final CoachingMessageRepository coachingMessageRepository;
     private final ContentRepository contentRepository;
+    private final SubscriptionValidator subscriptionValidator;
 
     private final ObjectMapper objectMapper;
 
@@ -441,7 +443,7 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
     }
 
     private void validateAiCoachingAccess(Long userId) {
-        if (!AiUsageLimitPolicy.hasValidAiCoachingAccess(userId)) {
+        if (!subscriptionValidator.isPremium(userId)) {
             throw new AiCoachingAccessDeniedException();
         }
     }
