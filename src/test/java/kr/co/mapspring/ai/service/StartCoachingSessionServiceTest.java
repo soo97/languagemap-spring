@@ -25,11 +25,14 @@ import kr.co.mapspring.ai.enums.CoachingSessionStatus;
 import kr.co.mapspring.ai.repository.CoachingSessionRepository;
 import kr.co.mapspring.ai.service.impl.StartCoachingSessionServiceImpl;
 import kr.co.mapspring.global.exception.ai.LearningSessionNotFoundException;
+import kr.co.mapspring.global.exception.ai.AiCoachingAccessDeniedException;
+import kr.co.mapspring.payment.service.SubscriptionValidator;
 import kr.co.mapspring.place.entity.LearningSession;
 import kr.co.mapspring.place.entity.Place;
 import kr.co.mapspring.place.entity.Region;
 import kr.co.mapspring.place.entity.Scenario;
 import kr.co.mapspring.place.repository.LearningSessionRepository;
+import kr.co.mapspring.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class StartCoachingSessionServiceTest {
@@ -42,6 +45,9 @@ class StartCoachingSessionServiceTest {
 
     @Mock
     private LearningSessionRepository learningSessionRepository;
+
+    @Mock
+    private SubscriptionValidator subscriptionValidator;
 
     @Test
     @DisplayName("코칭 세션 시작 성공 - RUNNING 세션이 없으면 새로 생성한다")
@@ -59,6 +65,9 @@ class StartCoachingSessionServiceTest {
 
         when(learningSessionRepository.findBySessionId(10L))
                 .thenReturn(Optional.of(learningSession));
+
+        when(subscriptionValidator.isPremium(2L))
+                .thenReturn(true);
 
         when(coachingSessionRepository.findByLearningSession_SessionIdAndCoachingSessionStatus(
                 10L, CoachingSessionStatus.RUNNING))
@@ -97,6 +106,9 @@ class StartCoachingSessionServiceTest {
         when(learningSessionRepository.findBySessionId(10L))
                 .thenReturn(Optional.of(learningSession));
 
+        when(subscriptionValidator.isPremium(2L))
+                .thenReturn(true);
+
         when(coachingSessionRepository.findByLearningSession_SessionIdAndCoachingSessionStatus(
                 10L, CoachingSessionStatus.RUNNING))
                 .thenReturn(Optional.of(existingCoachingSession));
@@ -111,6 +123,31 @@ class StartCoachingSessionServiceTest {
         assertEquals(CoachingSessionStatus.RUNNING.name(), response.getCoachingSessionStatus());
         assertEquals("GRAMMAR", response.getSelectedOption());
         assertEquals(0, response.getCurrentTurnOrder());
+        verify(coachingSessionRepository, never()).save(any(CoachingSession.class));
+    }
+
+    @Test
+    @DisplayName("코칭 세션 시작 실패 - 활성 구독이 없으면 권한 예외가 발생한다")
+    void 코칭_세션_시작_실패_활성_구독_없음() throws Exception {
+        // given
+        StartCoachingSessionDto.RequestStartCoachingSession request =
+                StartCoachingSessionDto.RequestStartCoachingSession.builder()
+                        .sessionId(10L)
+                        .optionType("WORD")
+                        .build();
+
+        LearningSession learningSession = createLearningSession(10L);
+
+        when(learningSessionRepository.findBySessionId(10L))
+                .thenReturn(Optional.of(learningSession));
+
+        when(subscriptionValidator.isPremium(2L))
+                .thenReturn(false);
+
+        // when & then
+        assertThrows(AiCoachingAccessDeniedException.class,
+                () -> startCoachingSessionService.startCoachingSession(request));
+
         verify(coachingSessionRepository, never()).save(any(CoachingSession.class));
     }
 
@@ -160,8 +197,17 @@ class StartCoachingSessionServiceTest {
         LearningSession learningSession = createInstance(LearningSession.class);
         setField(learningSession, "sessionId", sessionId);
         setField(learningSession, "place", place);
+        setField(learningSession, "user", createUser(2L));
 
         return learningSession;
+    }
+
+    private User createUser(Long userId) {
+        return User.builder()
+                .userId(userId)
+                .email("premium@example.com")
+                .name("Premium User")
+                .build();
     }
 
     private <T> T createInstance(Class<T> clazz) throws Exception {
