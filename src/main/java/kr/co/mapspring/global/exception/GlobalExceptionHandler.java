@@ -7,6 +7,7 @@ import kr.co.mapspring.global.exception.learning.GoalAlreadySelectedException;
 import kr.co.mapspring.global.exception.learning.GoalMasterNotFoundException;
 import kr.co.mapspring.global.exception.learning.GoalSelectionLimitExceededException;
 import kr.co.mapspring.global.exception.learning.UserGoalNotFoundException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,6 +94,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.fail(
                         HttpStatus.BAD_REQUEST,
                         "입력값 검증 실패"
+                ));
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponseDTO<Object>> handleJwtException(JwtException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponseDTO.fail(
+                        HttpStatus.UNAUTHORIZED,
+                        "인증이 만료되었거나 유효하지 않습니다."
                 ));
     }
 
