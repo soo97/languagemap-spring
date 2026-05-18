@@ -46,9 +46,11 @@ import kr.co.mapspring.global.exception.ai.CoachingSessionNotFoundException;
 import kr.co.mapspring.global.exception.ai.InvalidCoachingMessageException;
 import kr.co.mapspring.global.policy.AiUsageLimitPolicy;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class CoachingConversationServiceImpl implements CoachingConversationService {
 
@@ -127,18 +129,50 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
                     .build();
         }
 
-        FastApiOpenAiDto.ResponseCoachingScript scriptResponse =
-                fastApiOpenAiClient.createCoachingScript(
-                        FastApiOpenAiDto.RequestCoachingScript.builder()
-                                .optionType(request.getOptionType())
-                                .placeName(request.getPlaceName())
-                                .country(request.getCountry())
-                                .city(request.getCity())
-                                .placeAddress(request.getPlaceAddress())
-                                .evaluation(request.getEvaluation())
-                                .previousMessages(request.getPreviousMessages())
-                                .build()
-                );
+        log.info(
+                "Preparing to call FastAPI coaching script. sessionId={}, coachingSessionId={}, optionType={}",
+                sessionId,
+                coachingSessionId,
+                request.getOptionType()
+        );
+
+        FastApiOpenAiDto.ResponseCoachingScript scriptResponse;
+
+        try {
+            scriptResponse = fastApiOpenAiClient.createCoachingScript(
+                    FastApiOpenAiDto.RequestCoachingScript.builder()
+                            .optionType(request.getOptionType())
+                            .placeName(request.getPlaceName())
+                            .country(request.getCountry())
+                            .city(request.getCity())
+                            .placeAddress(request.getPlaceAddress())
+                            .evaluation(request.getEvaluation())
+                            .previousMessages(request.getPreviousMessages())
+                            .build()
+            );
+        } catch (RuntimeException e) {
+            Throwable rootCause = getRootCause(e);
+            log.error(
+                    "FastAPI coaching script call failed. sessionId={}, coachingSessionId={}, optionType={}, causeClass={}, causeMessage={}",
+                    sessionId,
+                    coachingSessionId,
+                    request.getOptionType(),
+                    rootCause.getClass().getName(),
+                    rootCause.getMessage()
+            );
+            throw e;
+        }
+
+        int messageCount = scriptResponse.getMessages() == null
+                ? 0
+                : scriptResponse.getMessages().size();
+
+        log.info(
+                "FastAPI coaching script call completed. sessionId={}, coachingSessionId={}, messageCount={}",
+                sessionId,
+                coachingSessionId,
+                messageCount
+        );
 
         List<CoachingScriptTurnDto.RequestSaveCoachingScriptTurn> turnRequests =
                 convertMessagesToScriptTurns(
@@ -555,5 +589,15 @@ public class CoachingConversationServiceImpl implements CoachingConversationServ
         } catch (JsonProcessingException e) {
             return "[]";
         }
+    }
+
+    private Throwable getRootCause(Throwable throwable) {
+        Throwable rootCause = throwable;
+
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+
+        return rootCause;
     }
 }

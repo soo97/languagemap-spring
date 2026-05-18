@@ -8,9 +8,11 @@ import org.springframework.web.client.RestTemplate;
 import kr.co.mapspring.ai.dto.FastApiOpenAiDto;
 import kr.co.mapspring.global.exception.ai.FastApiAiClientException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class FastApiOpenAiClient {
 
     private final RestTemplate restTemplate;
@@ -49,9 +51,13 @@ public class FastApiOpenAiClient {
     }
 
     private <T> T postJson(String path, Object request, Class<T> responseType) {
+        String url = createUrl(path);
+
         try {
+            log.info("Calling FastAPI OpenAI endpoint. path={}, url={}", path, url);
+
             T response = restTemplate.postForObject(
-                    createUrl(path),
+                    url,
                     request,
                     responseType
             );
@@ -62,6 +68,14 @@ public class FastApiOpenAiClient {
 
             return response;
         } catch (RestClientException e) {
+            Throwable rootCause = getRootCause(e);
+            log.error(
+                    "FastAPI OpenAI request failed. path={}, url={}, causeClass={}, causeMessage={}",
+                    path,
+                    url,
+                    rootCause.getClass().getName(),
+                    rootCause.getMessage()
+            );
             throw new FastApiAiClientException(e);
         }
     }
@@ -71,5 +85,15 @@ public class FastApiOpenAiClient {
             return fastApiBaseUrl.substring(0, fastApiBaseUrl.length() - 1) + path;
         }
         return fastApiBaseUrl + path;
+    }
+
+    private Throwable getRootCause(Throwable throwable) {
+        Throwable rootCause = throwable;
+
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+
+        return rootCause;
     }
 }

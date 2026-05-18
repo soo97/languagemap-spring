@@ -30,6 +30,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDTO<Object>> handleCustomException(CustomException e) {
 
         ErrorCode errorCode = e.getErrorCode();
+        Throwable cause = e.getCause();
+
+        if (cause != null) {
+            log.error(
+                    "CustomException root cause. errorCode={}, message={}, causeClass={}, causeMessage={}",
+                    errorCode,
+                    e.getMessage(),
+                    cause.getClass().getName(),
+                    cause.getMessage()
+            );
+        }
 
         return ResponseEntity
                 .status(errorCode.getStatus())
