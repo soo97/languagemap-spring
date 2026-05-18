@@ -39,7 +39,7 @@ jobs:
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters commands="[
-              \"export FASTAPI_BASE_URL=http://3.107.196.204:8000\",
+              \"export FASTAPI_BASE_URL=${{ secrets.FASTAPI_BASE_URL }}\",
               \"aws s3 cp s3://${{ secrets.BACKEND_BUCKET }}/app.jar /home/ec2-user/app/app.jar\",
               \"bash /home/ec2-user/app/deploy.sh\"
             ]"
